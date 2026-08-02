@@ -1,32 +1,50 @@
 # MasterBrand West Territory Strategic Plan (Q3–Q4 2026)
 
-**Confidential – Protected with Staticrypt**
+**Confidential — encrypted at rest with [Staticrypt](https://github.com/robinmoisson/staticrypt).**
 
-This folder hosts the interactive executive playbook for the West Territory Area VP.
+Interactive executive playbook for the West Territory Area VP.
 
 ## Viewing
 
-Open `index.html` (or the GitHub Pages URL if configured for this path).
+Open `index.html`, or the GitHub Pages URL:
+<https://cjfogerty.github.io/probuilds/masterbrand-west/index.html>
 
-You will be prompted for credentials.
+You will be prompted for a passphrase. **The passphrase is shared out-of-band — it is
+deliberately not recorded in this repository.**
 
-**Temporary passphrase used for encryption:** `MasterBrandWest2026!`
+## What's in here
 
-(You can re-encrypt with your preferred username + passphrase using [Staticrypt](https://github.com/robinmoisson/staticrypt) — the same method used for the `elevate` page.)
+`index.html` is the **encrypted build only**. The editable plaintext source is kept
+outside this public repo, together with the rebuild and verification scripts.
 
-### How to re-encrypt with your own UN + passphrase
+Do not commit the plaintext source here.
 
-1. Download the original full HTML (available in conversation artifacts or ask for it).
-2. Run:
-   ```bash
-   staticrypt original.html -p "your-strong-passphrase" \
-     --template-instructions "Enter the username and passphrase provided to you." \
-     --template-title "MasterBrand West Territory — Protected" \
-     --template-color-primary "#D0B787" --template-color-secondary "#1A1A1A"
-   ```
-3. Replace `index.html` with the new encrypted file and commit.
+## Rebuilding
 
-The original unencrypted source is kept locally / in artifacts so you can update content later.
+Edit the plaintext source in the local project, then run its `build.sh`, which
+re-encrypts, checks the output for plaintext leakage, and stages the encrypted file
+back into this folder. Commit the resulting `index.html` only.
+
+The build reuses a fixed salt so viewers who ticked "Remember me" stay unlocked across
+content updates.
+
+---
+
+## Contents
+
+| Section | What it covers |
+|---|---|
+| Executive Summary | Current-quarter position, the five imperatives, and the positions this revision reverses |
+| Market & Competition | Western-state permit trends, channel performance, margin trend, share, and a coverage matrix |
+| Strategic Priorities | Five priorities with competitive logic and numeric targets |
+| 2-Quarter Playbook | Q3/Q4 phases with exit gates |
+| KPI Scorecard | Filterable metrics, each with a baseline and a numeric target |
+| Risks & Asks | Risks with early-warning signals; leadership asks framed against the balance-sheet constraint |
+| Sources & Method | Every figure sourced, derived arithmetic shown, known conflicts stated |
+
+Figures are drawn from MasterBrand's Q1 2026 results, the American Woodmark merger
+completion (28 May 2026), US Census single-family permit data, Harvard JCHS LIRA, and
+KCMA industry shipments. Charts are self-contained inline SVG — no external requests.
 
 ---
 Aligned to The MasterBrand Way
