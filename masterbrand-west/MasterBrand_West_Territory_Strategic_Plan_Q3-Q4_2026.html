@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MasterBrand | West Territory Strategic Plan — Q3–Q4 2026</title>
+<style>
+  :root {
+    --mb-tan: #D0B787;
+    --mb-tan-dark: #B89A6A;
+    --mb-black: #1A1A1A;
+    --mb-charcoal: #2C2C2C;
+    --mb-gray: #4A4A4A;
+    --mb-light-gray: #F5F4F1;
+    --mb-mid-gray: #E8E6E1;
+    --mb-white: #FFFFFF;
+    --mb-success: #2E7D4F;
+    --mb-warning: #C47A1A;
+    --mb-danger: #A33B2B;
+    --mb-info: #3A5A7A;
+    --shadow: 0 4px 20px rgba(26,26,26,0.08);
+    --radius: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--mb-light-gray);
+    color: var(--mb-black);
+    line-height: 1.55;
+    font-size: 15px;
+  }
+
+  /* Header */
+  .top-bar {
+    background: var(--mb-black);
+    color: var(--mb-white);
+    padding: 0.6rem 2rem;
+    font-size: 0.78rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    letter-spacing: 0.03em;
+  }
+  .top-bar span { opacity: 0.85; }
+
+  header.hero {
+    background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 60%, #3A352E 100%);
+    color: white;
+    padding: 2.5rem 2rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  header.hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--mb-tan);
+  }
+  .hero-inner { max-width: 1100px; margin: 0 auto; }
+  .brand-lockup {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .brand-mark {
+    width: 48px; height: 48px;
+    background: var(--mb-tan);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1.4rem; color: var(--mb-black);
+  }
+  .brand-text h1 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .brand-text p {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    margin-top: 2px;
+  }
+  .hero-title {
+    font-size: 2.1rem;
+    font-weight: 700;
+    line-height: 1.2;
+    max-width: 720px;
+    margin-bottom: 0.75rem;
+  }
+  .hero-sub {
+    font-size: 1.05rem;
+    opacity: 0.85;
+    max-width: 640px;
+    margin-bottom: 1.5rem;
+  }
+  .meta-pills {
+    display: flex; flex-wrap: wrap; gap: 0.6rem;
+  }
+  .pill {
+    background: rgba(208,183,135,0.18);
+    border: 1px solid rgba(208,183,135,0.4);
+    color: var(--mb-tan);
+    padding: 0.35rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 500;
+  }
+
+  /* Navigation */
+  nav.sticky-nav {
+    background: white;
+    border-bottom: 1px solid var(--mb-mid-gray);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    overflow-x: auto;
+    gap: 0.25rem;
+    padding: 0 1rem;
+  }
+  .nav-btn {
+    background: none;
+    border: none;
+    padding: 0.9rem 1.1rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--mb-gray);
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { color: var(--mb-black); }
+  .nav-btn.active {
+    color: var(--mb-black);
+    border-bottom-color: var(--mb-tan);
+  }
+
+  /* Layout */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+  section.panel {
+    display: none;
+    animation: fadeIn 0.35s ease;
+  }
+  section.panel.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Cards & typography */
+  h2.section-title {
+    font-size: 1.55rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    color: var(--mb-black);
+  }
+  .section-lead {
+    color: var(--mb-gray);
+    margin-bottom: 1.75rem;
+    max-width: 780px;
+  }
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+  .card h3 {
+    font-size: 1.1rem;
+    font-weight: 650;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .card h4 {
+    font-size: 0.92rem;
+    font-weight: 650;
+    margin: 1rem 0 0.4rem;
+    color: var(--mb-charcoal);
+  }
+  .accent-bar {
+    width: 36px; height: 4px;
+    background: var(--mb-tan);
+    border-radius: 2px;
+    margin-bottom: 1rem;
+  }
+
+  /* Grid */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.15rem; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  @media (max-width: 900px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+
+  /* KPI tiles */
+  .kpi-tile {
+    background: white;
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    box-shadow: var(--shadow);
+    border-top: 3px solid var(--mb-tan);
+    text-align: center;
+  }
+  .kpi-tile .label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--mb-gray);
+    margin-bottom: 0.35rem;
+  }
+  .kpi-tile .value {
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: var(--mb-black);
+  }
+  .kpi-tile .sub {
+    font-size: 0.75rem;
+    color: var(--mb-gray);
+    margin-top: 0.25rem;
+  }
+
+  /* Tables */
+  table.scorecard {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  table.scorecard th {
+    background: var(--mb-black);
+    color: white;
+    text-align: left;
+    padding: 0.7rem 0.85rem;
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  table.scorecard td {
+    padding: 0.7rem 0.85rem;
+    border-bottom: 1px solid var(--mb-mid-gray);
+    vertical-align: top;
+  }
+  table.scorecard tr:nth-child(even) td { background: #FAFAF8; }
+  table.scorecard tr:hover td { background: #F0EDE6; }
+
+  .status {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  .status.on-track { background: #E6F4EC; color: var(--mb-success); }
+  .status.watch { background: #FDF3E3; color: var(--mb-warning); }
+  .status.at-risk { background: #F9E8E6; color: var(--mb-danger); }
+  .status.planned { background: #E8EEF4; color: var(--mb-info); }
+
+  /* Priority cards */
+  .priority-card {
+    border-left: 4px solid var(--mb-tan);
+  }
+  .priority-num {
+    display: inline-flex;
+    width: 28px; height: 28px;
+    background: var(--mb-tan);
+    color: var(--mb-black);
+    border-radius: 50%;
+    align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  /* Competitive chips */
+  .comp-chip {
+    display: inline-block;
+    background: var(--mb-mid-gray);
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    margin: 0.15rem 0.2rem 0.15rem 0;
+    font-weight: 500;
+  }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    padding-left: 1.5rem;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px; top: 4px; bottom: 4px;
+    width: 2px;
+    background: var(--mb-tan);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 1.4rem;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.5rem; top: 6px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--mb-tan);
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px var(--mb-tan);
+  }
+  .timeline-item h4 { margin-top: 0; }
+
+  /* Accordion */
+  .accordion-item {
+    border: 1px solid var(--mb-mid-gray);
+    border-radius: var(--radius);
+    margin-bottom: 0.6rem;
+    overflow: hidden;
+    background: white;
+  }
+  .accordion-header {
+    width: 100%;
+    background: white;
+    border: none;
+    padding: 1rem 1.2rem;
+    text-align: left;
+    font-weight: 650;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--mb-black);
+  }
+  .accordion-header:hover { background: var(--mb-light-gray); }
+  .accordion-header .chevron {
+    transition: transform 0.25s;
+    font-size: 1.1rem;
+    color: var(--mb-tan-dark);
+  }
+  .accordion-item.open .chevron { transform: rotate(180deg); }
+  .accordion-body {
+    display: none;
+    padding: 0 1.2rem 1.2rem;
+    border-top: 1px solid var(--mb-mid-gray);
+  }
+  .accordion-item.open .accordion-body { display: block; }
+
+  /* Callout */
+  .callout {
+    background: linear-gradient(135deg, #F8F5EE, #F0EBE0);
+    border: 1px solid rgba(208,183,135,0.45);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.4rem;
+    margin: 1.5rem 0;
+  }
+  .callout strong { color: var(--mb-charcoal); }
+
+  /* Footer */
+  footer {
+    background: var(--mb-black);
+    color: rgba(255,255,255,0.7);
+    padding: 1.5rem 2rem;
+    font-size: 0.78rem;
+    text-align: center;
+  }
+  footer .brand { color: var(--mb-tan); font-weight: 600; }
+
+  /* Interactive scorecard controls */
+  .scorecard-controls {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    background: white;
+    border: 1px solid var(--mb-mid-gray);
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .filter-btn.active {
+    background: var(--mb-black);
+    color: white;
+    border-color: var(--mb-black);
+  }
+
+  /* Print */
+  @media print {
+    nav.sticky-nav, .top-bar, .scorecard-controls { display: none !important; }
+    section.panel { display: block !important; page-break-inside: avoid; }
+    .card { box-shadow: none; border: 1px solid #ddd; }
+  }
+
+  ul.clean { padding-left: 1.2rem; }
+  ul.clean li { margin-bottom: 0.35rem; }
+  .tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    background: var(--mb-mid-gray);
+    color: var(--mb-gray);
+    margin-right: 0.4rem;
+  }
+  .tag.critical { background: #F9E8E6; color: var(--mb-danger); }
+  .tag.high { background: #FDF3E3; color: var(--mb-warning); }
+  .tag.growth { background: #E6F4EC; color: var(--mb-success); }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <span>CONFIDENTIAL — Internal Executive Use Only</span>
+  <span>West Territory | Sales Area VP Briefing | August 2026</span>
+</div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="brand-lockup">
+      <div class="brand-mark">MB</div>
+      <div class="brand-text">
+        <h1>MasterBrand</h1>
+        <p>Building Great Experiences Together</p>
+      </div>
+    </div>
+    <h2 class="hero-title">West Territory Strategic Plan<br>Q3–Q4 2026 Execution Playbook</h2>
+    <p class="hero-sub">Post-merger commercial acceleration for the territory west of the Mississippi — dealer share, portfolio penetration, mix discipline, and integration excellence.</p>
+    <div class="meta-pills">
+      <span class="pill">Horizon: Aug 2026 – Jan 2027</span>
+      <span class="pill">Primary Channel: Dealer</span>
+      <span class="pill">Context: Soft Demand + Integration</span>
+      <span class="pill">Owner: Area VP, West</span>
+    </div>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <div class="nav-inner">
+    <button class="nav-btn active" data-target="exec">Executive Summary</button>
+    <button class="nav-btn" data-target="market">Market & Context</button>
+    <button class="nav-btn" data-target="priorities">Strategic Priorities</button>
+    <button class="nav-btn" data-target="playbook">2-Quarter Playbook</button>
+    <button class="nav-btn" data-target="scorecard">KPI Scorecard</button>
+    <button class="nav-btn" data-target="risks">Risks & Asks</button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- ===================== EXECUTIVE SUMMARY ===================== -->
+  <section id="exec" class="panel active">
+    <div class="accent-bar"></div>
+    <h2 class="section-title">Executive Summary</h2>
+    <p class="section-lead">This plan positions the West Territory to outperform in a soft 2026 market while capturing the commercial upside of the American Woodmark combination. Success is defined by profitable share growth, mix improvement, and clean integration—not volume alone.</p>
+
+    <div class="grid-3" style="margin-bottom:1.5rem;">
+      <div class="kpi-tile">
+        <div class="label">Market Outlook 2026</div>
+        <div class="value" style="font-size:1.25rem;">Mid-Single Digit ↓</div>
+        <div class="sub">End markets expected soft; recovery bias 2027</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="label">Primary Lever</div>
+        <div class="value" style="font-size:1.25rem;">Dealer + Mix</div>
+        <div class="sub">Highest margin, highest control</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="label">Integration Window</div>
+        <div class="value" style="font-size:1.25rem;">Critical</div>
+        <div class="sub">Cross-sell AWM brands into MB network</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Situation in One Page</h3>
+      <p style="margin-bottom:0.8rem;">MasterBrand is the #1 North American residential cabinet manufacturer. The May 28, 2026 all-stock merger with American Woodmark created the industry’s most comprehensive portfolio spanning stock, semi-custom, and premium. Pre-merger MasterBrand shareholders own ~63%. The combined company targets ~$90M run-rate cost synergies by year three and accretion in year two.</p>
+      <p style="margin-bottom:0.8rem;">Channel mix (pre-merger MasterBrand): ~55% Dealer, ~32% Retail, ~13% Builder. Dealers remain the highest-margin, most controllable growth engine. The West Territory (TX, CA, AZ, CO, NM, UT and adjacent) contains both high-growth Sun Belt/Mountain West corridors and affordability-challenged California markets.</p>
+      <p>2026 is a transitional year: end markets expected down mid-single digits, tariff costs elevated (gross tariff exposure cited at 5–6% of sales before mitigation), and integration work is the commercial priority. Long-term structural drivers (demographics, underbuilding, R&R) remain intact.</p>
+    </div>
+
+    <div class="card priority-card">
+      <h3><span class="priority-num">★</span> The Five Imperatives for the West AVP</h3>
+      <ol class="clean" style="margin-top:0.6rem;">
+        <li><strong>Dealer Share & Portfolio Penetration</strong> — Convert the expanded brand set into placements and share of wallet with the existing MasterBrand dealer network.</li>
+        <li><strong>Builder & Retail Continuity + Mix Guardrails</strong> — Protect service levels and volume relationships while refusing pure volume-at-any-cost deals.</li>
+        <li><strong>Mix, Pricing & Margin Discipline</strong> — In a soft market, mix shift and price realization are the primary path to regional P&L success.</li>
+        <li><strong>Team / Agency Performance + Integration Execution</strong> — High-accountability field system; zero service friction during brand and process integration.</li>
+        <li><strong>West-Specific Resource Allocation</strong> — Prioritize TX/AZ/CO growth corridors; tailor California approach to design intensity and longer cycles.</li>
+      </ol>
+    </div>
+
+    <div class="callout">
+      <strong>Bottom Line for Leadership:</strong> The West can deliver outsized value in the next two quarters by treating the merger as a commercial offensive in the dealer channel, enforcing mix and pricing discipline, and running a tight integration cadence. Volume will be constrained by the market; profitable share and operational reliability will not.
+    </div>
+  </section>
+
+  <!-- ===================== MARKET & CONTEXT ===================== -->
+  <section id="market" class="panel">
+    <div class="accent-bar"></div>
+    <h2 class="section-title">Market Context & Competitive Landscape</h2>
+    <p class="section-lead">Understanding the playing field for the West Territory over the next six months.</p>
+
+    <div class="card">
+      <h3>Company Snapshot (Post-Merger)</h3>
+      <div class="grid-2">
+        <div>
+          <ul class="clean">
+            <li><strong>Position:</strong> #1 North American residential cabinet manufacturer</li>
+            <li><strong>HQ:</strong> Beachwood, OH (presence retained in Winchester, VA)</li>
+            <li><strong>Scale:</strong> ~$2.7B standalone + AWM combination; pro forma significantly larger</li>
+            <li><strong>Network:</strong> 7,900+ dealers; 20+ manufacturing facilities</li>
+            <li><strong>Culture System:</strong> The MasterBrand Way — Align to Grow, Lead through Lean, Tech Enabled</li>
+          </ul>
+        </div>
+        <div>
+          <ul class="clean">
+            <li><strong>CEO:</strong> Dave Banyard</li>
+            <li><strong>Commercial Structure:</strong> Channel-aligned EVPs (Dealer & Home Center; Builder/Distributor/Canada)</li>
+            <li><strong>Key Brands:</strong> Aristokraft, Diamond, Schrock, Homecrest, Omega, Decora, Mantra, Dura Supreme, Bertch + AWM portfolio</li>
+            <li><strong>End Market Split:</strong> ~60% R&R / ~40% New Construction orientation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Competitive Set — West Relevance</h3>
+      <table class="scorecard">
+        <thead>
+          <tr>
+            <th>Competitor</th>
+            <th>Est. Position</th>
+            <th>Strengths</th>
+            <th>West Implications</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Cabinetworks Group</strong></td>
+            <td>~14% share; ~$1.9B private</td>
+            <td>KraftMaid, Merillat, Medallion; multi-channel; recent commercial leadership elevation; aggressive product cadence</td>
+            <td>Primary mid-tier and promotional competitor in dealer showrooms. Watch new product and designer engagement intensity.</td>
+          </tr>
+          <tr>
+            <td><strong>Fabuwood & Value Importers</strong></td>
+            <td>Growing share in entry/mid</td>
+            <td>Speed, price, trend-forward styles; strong Sun Belt dealer presence</td>
+            <td>Pressure on lower price points in TX/AZ. Defend with service, reliability, and trade-up paths rather than pure price matching.</td>
+          </tr>
+          <tr>
+            <td><strong>Wellborn & Regional Specialists</strong></td>
+            <td>Strong in select dealer bases</td>
+            <td>Local relationships, quality claims, flexibility</td>
+            <td>Compete on total cost of ownership, digital tools, and multi-brand portfolio breadth.</td>
+          </tr>
+          <tr>
+            <td><strong>Legacy AWM (now internal)</strong></td>
+            <td>Strong builder/retail heritage</td>
+            <td>Turnkey builder model; solid home-center programs</td>
+            <td>Opportunity: inject AWM brands into MasterBrand’s denser dealer network. Risk: service disruption during integration.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top:0.9rem;font-size:0.85rem;color:var(--mb-gray);">National share context (pre-merger estimates): MasterBrand ~19%, Cabinetworks ~14%, American Woodmark ~11%, Importers ~11%, Others ~45%. Combined entity is the clear scale leader.</p>
+    </div>
+
+    <div class="card">
+      <h3>West Territory Market Realities</h3>
+      <div class="grid-2">
+        <div>
+          <h4>Growth Corridors</h4>
+          <ul class="clean">
+            <li>Texas metros (DFW, Houston, Austin, San Antonio)</li>
+            <li>Phoenix / Arizona</li>
+            <li>Denver / Front Range Colorado</li>
+            <li>Utah and select Mountain West</li>
+          </ul>
+          <p style="font-size:0.85rem;margin-top:0.5rem;">Long-term population and job growth support demand; near-term starts remain soft but inventory corrections are progressing in parts of the West.</p>
+        </div>
+        <div>
+          <h4>Challenged / Distinct Dynamics</h4>
+          <ul class="clean">
+            <li>California — affordability pressure, longer cycles, higher design expectations</li>
+            <li>Promotional intensity higher in value-oriented Sun Belt dealer sets</li>
+            <li>Logistics span is wide; service reliability is a differentiator</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== STRATEGIC PRIORITIES ===================== -->
+  <section id="priorities" class="panel">
+    <div class="accent-bar"></div>
+    <h2 class="section-title">Strategic Priorities — Competitive & Performance Bios</h2>
+    <p class="section-lead">Five focus areas with competitive context, success metrics, and execution guidance.</p>
+
+    <!-- Priority 1 -->
+    <div class="accordion-item open">
+      <button class="accordion-header">1. Drive Dealer-Channel Share & Portfolio Penetration <span class="chevron">▼</span></button>
+      <div class="accordion-body">
+        <p><span class="tag growth">Highest Leverage</span> Dealers remain the highest-margin, most controllable channel. Post-merger, the commercial prize is placing the expanded portfolio (including AWM brands) into MasterBrand’s larger, denser dealer network where historical overlap was limited.</p>
+        <h4>Competitive Reality</h4>
+        <p>Cabinetworks competes hard on mid-tier brands and designer programs. Value importers win on speed and price in entry segments. MasterBrand’s advantage is breadth (stock → premium), service infrastructure, and now the ability to offer former AWM lines through the same sales motion.</p>
+        <h4>Performance Metrics</h4>
+        <ul class="clean">
+          <li>Share of wallet / brand penetration with top 50–100 West dealers</li>
+          <li>% of dealer revenue from semi-custom + premium</li>
+          <li>New brand / display placements (especially AWM lines)</li>
+          <li>Agency and Territory Manager productivity</li>
+          <li>Dealer NPS / retention and competitive displacement wins</li>
+        </ul>
+        <h4>West Actions</h4>
+        <ul class="clean">
+          <li>Segment dealers A/B/C and resource accordingly</li>
+          <li>Rapid training and incentive alignment on full portfolio</li>
+          <li>Win showroom and specification share with priority partners</li>
+          <li>Use digital configuration tools to improve conversion and order quality</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Priority 2 -->
+    <div class="accordion-item">
+      <button class="accordion-header">2. Protect & Grow Builder and Retail Relationships (with Mix Guardrails) <span class="chevron">▼</span></button>
+      <div class="accordion-body">
+        <p>Builders and retailers provide volume and plant utilization. American Woodmark brought stronger builder heritage (including turnkey elements). The combined company must maintain continuity while refusing margin-destructive volume.</p>
+        <h4>Competitive Reality</h4>
+        <p>National and large regional builders value reliability, lead times, and package simplicity. Retail programs are concentrated and promotional. Importers and private-label pressure is highest at the value end. Service friction during integration is the largest near-term risk.</p>
+        <h4>Performance Metrics</h4>
+        <ul class="clean">
+          <li>Revenue and share with priority West builder accounts</li>
+          <li>Retail program compliance, fill rates, category standing</li>
+          <li>Margin by channel (protect or improve vs. pure volume)</li>
+          <li>On-time / complete delivery performance</li>
+        </ul>
+        <h4>West Actions</h4>
+        <ul class="clean">
+          <li>Secure service continuity commitments with key accounts</li>
+          <li>Introduce higher-mix options into builder packages where feasible</li>
+          <li>Maintain disciplined pricing posture with retailers</li>
+          <li>Leverage expanded footprint for logistics reliability across the West</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Priority 3 -->
+    <div class="accordion-item">
+      <button class="accordion-header">3. Ruthlessly Manage Mix, Pricing & Margin <span class="chevron">▼</span></button>
+      <div class="accordion-body">
+        <p><span class="tag critical">P&L Critical</span> In a soft demand environment with tariff pressure, volume alone will not deliver regional goals. Mix shift toward semi-custom/premium and clean price realization are the primary levers.</p>
+        <h4>Competitive Reality</h4>
+        <p>Value competitors will fight on price and lead time. MasterBrand’s multi-brand architecture enables trade-up pathways that pure value players lack. Domestic/nearshore capacity is a relative advantage in a tariff environment.</p>
+        <h4>Performance Metrics</h4>
+        <ul class="clean">
+          <li>Gross and contribution margin by brand, channel, and key customer</li>
+          <li>Mix percentage (semi-custom + premium)</li>
+          <li>Price realization vs. list and vs. prior year</li>
+          <li>Discount / promotion leakage</li>
+        </ul>
+        <h4>West Actions</h4>
+        <ul class="clean">
+          <li>Weekly price/mix visibility at regional level</li>
+          <li>Align agency incentives to margin, not revenue alone</li>
+          <li>Push configuration tools that surface higher-value options</li>
+          <li>Segment service levels to protect cost-to-serve</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Priority 4 -->
+    <div class="accordion-item">
+      <button class="accordion-header">4. Lead Team & Agency Performance + Integration Execution <span class="chevron">▼</span></button>
+      <div class="accordion-body">
+        <p>The AVP’s primary leverage is through Regional Sales Managers, Territory Managers, and independent agencies. Integration success or friction will surface first in the field.</p>
+        <h4>Competitive Reality</h4>
+        <p>Talent and high-performing agencies are contested. Competitors are also investing in commercial leadership. Zero service disruption is both a defensive requirement and an offensive differentiator.</p>
+        <h4>Performance Metrics</h4>
+        <ul class="clean">
+          <li>Agency and manager attainment vs. target</li>
+          <li>Revenue and margin per sales resource</li>
+          <li>Forecast accuracy</li>
+          <li>Integration milestones (training completion, cross-sell activity, service levels)</li>
+          <li>Team engagement / retention</li>
+        </ul>
+        <h4>West Actions</h4>
+        <ul class="clean">
+          <li>Clear scorecards and weekly/bi-weekly operating rhythm</li>
+          <li>Accelerate post-merger product and process training</li>
+          <li>Surface integration issues upward quickly while protecting customers</li>
+          <li>Develop bench strength in high-growth sub-markets</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Priority 5 -->
+    <div class="accordion-item">
+      <button class="accordion-header">5. Exploit West-Specific Market Realities <span class="chevron">▼</span></button>
+      <div class="accordion-body">
+        <p>The West is not uniform. Resource allocation and playbooks must differ by sub-region.</p>
+        <h4>Sub-Region Guidance</h4>
+        <ul class="clean">
+          <li><strong>Texas & Arizona:</strong> Volume and production-builder opportunity; value competition intense — defend with service and trade-up.</li>
+          <li><strong>Colorado / Mountain West:</strong> Growth and mix potential; invest in design-oriented dealers.</li>
+          <li><strong>California:</strong> Higher design intensity, longer cycles, stronger sustainability and customization expectations — prioritize high-potential design partners.</li>
+        </ul>
+        <h4>Performance Metrics</h4>
+        <ul class="clean">
+          <li>Relative growth vs. local housing starts, existing-home sales, and remodel indicators by major metro</li>
+          <li>Share trends in priority metros</li>
+          <li>Lead-time and logistics performance by sub-region</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 2-QUARTER PLAYBOOK ===================== -->
+  <section id="playbook" class="panel">
+    <div class="accent-bar"></div>
+    <h2 class="section-title">2-Quarter Execution Playbook</h2>
+    <p class="section-lead">Concrete cadence for Q3 2026 (Aug–Oct) and Q4 2026 (Nov–Jan 2027). Designed for soft demand + active integration.</p>
+
+    <div class="card">
+      <h3>Q3 2026 — Stabilize, Train, Launch Cross-Sell</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <h4>Weeks 1–4: Foundation</h4>
+          <ul class="clean">
+            <li>Finalize West dealer segmentation (A/B/C) and priority account list</li>
+            <li>Complete portfolio training for all agencies and RSMs on expanded brand set</li>
+            <li>Establish weekly integration + service dashboard (escalations, lead times, complaints)</li>
+            <li>Align agency incentive elements to mix and new-brand placement goals</li>
+          </ul>
+        </div>
+        <div class="timeline-item">
+          <h4>Weeks 5–8: Offensive Launch</h4>
+          <ul class="clean">
+            <li>Execute top-50 dealer joint business plan reviews with full portfolio story</li>
+            <li>Secure first wave of AWM-brand display and specification wins</li>
+            <li>Lock service continuity commitments with top builder and retail accounts</li>
+            <li>Stand up regional price/mix weekly review with Sales Ops</li>
+          </ul>
+        </div>
+        <div class="timeline-item">
+          <h4>Weeks 9–13: Embed & Measure</h4>
+          <ul class="clean">
+            <li>First formal scorecard readout vs. Q3 targets</li>
+            <li>Agency performance calibration; territory adjustments where needed</li>
+            <li>Document competitive wins/losses and feed back to product/commercial leadership</li>
+            <li>Confirm Q4 resource allocation by sub-region</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Q4 2026 — Accelerate Share, Protect Margin, Close Strong</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <h4>November: Momentum</h4>
+          <ul class="clean">
+            <li>Second-wave dealer penetration and cross-sell push</li>
+            <li>Holiday / year-end promotional discipline (protect mix)</li>
+            <li>Builder pipeline lock for early 2027 starts</li>
+          </ul>
+        </div>
+        <div class="timeline-item">
+          <h4>December–January: Close & Reset</h4>
+          <ul class="clean">
+            <li>Full Q3–Q4 scorecard and variance analysis</li>
+            <li>2027 territory planning input (priorities, agency design, investment asks)</li>
+            <li>Celebrate and communicate integration commercial wins to the broader organization</li>
+            <li>Identify residual service or process gaps for Q1 2027 resolution</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Operating Rhythm Recommendation:</strong> Weekly 30-minute West leadership huddle (bookings, service flags, competitive intel) + bi-weekly deep dive with agencies/RSMs on priority accounts + monthly full P&L and scorecard review with Commercial leadership.
+    </div>
+  </section>
+
+  <!-- ===================== KPI SCORECARD ===================== -->
+  <section id="scorecard" class="panel">
+    <div class="accent-bar"></div>
+    <h2 class="section-title">KPI Scorecard — West Territory</h2>
+    <p class="section-lead">Primary metrics for the next two quarters. Filter by focus area. Status is illustrative for planning purposes and should be updated with live data.</p>
+
+    <div class="scorecard-controls">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="dealer">Dealer / Portfolio</button>
+      <button class="filter-btn" data-filter="mix">Mix / Margin</button>
+      <button class="filter-btn" data-filter="builder">Builder / Retail</button>
+      <button class="filter-btn" data-filter="team">Team / Integration</button>
+      <button class="filter-btn" data-filter="west">West Markets</button>
+    </div>
+
+    <div class="card" style="padding:0; overflow:hidden;">
+      <table class="scorecard" id="kpiTable">
+        <thead>
+          <tr>
+            <th>KPI</th>
+            <th>Focus</th>
+            <th>Q3 Target Direction</th>
+            <th>Q4 Target Direction</th>
+            <th>Owner</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-cat="dealer">
+            <td>Dealer revenue growth vs. prior year</td>
+            <td>Dealer</td>
+            <td>Outperform market</td>
+            <td>Outperform market</td>
+            <td>AVP + RSMs</td>
+            <td><span class="status planned">Planned</span></td>
+          </tr>
+          <tr data-cat="dealer">
+            <td>New AWM / expanded brand placements (top 50 dealers)</td>
+            <td>Dealer</td>
+            <td>≥ 40% of top 50 activated</td>
+            <td>≥ 70% of top 50 activated</td>
+            <td>AVP + Agencies</td>
+            <td><span class="status planned">Planned</span></td>
+          </tr>
+          <tr data-cat="dealer">
+            <td>Share of wallet — priority A dealers</td>
+            <td>Dealer</td>
+            <td>+150–300 bps where measurable</td>
+            <td>Further sequential gain</td>
+            <td>RSMs</td>
+            <td><span class="status planned">Planned</span></td>
+          </tr>
+          <tr data-cat="mix">
+            <td>Mix % (semi-custom + premium of dealer revenue)</td>
+            <td>Mix</td>
+            <td>Sequential improvement</td>
+            <td>Sequential improvement</td>
+            <td>AVP</td>
+            <td><span class="status planned">Planned</span></td>
+          </tr>
+          <tr data-cat="mix">
+            <td>Regional gross margin / contribution margin</td>
+            <td>Mix</td>
+            <td>Protect or expand vs. plan</td>
+            <td>Protect or expand vs. plan</td>
+            <td>AVP + Finance partner</td>
+            <td><span class="status planned">Planned</span></td>
+          </tr>
+          <tr data-cat="mix">
+            <td>Price realization (vs. list / prior year)</td>
+            <td>Mix</td>
+            <td>Within governance band</td>
+            <td>Within governance band</td>
+            <td>AVP</td>
+            <td><span class="status planned">Planned</span></td>
+          </tr>
+          <tr data-cat="builder">
+            <td>Priority builder account retention & service score</td>
+            <td>Builder</td>
+            <td>No material attrition; service SLAs met</td>
+            <td>Maintain + selective share gains</td>
+            <td>AVP + Builder team</td>
+            <td><span class="status planned">Planned</span></td>
+          </tr>
+          <tr data-cat="builder">
+            <td>Retail program compliance & fill rate</td>
+            <td>Builder</td>
+            <td>Meet or exceed program standards</td>
+            <td>Meet or exceed program standards</td>
+            <td>Channel partners</td>
+            <td><span class="status planned">Planned</span></td>
+          </tr>
+          <tr data-cat="team">
+            <td>Agency / RSM attainment distribution</td>
+            <td>Team</td>
+            <td>≥ 70% at or above plan</td>
+            <td>≥ 75% at or above plan</td>
+            <td>AVP</td>
+            <td><span class="status planned">Planned</span></td>
+          </tr>
+          <tr data-cat="team">
+            <td>Integration training completion (field)</td>
+            <td>Team</td>
+            <td>100% of active field resources</td>
+            <td>Refresh + new hire coverage</td>
+            <td>AVP + Commercial Ops</td>
+            <td><span class="status planned">Planned</span></td>
+          </tr>
+          <tr data-cat="team">
+            <td>Service escalation volume & resolution time</td>
+            <td>Team</td>
+            <td>No sustained increase vs. baseline</td>
+            <td>Below baseline</td>
+            <td>AVP + Ops partners</td>
+            <td><span class="status planned">Planned</span></td>
+          </tr>
+          <tr data-cat="west">
+            <td>Relative performance vs. local market indicators (TX/AZ/CO priority)</td>
+            <td>West</td>
+            <td>Outperform local starts / remodel proxies</td>
+            <td>Outperform local starts / remodel proxies</td>
+            <td>AVP</td>
+            <td><span class="status planned">Planned</span></td>
+          </tr>
+          <tr data-cat="west">
+            <td>Forecast accuracy (bookings → shipments)</td>
+            <td>West</td>
+            <td>Within agreed tolerance</td>
+            <td>Within agreed tolerance</td>
+            <td>AVP + Sales Ops</td>
+            <td><span class="status planned">Planned</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:1.25rem;">
+      <h3>How to Use This Scorecard</h3>
+      <ul class="clean">
+        <li>Update status monthly (On Track / Watch / At Risk) with actuals.</li>
+        <li>Tie agency and RSM variable compensation elements to a subset of these metrics (especially mix, placements, and attainment).</li>
+        <li>Escalate any “At Risk” item within 5 business days with a recovery plan.</li>
+        <li>Feed competitive and market insights from the field into the monthly commercial leadership review.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== RISKS & ASKS ===================== -->
+  <section id="risks" class="panel">
+    <div class="accent-bar"></div>
+    <h2 class="section-title">Risks, Mitigations & Leadership Asks</h2>
+    <p class="section-lead">Clear-eyed view of what could derail the plan and what the West needs from the broader organization.</p>
+
+    <div class="card">
+      <h3>Key Risks</h3>
+      <table class="scorecard">
+        <thead>
+          <tr>
+            <th>Risk</th>
+            <th>Likelihood / Impact</th>
+            <th>Mitigation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Integration service disruption (lead times, order accuracy, claims)</td>
+            <td>Medium / High</td>
+            <td>Weekly service dashboard; rapid escalation path; protect priority accounts first</td>
+          </tr>
+          <tr>
+            <td>Continued or deepening soft demand</td>
+            <td>High / Medium</td>
+            <td>Double down on mix and share; avoid volume-chasing that destroys margin</td>
+          </tr>
+          <tr>
+            <td>Competitor promotional intensity in Sun Belt</td>
+            <td>High / Medium</td>
+            <td>Trade-up storytelling, service differentiation, selective and governed response</td>
+          </tr>
+          <tr>
+            <td>Agency or key talent attrition during change</td>
+            <td>Medium / High</td>
+            <td>Clear communication, incentive alignment, visible leadership presence</td>
+          </tr>
+          <tr>
+            <td>Tariff cost pressure limiting pricing flexibility</td>
+            <td>Medium / Medium</td>
+            <td>Partner with pricing and supply chain on mitigation; protect highest-value segments</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Leadership Asks (to Enable West Success)</h3>
+      <ul class="clean">
+        <li><strong>Clear portfolio and incentive guidance</strong> for cross-selling former AWM brands into the MasterBrand dealer network (what is prioritized, what is governed).</li>
+        <li><strong>Dedicated integration support</strong> for field training materials, FAQ, and rapid issue resolution in the first 90–120 days.</li>
+        <li><strong>Pricing and promotional guardrails</strong> that allow regional flexibility without opening the door to uncontrolled discounting.</li>
+        <li><strong>Visibility into national builder and retail program changes</strong> so the West can align local execution.</li>
+        <li><strong>Investment flexibility</strong> for high-ROI dealer display and training programs in priority growth corridors (TX, AZ, CO).</li>
+      </ul>
+    </div>
+
+    <div class="callout">
+      <strong>Closing Message:</strong> The West Territory is ready to turn the MasterBrand + American Woodmark combination into commercial reality. With disciplined focus on dealer penetration, mix, service reliability, and team accountability, the next two quarters can set the foundation for outperformance when market conditions improve. This plan is both the analysis and the playbook — we are prepared to execute.
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p><span class="brand">MasterBrand</span> — Building Great Experiences Together</p>
+  <p style="margin-top:0.4rem;">West Territory Strategic Plan | Q3–Q4 2026 | Confidential — For Internal Executive Use</p>
+  <p style="margin-top:0.3rem;opacity:0.6;">Aligned to The MasterBrand Way: Align to Grow · Lead through Lean · Tech Enabled</p>
+</footer>
+
+<script>
+  // Navigation
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.target).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  // Accordions
+  document.querySelectorAll('.accordion-header').forEach(header => {
+    header.addEventListener('click', () => {
+      const item = header.parentElement;
+      const wasOpen = item.classList.contains('open');
+      // Optional: close others
+      // document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open'));
+      item.classList.toggle('open', !wasOpen);
+    });
+  });
+
+  // Scorecard filters
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      document.querySelectorAll('#kpiTable tbody tr').forEach(row => {
+        if (filter === 'all' || row.dataset.cat === filter) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
