@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta http-equiv="cache-control" content="no-cache" />
-  <title>Market Intel — Hub</title>
+  <title>Market Intel — Map</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" />
   <style>
     html, body { height: 100%; margin: 0; }
@@ -29,8 +29,8 @@
 </head>
 <body>
   <div class="card">
-    <h1>Market Intel — Hub</h1>
-    <p>Enter the passphrase to open the metro / brand hub.</p>
+    <h1>Market Intel — Map</h1>
+    <p>Enter the passphrase to open the map command center.</p>
     <form id="f">
       <input id="pw" type="password" placeholder="Passphrase" autocomplete="current-password" autofocus />
       <label><input id="remember" type="checkbox" checked /> Remember me</label>
@@ -43,7 +43,7 @@
     const SALT_HEX = "9f82c72d69f242c4f35f4077acc96cfb";
     const KEY_NAME = "marketintel_dash_passphrase_v1";
     const PART_COUNT = 4;
-    const PART_PREFIX = "hub.enc.part";
+    const PART_PREFIX = "map.enc.part";
     function b64ToBytes(b64) {
       const bin = atob(b64);
       const out = new Uint8Array(bin.length);
