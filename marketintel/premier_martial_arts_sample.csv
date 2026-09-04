@@ -1,0 +1,21 @@
+name,park_id,slug,zip,phone,likely_closed,n_classes,enrolled,capacity,fill_pct,intro_slots_open,price_low,price_low_name,billing_interval,n_products
+"Hinsdale, IL",2277766d-5f70-4472-943e-00467b75b792,hinsdale,60521,(708) 441-3055,False,22,200,484,41.3,66,164.0,PMA Hinsdale Starter - 1X 12M,monthly,5
+"Z Aiken, SC",de14be11-f61b-4d9d-8929-009ded5739fb,aiken,29803,(803) 989-0128,True,0,0,0,,0,114.0,PMA Aiken Starter - 1X 12M,monthly,5
+"Aventura, FL",dc2b58d7-78e8-45d1-822d-00a13f195549,aventura,33180,(305) 767-4141,False,57,177,624,28.4,188,199.0,PMA Aventura Starter - 1X 12M,monthly,5
+"Z Murrysville, PA",6a6ed7f5-9d43-47c0-b8ec-00e63e18bbce,murrysville,15632,4123683589,True,0,0,0,,0,114.0,PMA Murrysville Starter - 1X 12M,monthly,5
+"Decatur East, GA",5be77488-da76-4a9b-a6c1-01ee0dd7e316,decatureast,30030,(404) 482-0594,False,0,0,0,,0,1254.0,PMA Decatur East Starter - 2X 6M Prepaid,each,1
+"Grovetown, GA",ebf5650b-9f63-4929-9fd2-0278b4a22682,grovetown,30813,(706) 432-6963,False,0,0,0,,0,954.0,PMA Grovetown Starter - 2X 6M Prepaid,each,1
+"Z Green Valley South, NV",5adcbb9d-6144-46c2-b707-02ae1ed7d506,greenvalleysouth,89074,(833) 586-8762,True,0,0,0,,0,,,,
+"North Knoxville, TN",b084a564-2f6a-4d80-8337-036b98db28c4,northknoxville,37912,(865) 393-3947,False,22,69,440,15.7,103,114.0,PMA North Knoxville Starter - 1X 12M,monthly,5
+"Lawrence, KS",517c1ff5-409f-4a8a-89f1-03a9391f2715,lawrence,66047,(785) 749-4400,False,0,0,0,,0,,,,
+"Steele Creek, NC",cc1db7ec-0aae-44af-a8db-0597aeb6147e,steelecreek,28273,(704) 463-8086,False,0,0,0,,0,114.0,PMA Steele Creek Starter - 1X 12M,monthly,4
+"Littleton, CO",09a82a1a-833f-4e9b-bce5-06667f099b37,littleton,80128,(720) 788-8129,False,0,0,0,,0,114.0,PMA Littleton Starter 1X Membership 12-Month,monthly,4
+"Houston Heights, TX",69787fdc-5a51-4da6-84ed-067d67721c18,houstonheights,77008,(713) 300-2421,False,26,241,549,43.9,14,234.0,PMA Houston Heights Starter - 1X 12M,monthly,5
+"Lakewood, TX",afa796d0-33ba-46bf-a280-07b894c7a3a7,lakewood,75214,(214) 612-6125,False,37,206,597,34.5,114,139.0,Lakewood Starter 1X Membership 12-Month,monthly,5
+"Powder Springs, GA",dcd7092b-151a-4563-be04-0a179be61a96,powdersprings,30127,(770) 439-4029,False,0,0,0,,0,,,,
+"Marietta, GA",759e435a-6199-4462-80c5-0ab4f9e4de53,marietta,30066,(770) 422-9250,False,0,0,0,,0,,,,
+"West Town, TN",10818185-9e00-4d0c-b8b0-0bcaf84073d3,knoxvillewesttown,37919,(865) 393-3947,False,22,65,440,14.8,80,114.0,PMA West Town Starter - 1X 12M,monthly,5
+"Doral, FL",96ad7b98-cdc9-4c71-88ee-0c7cae6ea044,doral,33178,(786) 706-7600,False,20,122,396,30.8,59,139.0,PMA Doral Starter - 1X 12M,monthly,5
+"Fairwood, WA",bd19de37-deb5-496c-abca-0d5933c97fb5,fairwood,98058,(425) 818-3344,False,34,232,424,54.7,32,199.0,PMA Fairwood Starter - 1X 12M,monthly,5
+"Denville, NJ",ea72fa9a-b00e-4b0c-a870-0d946df1a278,denville,07834,(973) 601-2550,False,25,0,500,0.0,0,164.0,PMA Denville Starter - 1X 12M,monthly,5
+"Lebanon, TN",b269049b-0c1c-4c94-ad95-0e82a94b2a42,lebanon,37087,(615) 443-4783,False,19,386,680,56.8,0,114.0,PMA Lebanon Starter - 1X 12M,monthly,5

@@ -1,0 +1,16 @@
+level,n_classes_roswell,truth_capacity,seats_per_class,source
+Glider 1,23,88,4.0,calibrated_4site_20260730
+Glider 2,25,100,4.0,calibrated_4site_20260730
+Glider 3,25,100,4.0,calibrated_4site_20260730
+Junior 1,36,160,4.0,calibrated_4site_20260730
+Junior 2,15,64,4.0,calibrated_4site_20260730
+Junior 3,10,40,4.0,calibrated_4site_20260730
+Mini 1,5,24,6.0,calibrated_4site_20260730
+Mini 2,14,90,6.0,calibrated_4site_20260730
+Mini 3,16,45,3.0,calibrated_4site_20260730
+Pro 1,22,92,4.0,calibrated_4site_20260730
+Pro 2,26,116,4.0,calibrated_4site_20260730
+Private,,,1.0,fallback_documented
+Semi-Private,,,2.0,fallback_documented
+Mini (group fallback -- Mini 4/Mini bare),,,4.90,fallback_group_mean_4site
+Group default (fallback -- non-Mini novel lesson-like names e.g. Golden Learner),,,4.0,fallback_group_mean_4site
