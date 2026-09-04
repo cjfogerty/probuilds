@@ -87,28 +87,22 @@
       const plainBuf = await crypto.subtle.decrypt({ name: "AES-GCM", iv: raw.slice(0, 12) }, key, raw.slice(12));
       return new TextDecoder().decode(plainBuf);
     }
-    async function installDecryptedHtml(html) {
-      // Keep markup + external <script src>; defer inline bodies; eval after close.
-      // Staying on this origin keeps relative hub↔map links working.
-      const inline = [];
-      const stripped = html.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi, (full, attrs, code) => {
-        if (/\bsrc\s*=/i.test(attrs || "")) return full;
-        inline.push(code);
-        return "";
-      });
-      document.open();
-      document.write(stripped);
-      document.close();
-      for (const code of inline) {
-        (0, eval)(code);
+    function installDecryptedHtml(html) {
+      // Full navigation into a blob so Leaflet + huge inline loaders run in normal parser order.
+      // <base> keeps relative hub↔map links on the real Pages origin (not blob:).
+      const baseHref = location.href.replace(/[^\/]*$/, "");
+      if (!/<base\s/i.test(html)) {
+        html = html.replace(/<head([^>]*)>/i, '<head$1><base href="' + baseHref + '">');
       }
+      const url = URL.createObjectURL(new Blob([html], { type: "text/html" }));
+      location.replace(url);
     }
     async function tryPassword(password, remember) {
       const payload = await loadPayload();
       const html = await unlock(password, payload);
       if (remember) sessionStorage.setItem(KEY_NAME, password);
       else sessionStorage.removeItem(KEY_NAME);
-      await installDecryptedHtml(html);
+      installDecryptedHtml(html);
     }
     document.getElementById("f").addEventListener("submit", async (e) => {
       e.preventDefault();
