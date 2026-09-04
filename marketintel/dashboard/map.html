@@ -88,9 +88,8 @@
       return new TextDecoder().decode(plainBuf);
     }
     async function installDecryptedHtml(html) {
-      // document.write of ~1MB inline scripts paints the shell but often never runs JS.
-      // Keep markup + external <script src> (Leaflet), defer inline bodies, eval after close.
-      // Staying on this origin keeps relative map.html / hub links working.
+      // Keep markup + external <script src>; defer inline bodies; eval after close.
+      // Staying on this origin keeps relative hub↔map links working.
       const inline = [];
       const stripped = html.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi, (full, attrs, code) => {
         if (/\bsrc\s*=/i.test(attrs || "")) return full;
@@ -100,6 +99,17 @@
       document.open();
       document.write(stripped);
       document.close();
+
+      // External <script src> from document.write can load async after unlock.
+      // Map payload needs Leaflet (+ markercluster) before inline map.js runs.
+      await new Promise((resolve, reject) => {
+        const t0 = Date.now();
+        (function tick() {
+          if (window.L && typeof window.L.map === "function" && window.L.markerClusterGroup) return resolve();
+          if (Date.now() - t0 > 15000) return reject(new Error("Leaflet load timeout"));
+          setTimeout(tick, 25);
+        })();
+      });
       for (const code of inline) {
         (0, eval)(code);
       }
@@ -118,6 +128,7 @@
       try {
         await tryPassword(document.getElementById("pw").value, document.getElementById("remember").checked);
       } catch (ex) {
+        console.error(ex);
         err.textContent = "That passphrase didn’t work. Try again.";
       }
     });
