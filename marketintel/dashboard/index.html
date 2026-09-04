@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="cache-control" content="no-cache" />
+  <title>Market Intel — Operator Command Center</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" />
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #121a2b;
+      --border: #243049;
+      --text: #e8eefc;
+      --muted: #8b9bb8;
+      --accent: #3dd6c6;
+      --accent-dim: #1a9e91;
+      --danger: #ff6b7a;
+      --glow: rgba(61, 214, 198, 0.25);
+    }
+    html, body { height: 100%; margin: 0; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(61,214,198,0.12), transparent 55%),
+        radial-gradient(900px 500px at 100% 10%, rgba(80,120,255,0.10), transparent 50%),
+        linear-gradient(160deg, #070d18 0%, #0b1220 45%, #0a1524 100%);
+      color: var(--text);
+    }
+    .card {
+      width: min(440px, 92vw);
+      padding: 2.1rem 1.85rem 1.75rem;
+      background: linear-gradient(180deg, rgba(18,26,43,0.96), rgba(12,18,32,0.98));
+      border: 1px solid var(--border);
+      border-radius: 1.1rem;
+      box-shadow: 0 0 0 1px rgba(61,214,198,0.06), 0 24px 60px -20px rgba(0,0,0,0.65), 0 0 40px var(--glow);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 1.15rem;
+    }
+    .logo {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      display: grid; place-items: center;
+      font-family: "IBM Plex Mono", monospace;
+      font-weight: 700; font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      background: linear-gradient(135deg, #1a9e91, #3dd6c6);
+      color: #041018;
+      box-shadow: 0 0 18px var(--glow);
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+    .brand small {
+      display: block;
+      margin-top: 0.15rem;
+      font-size: 0.72rem;
+      font-family: "IBM Plex Mono", monospace;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    p.lead {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.92rem;
+      margin: 0 0 1.15rem;
+    }
+    input[type="password"] {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.85rem 0.95rem;
+      border: 1px solid var(--border);
+      border-radius: 0.7rem;
+      font-size: 16px;
+      margin-bottom: 0.75rem;
+      background: #0a111f;
+      color: var(--text);
+      font-family: "IBM Plex Mono", monospace;
+      outline: none;
+    }
+    input[type="password"]:focus {
+      border-color: var(--accent-dim);
+      box-shadow: 0 0 0 3px rgba(61,214,198,0.15);
+    }
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 0.7rem;
+      padding: 0.9rem;
+      background: linear-gradient(135deg, #1a9e91, #3dd6c6);
+      color: #041018;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-family: "IBM Plex Sans", sans-serif;
+    }
+    button:hover { filter: brightness(1.06); }
+    label.remember {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin: 0 0 0.85rem;
+      user-select: none;
+    }
+    .err {
+      color: var(--danger);
+      font-size: 0.82rem;
+      min-height: 1.2em;
+      margin: 0 0 0.55rem;
+      font-family: "IBM Plex Mono", monospace;
+    }
+    .hint {
+      font-size: 0.75rem;
+      color: #6b7c99;
+      margin-top: 1.05rem;
+      text-align: center;
+      font-family: "IBM Plex Mono", monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="brand">
+      <div class="logo">MI</div>
+      <div>
+        <h1>Market Intel</h1>
+        <small>Operator Command Center</small>
+      </div>
+    </div>
+    <p class="lead">Enter the operator passphrase to unlock the gym / martial arts footprint dashboard.</p>
+    <form id="f">
+      <input id="pw" type="password" placeholder="Passphrase" autocomplete="current-password" autofocus />
+      <label class="remember"><input id="remember" type="checkbox" checked /> Remember for this session</label>
+      <div class="err" id="err"></div>
+      <button type="submit">Unlock dashboard</button>
+    </form>
+    <p class="hint">Encrypted payload · AES-GCM · session only</p>
+  </div>
+  <script>
+    const SALT_HEX = "9f82c72d69f242c4f35f4077acc96cfb";
+    const KEY_NAME = "marketintel_dash_passphrase_v1";
+    const PART_COUNT = 3;
+    function b64ToBytes(b64) {
+      const bin = atob(b64);
+      const out = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+      return out;
+    }
+    function hexToBytes(hex) {
+      const out = new Uint8Array(hex.length / 2);
+      for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.substr(i * 2, 2), 16);
+      return out;
+    }
+    function looksLikePayload(text) {
+      const t = (text || "").trim();
+      return t.length > 200 && /^[A-Za-z0-9+/=\s]+$/.test(t);
+    }
+    async function fetchText(url) {
+      const r = await fetch(url, { cache: "no-store" });
+      if (!r.ok) throw new Error("missing " + url);
+      return r.text();
+    }
+    async function loadPayload() {
+      const urls = [];
+      for (let i = 1; i <= PART_COUNT; i++) urls.push("dashboard.enc.part" + i);
+      const parts = await Promise.all(urls.map(fetchText));
+      const joined = parts.join("");
+      if (!looksLikePayload(joined)) throw new Error("bad payload");
+      return joined;
+    }
+    async function deriveKey(password) {
+      const material = await crypto.subtle.importKey(
+        "raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]
+      );
+      return crypto.subtle.deriveKey(
+        { name: "PBKDF2", salt: hexToBytes(SALT_HEX), iterations: 200000, hash: "SHA-256" },
+        material, { name: "AES-GCM", length: 256 }, false, ["decrypt"]
+      );
+    }
+    async function unlock(password, payload) {
+      const key = await deriveKey(password);
+      const raw = b64ToBytes(payload.trim());
+      const plainBuf = await crypto.subtle.decrypt(
+        { name: "AES-GCM", iv: raw.slice(0, 12) }, key, raw.slice(12)
+      );
+      return new TextDecoder().decode(plainBuf);
+    }
+    async function tryPassword(password, remember) {
+      const payload = await loadPayload();
+      const html = await unlock(password, payload);
+      if (remember) sessionStorage.setItem(KEY_NAME, password);
+      else sessionStorage.removeItem(KEY_NAME);
+      document.open();
+      document.write(html);
+      document.close();
+    }
+    document.getElementById("f").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const err = document.getElementById("err");
+      err.textContent = "";
+      try {
+        await tryPassword(document.getElementById("pw").value, document.getElementById("remember").checked);
+      } catch (ex) {
+        err.textContent = "That passphrase didn't work. Try again.";
+      }
+    });
+    (async () => {
+      const saved = sessionStorage.getItem(KEY_NAME);
+      if (!saved) return;
+      try { await tryPassword(saved, true); }
+      catch (e) { sessionStorage.removeItem(KEY_NAME); }
+    })();
+  </script>
+</body>
+</html>
