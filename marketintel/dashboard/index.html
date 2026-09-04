@@ -88,14 +88,14 @@
       return new TextDecoder().decode(plainBuf);
     }
     function installDecryptedHtml(html) {
-      // Full navigation into a blob so Leaflet + huge inline loaders run in normal parser order.
-      // <base> keeps relative hub↔map links on the real Pages origin (not blob:).
-      const baseHref = location.href.replace(/[^\/]*$/, "");
+      // Blob nav so Leaflet + inline loaders run in normal parser order.
+      // <base> keeps relative hub↔map links on Pages. Preserve hash for deep links.
+      const baseHref = location.href.replace(/[#?].*$/, "").replace(/[^\/]*$/, "");
       if (!/<base\s/i.test(html)) {
         html = html.replace(/<head([^>]*)>/i, '<head$1><base href="' + baseHref + '">');
       }
       const url = URL.createObjectURL(new Blob([html], { type: "text/html" }));
-      location.replace(url + location.hash);
+      location.replace(url + (location.hash || ""));
     }
     async function tryPassword(password, remember) {
       const payload = await loadPayload();
