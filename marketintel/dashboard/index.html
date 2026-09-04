@@ -95,7 +95,7 @@
         html = html.replace(/<head([^>]*)>/i, '<head$1><base href="' + baseHref + '">');
       }
       const url = URL.createObjectURL(new Blob([html], { type: "text/html" }));
-      location.replace(url);
+      location.replace(url + location.hash);
     }
     async function tryPassword(password, remember) {
       const payload = await loadPayload();
