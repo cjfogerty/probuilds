@@ -3,15 +3,38 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="refresh" content="0; url=marketintel/dashboard/" />
-  <title>probuilds</title>
-  <link rel="canonical" href="marketintel/dashboard/" />
+  <title>probuilds — Market Intel</title>
+  <style>
+    body {
+      margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      font-family: system-ui, -apple-system, sans-serif; background: #0b1220; color: #e8eefc;
+    }
+    .card {
+      width: min(420px, 92vw); padding: 2rem 1.75rem; background: #121a2b;
+      border: 1px solid #243049; border-radius: 1rem; text-align: center;
+    }
+    h1 { margin: 0 0 0.35rem; font-size: 1.35rem; }
+    p { margin: 0 0 1.25rem; color: #9aa8c7; line-height: 1.45; font-size: 0.95rem; }
+    nav { display: flex; flex-direction: column; gap: 0.65rem; }
+    a {
+      display: block; padding: 0.85rem 1rem; border-radius: 0.75rem; text-decoration: none;
+      font-weight: 600; border: 1px solid #334155; color: #e8eefc; background: #0b1220;
+    }
+    a:hover { border-color: #3b82f6; }
+    a.primary { background: #3b82f6; border-color: #3b82f6; color: #fff; }
+    .note { margin-top: 1rem; font-size: 0.8rem; color: #64748b; }
+  </style>
 </head>
 <body>
-  <p>
-    <a href="marketintel/dashboard/">Market Intel hub</a> ·
-    <a href="marketintel/dashboard/map.html">Map</a> ·
-    <a href="marketintel/dashboard/programs.html">Brand &amp; program facts</a>
-  </p>
+  <div class="card">
+    <h1>Market Intel</h1>
+    <p>Pick a page. Hub and map need the passphrase; Brand &amp; program facts is plain HTML.</p>
+    <nav>
+      <a class="primary" href="marketintel/dashboard/">Hub (encrypted)</a>
+      <a href="marketintel/dashboard/map.html">Map (encrypted)</a>
+      <a href="marketintel/dashboard/programs.html">Brand &amp; program facts</a>
+    </nav>
+    <p class="note">Plain Programs link stays reachable — no auto-redirect.</p>
+  </div>
 </body>
 </html>
