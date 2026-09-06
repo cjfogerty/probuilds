@@ -63,6 +63,7 @@
     evidence: '',
     hideRetail: true,
     multiOnly: false,
+    publishedOnlyEst: true,
     search: '',
     sortKey: 'site',
     sortDir: 'asc',
@@ -119,24 +120,35 @@
     return list;
   }
 
+  function enrollCountsForEst(p) {
+    if (!p.revenue_rollable) return false;
+    const enroll = p.enrolled_or_sold;
+    if (enroll == null || isNaN(+enroll) || +enroll <= 0) return false;
+    if (p.price == null || isNaN(+p.price)) return false;
+    // Catalog never contributes Est. $ (sticker only)
+    if ((p.evidence_tier || '') === 'product_catalog') return false;
+    if (state.publishedOnlyEst) {
+      return (p.evidence_tier || '') === 'class_line_published';
+    }
+    // Include modeled + published; still skip schedule_only (no enroll) and catalog
+    return (
+      (p.evidence_tier || '') === 'class_line_published' ||
+      (p.evidence_tier || '') === 'class_line_modeled'
+    );
+  }
+
   function productRev(p) {
     const enroll = p.enrolled_or_sold;
     const price = p.price;
-    if (
-      p.revenue_rollable &&
-      enroll != null &&
-      !isNaN(+enroll) &&
-      +enroll > 0 &&
-      price != null &&
-      !isNaN(+price)
-    ) {
+    if (enrollCountsForEst(p)) {
       const monthly = +enroll * +price;
-      return { monthly, annual: monthly * 12, sticker: null };
+      return { monthly, annual: monthly * 12, sticker: null, estEligible: true };
     }
     return {
       monthly: null,
       annual: null,
       sticker: price != null && !isNaN(+price) ? +price : null,
+      estEligible: false,
     };
   }
 
@@ -410,6 +422,8 @@
     if (state.evidence) parts.push('evidence: ' + state.evidence);
     if (state.hideRetail) parts.push('membership/prepaid');
     if (state.multiOnly) parts.push('multi-billing only');
+    if (state.publishedOnlyEst) parts.push('Est. $ published-only');
+    else parts.push('Est. $ incl. modeled');
     if (state.search.trim()) parts.push('“' + state.search.trim() + '”');
     return parts.length ? parts.join(' · ') : 'All catalog SKUs';
   }
@@ -506,8 +520,13 @@
       fmtNum(agg.priceN) + ' priced SKUs · sticker not revenue';
     document.getElementById('kMonthly').textContent = fmtMoney(agg.estMonthly);
     document.getElementById('kMonthlySub').textContent = agg.monthlyN
-      ? fmtNum(agg.monthlyN) + ' SKUs with enroll×price'
-      : 'needs enrolled_or_sold';
+      ? fmtNum(agg.monthlyN) +
+        (state.publishedOnlyEst
+          ? ' published enroll×price'
+          : ' modeled+published enroll×price')
+      : state.publishedOnlyEst
+        ? 'no published enroll in scope (toggle off to include modeled)'
+        : 'needs enrolled_or_sold';
     document.getElementById('kAnnual').textContent = fmtMoney(agg.estAnnual);
     document.getElementById('kEnroll').textContent = fmtNum(agg.enrollN);
     const kCat = document.getElementById('kCatalog');
@@ -711,6 +730,14 @@
     state.shown = PAGE_SIZE;
     refresh();
   });
+  const publishedOnlyEst = document.getElementById('publishedOnlyEst');
+  if (publishedOnlyEst) {
+    publishedOnlyEst.addEventListener('change', (e) => {
+      state.publishedOnlyEst = !!e.target.checked;
+      state.shown = PAGE_SIZE;
+      refresh();
+    });
+  }
   document.getElementById('prodSearch').addEventListener('input', (e) => {
     state.search = e.target.value;
     state.shown = PAGE_SIZE;
