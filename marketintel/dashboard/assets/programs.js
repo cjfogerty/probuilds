@@ -53,7 +53,47 @@
     return true;
   }
 
-  function isUrbanAir(s) {
+  const BILLING_MODEL_ORDER = [
+    'perpetual_monthly',
+    'membership_pass_monthly',
+    'prepaid_term_membership',
+    'term_session',
+    'one_off_per_lesson',
+    'one_off_package',
+    'unknown',
+  ];
+
+  function billingModelOf(s) {
+    const v = String(s.billing_model || '').trim();
+    if (v) return v;
+    if (s.brand_id === 1 || s.brand_id === '1' || /^urban air$/i.test(s.brand || '')) {
+      return 'membership_pass_monthly';
+    }
+    return 'unknown';
+  }
+
+  function revenueUnitOf(s) {
+    return String(s.revenue_unit || '').trim() || 'unknown';
+  }
+
+  function isRollable(s) {
+    if (s.revenue_rollable === true || s.revenue_rollable === 'true') return true;
+    if (s.revenue_rollable === false || s.revenue_rollable === 'false') return false;
+    // legacy fallback: monthly tuition non-UA
+    return s.revenue_eligible === true && !isUrbanAir(s);
+  }
+
+  function isTuitionUnit(s) {
+    const u = revenueUnitOf(s);
+    return u === 'per_enrollee_month' || u === 'per_enrollee_term';
+  }
+
+  function isPassUnit(s) {
+    const u = revenueUnitOf(s);
+    return u === 'per_member_month' || u === 'per_member_term' || billingModelOf(s) === 'membership_pass_monthly';
+  }
+
+    function isUrbanAir(s) {
     if (s.brand_id === 1 || s.brand_id === '1') return true;
     if (/^urban air$/i.test(s.brand || '')) return true;
     if (s.revenue_eligible === false && /urban.?air|pass.?pricing/i.test(s.revenue_note || '')) return true;
@@ -129,77 +169,87 @@
   }
 
   function siteRev(s) {
-    if (isUrbanAir(s)) {
+    const enrolled = s.enrolled;
+    const price =
+      s.price_monthly_equiv != null && !isNaN(+s.price_monthly_equiv)
+        ? +s.price_monthly_equiv
+        : s.price_low;
+    const bucket = unitBucket(s);
+    const model = billingModelOf(s);
+    const unit = revenueUnitOf(s);
+    const rollable = isRollable(s);
+
+    if (!rollable) {
       return {
         monthly: null,
         annual: null,
-        strength: 'excluded',
-        note: 'UA membership_pass — excluded',
+        passMonthly: null,
+        strength: 'non_rollable',
+        note: model + ' · not revenue_rollable',
+        rollable: false,
+        tuition: false,
+        pass: isPassUnit(s),
       };
     }
-    const enrolled = s.enrolled;
-    const price = s.price_low;
-    const bucket = unitBucket(s);
 
+    let monthly = null;
+    let annual = null;
     if (s.est_monthly_rev != null && !isNaN(+s.est_monthly_rev)) {
-      const monthly = +s.est_monthly_rev;
-      const annual =
+      monthly = +s.est_monthly_rev;
+      annual =
         s.est_annual_rev != null && !isNaN(+s.est_annual_rev)
           ? +s.est_annual_rev
-          : bucket === 'monthly'
-            ? monthly * 12
-            : null;
+          : monthly * 12;
+    } else if (
+      enrolled != null &&
+      price != null &&
+      !isNaN(+enrolled) &&
+      !isNaN(+price) &&
+      +enrolled > 0
+    ) {
+      monthly = +enrolled * +price;
+      annual = monthly * 12;
+    }
+
+    const tuition = isTuitionUnit(s);
+    const pass = isPassUnit(s);
+
+    // Gate Est monthly/annual dollars: tuition units go to tuition KPIs; pass units stay separate
+    if (tuition && monthly != null) {
       return {
         monthly,
         annual,
-        strength: bucket === 'monthly' ? 'solid' : annual != null ? 'partial' : 'partial',
-        note: bucket === 'monthly' ? 'est_monthly' : 'est_* (non-monthly — weak annual)',
-      };
-    }
-
-    if (enrolled == null || price == null || isNaN(+enrolled) || isNaN(+price)) {
-      return { monthly: null, annual: null, strength: 'none', note: 'missing enroll or price' };
-    }
-
-    const listX = +enrolled * +price;
-    if (bucket === 'monthly') {
-      return {
-        monthly: listX,
-        annual: listX * 12,
+        passMonthly: null,
         strength: 'solid',
-        note: 'enrolled × price_low (monthly)',
+        note: 'rollable tuition · ' + model,
+        rollable: true,
+        tuition: true,
+        pass: false,
       };
     }
-    if (bucket === 'lesson') {
-      const assumed = s.lessons_per_month_assumed;
-      const lessons =
-        assumed != null && !isNaN(+assumed) && +assumed > 0
-          ? +assumed
-          : s.n_classes != null && +s.n_classes > 0 && +s.n_classes <= 40
-            ? +s.n_classes
-            : null;
-      if (lessons != null) {
-        const m = listX * lessons;
-        return {
-          monthly: m,
-          annual: m * 12,
-          strength: 'partial',
-          note: 'per_lesson × ' + lessons + ' lessons/mo assumed (weak annualize)',
-        };
-      }
+    if (pass && monthly != null) {
       return {
         monthly: null,
         annual: null,
-        listPartial: listX,
-        strength: 'partial',
-        note: 'per_lesson/each — list×enrolled only; not annualized',
+        passMonthly: monthly,
+        strength: 'pass',
+        note: 'rollable pass · separate from tuition',
+        rollable: true,
+        tuition: false,
+        pass: true,
       };
     }
+    // Rollable but unknown/other unit — show price_monthly_equiv as display only, do not roll into tuition
     return {
       monthly: null,
       annual: null,
-      strength: 'none',
-      note: 'billing unit unknown — do not annualize',
+      passMonthly: null,
+      strength: 'display_only',
+      note: 'rollable but unit ' + unit + ' not in tuition KPI',
+      rollable: true,
+      tuition: false,
+      pass: false,
+      listPartial: monthly,
     };
   }
 
@@ -272,6 +322,7 @@
     brands: new Set(),
     program: '',
     metro: '',
+    billingModel: '',
     platform: '',
     hideClosed: true,
     search: '',
@@ -316,6 +367,9 @@
     if (state.metro) {
       list = list.filter((s) => (s.metro || '').trim() === state.metro);
     }
+    if (state.billingModel) {
+      list = list.filter((s) => billingModelOf(s) === state.billingModel);
+    }
     if (state.platform) {
       const p = state.platform.toLowerCase();
       list = list.filter((s) => String(s.platform || '').toLowerCase() === p);
@@ -332,6 +386,8 @@
           brandNameOf(s),
           programOf(s).name,
           categoryOf(s),
+          billingModelOf(s),
+          revenueUnitOf(s),
           s.platform,
         ]
           .join(' ')
@@ -348,21 +404,32 @@
     let enrolledSum = 0;
     let enrollSites = 0;
     let priceSites = 0;
-    let priceSumExUA = 0;
-    let priceCountExUA = 0;
+    let priceSumTuition = 0;
+    let priceCountTuition = 0;
     let monthly = 0;
     let annual = 0;
     let monthlySites = 0;
     let annualSites = 0;
+    let passMonthly = 0;
+    let passSites = 0;
     let partialList = 0;
     let partialSites = 0;
+    let rollableSites = 0;
+    let nonRollableSites = 0;
     const units = { monthly: 0, lesson: 0, unknown: 0 };
+    const billingCounts = {};
+    BILLING_MODEL_ORDER.forEach((k) => { billingCounts[k] = 0; });
     let uaSites = 0;
 
     list.forEach((s) => {
-      if (isUrbanAir(s)) uaSites++;
+      if (isUrbanAir(s) || billingModelOf(s) === 'membership_pass_monthly') uaSites++;
       const bucket = unitBucket(s);
-      units[bucket]++;
+      units[bucket] = (units[bucket] || 0) + 1;
+      const bm = billingModelOf(s);
+      billingCounts[bm] = (billingCounts[bm] || 0) + 1;
+
+      if (isRollable(s)) rollableSites++;
+      else nonRollableSites++;
 
       if (s.enrolled != null && !isNaN(+s.enrolled)) {
         enrollSites++;
@@ -370,9 +437,9 @@
       }
       if (s.price_low != null && !isNaN(+s.price_low)) {
         priceSites++;
-        if (!isUrbanAir(s)) {
-          priceCountExUA++;
-          priceSumExUA += +s.price_low;
+        if (isTuitionUnit(s) && isRollable(s)) {
+          priceCountTuition++;
+          priceSumTuition += +s.price_low;
         }
       }
 
@@ -384,6 +451,10 @@
       if (rev.annual != null) {
         annual += rev.annual;
         annualSites++;
+      }
+      if (rev.passMonthly != null) {
+        passMonthly += rev.passMonthly;
+        passSites++;
       }
       if (rev.listPartial != null) {
         partialList += rev.listPartial;
@@ -399,7 +470,7 @@
           : 'unknown';
 
     const avgEnroll = enrollSites > 0 ? enrolledSum / enrollSites : null;
-    const avgPrice = priceCountExUA > 0 ? priceSumExUA / priceCountExUA : null;
+    const avgPrice = priceCountTuition > 0 ? priceSumTuition / priceCountTuition : null;
     const cov = sessionCoverageCounts(list);
 
     return {
@@ -414,10 +485,15 @@
       avgPrice,
       units,
       dominantUnit,
+      billingCounts,
+      rollableSites,
+      nonRollableSites,
       estMonthly: monthlySites ? monthly : null,
       estAnnual: annualSites ? annual : null,
       monthlySites,
       annualSites,
+      passMonthly: passSites ? passMonthly : null,
+      passSites,
       partialList: partialSites ? partialList : null,
       partialSites,
       uaSites,
@@ -478,6 +554,10 @@
         case 'category':
           av = categoryOf(a);
           bv = categoryOf(b);
+          break;
+        case 'billing':
+          av = billingModelOf(a);
+          bv = billingModelOf(b);
           break;
         case 'name':
           av = a.name || '';
@@ -548,6 +628,7 @@
       state.brands.size ||
       state.program ||
       state.metro ||
+      state.billingModel ||
       state.platform ||
       state.search.trim()
     );
@@ -560,6 +641,7 @@
     else if (state.brands.size > 1) parts.push(state.brands.size + ' brands');
     if (state.program) parts.push('Program: ' + state.program);
     if (state.metro) parts.push('Metro: ' + state.metro);
+    if (state.billingModel) parts.push('Billing: ' + state.billingModel);
     if (state.platform) parts.push('Platform: ' + state.platform);
     if (state.search.trim()) parts.push('Search: “' + state.search.trim() + '”');
     return parts.length ? parts.join(' · ') : 'National (all visible)';
@@ -573,6 +655,7 @@
     else if (state.brands.size > 1) q.set('brand', [...state.brands].join('|'));
     if (state.program) q.set('program', state.program);
     if (state.metro) q.set('metro', state.metro);
+    if (state.billingModel) q.set('billing', state.billingModel);
     if (state.platform) q.set('platform', state.platform);
     const hash = q.toString();
     try {
@@ -588,11 +671,13 @@
     const category = params.get('category');
     const metro = params.get('metro');
     const program = params.get('program');
+    const billing = params.get('billing');
     const platform = params.get('platform');
 
     if (category) state.category = normalizeCategory(category);
     if (program) state.program = program;
     if (metro) state.metro = metro;
+    if (billing) state.billingModel = billing;
     if (platform) state.platform = platform.toLowerCase();
     if (brand) {
       state.brands = new Set(
@@ -738,6 +823,40 @@
     }
   }
 
+
+  function populateBillingFilter() {
+    const sel = document.getElementById('billingFilter');
+    if (!sel) return;
+    const counts = {};
+    baseSites().forEach((s) => {
+      const m = billingModelOf(s);
+      counts[m] = (counts[m] || 0) + 1;
+    });
+    const models = BILLING_MODEL_ORDER.filter((m) => counts[m]).concat(
+      Object.keys(counts).filter((m) => !BILLING_MODEL_ORDER.includes(m)).sort()
+    );
+    const current = state.billingModel;
+    sel.innerHTML =
+      '<option value="">All billing models</option>' +
+      models
+        .map(
+          (m) =>
+            '<option value="' +
+            esc(m) +
+            '">' +
+            esc(m) +
+            ' (' +
+            fmtNum(counts[m] || 0) +
+            ')</option>'
+        )
+        .join('');
+    if (current && models.includes(current)) sel.value = current;
+    else {
+      sel.value = '';
+      state.billingModel = '';
+    }
+  }
+
   function populatePlatformFilter() {
     const sel = document.getElementById('platformFilter');
     if (!sel) return;
@@ -757,6 +876,7 @@
     renderBrandMs();
     populateProgramFilter();
     populateMetroFilter();
+    populateBillingFilter();
     populatePlatformFilter();
 
     // Sync select values from state (after options built)
@@ -766,6 +886,8 @@
     if (prog) prog.value = state.program || '';
     const metro = document.getElementById('metroFilter');
     if (metro) metro.value = state.metro || '';
+    const bill = document.getElementById('billingFilter');
+    if (bill) bill.value = state.billingModel || '';
     const plat = document.getElementById('platformFilter');
     if (plat) plat.value = state.platform || '';
   }
@@ -781,6 +903,7 @@
     [...state.brands].sort().forEach((b) => items.push({ k: 'brand', v: b, label: 'brand: ' + b }));
     if (state.program) items.push({ k: 'program', label: 'program: ' + state.program });
     if (state.metro) items.push({ k: 'metro', label: 'metro: ' + state.metro });
+    if (state.billingModel) items.push({ k: 'billing', label: 'billing: ' + state.billingModel });
     if (state.platform) items.push({ k: 'platform', label: 'platform: ' + state.platform });
     if (state.search.trim()) items.push({ k: 'search', label: 'search: ' + state.search.trim() });
 
@@ -814,6 +937,7 @@
         else if (k === 'brand') state.brands.delete(btn.getAttribute('data-v'));
         else if (k === 'program') state.program = '';
         else if (k === 'metro') state.metro = '';
+        else if (k === 'billing') state.billingModel = '';
         else if (k === 'platform') state.platform = '';
         else if (k === 'search') {
           state.search = '';
@@ -826,6 +950,65 @@
         refresh(false);
       });
     });
+  }
+
+
+  function renderBillingGrid(agg) {
+    const grid = document.getElementById('billingGrid');
+    const legend = document.getElementById('billingLegend');
+    if (!grid) return;
+    const counts = agg.billingCounts || {};
+    const keys = BILLING_MODEL_ORDER.filter((k) => counts[k]).concat(
+      Object.keys(counts).filter((k) => !BILLING_MODEL_ORDER.includes(k) && counts[k]).sort()
+    );
+    if (!keys.length) {
+      grid.innerHTML = '<div class="billing-card"><div class="bm-name">No sites</div></div>';
+      if (legend) legend.textContent = '';
+      return;
+    }
+    const rollableModels = new Set([
+      'perpetual_monthly',
+      'membership_pass_monthly',
+      'term_session',
+    ]);
+    grid.innerHTML = keys
+      .map((k) => {
+        const n = counts[k] || 0;
+        const cls = rollableModels.has(k) ? 'rollable' : 'non-rollable';
+        const hint =
+          k === 'membership_pass_monthly'
+            ? 'pass $ separate'
+            : rollableModels.has(k)
+              ? 'may roll if stamped'
+              : 'not annualized';
+        return (
+          '<button type="button" class="billing-card ' +
+          cls +
+          '" data-billing="' +
+          esc(k) +
+          '"><div class="bm-name">' +
+          esc(k) +
+          '</div><div class="bm-count">' +
+          fmtNum(n) +
+          '</div><div class="bm-sub">' +
+          hint +
+          '</div></button>'
+        );
+      })
+      .join('');
+    grid.querySelectorAll('[data-billing]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        state.billingModel = btn.getAttribute('data-billing') || '';
+        state.shown = PAGE_SIZE;
+        populateFilters();
+        writeHash();
+        refresh(false);
+      });
+    });
+    if (legend) {
+      legend.textContent =
+        'Tuition Est. KPIs use revenue_rollable + per_enrollee_month only. Green cards ≈ typically rollable models; amber = one-off / unknown.';
+    }
   }
 
   function renderKpis(agg) {
@@ -845,23 +1028,35 @@
     document.getElementById('kAvgPrice').textContent =
       agg.avgPrice != null ? '$' + fmtDec(agg.avgPrice, 0) : '—';
     document.getElementById('kAvgPriceUnit').textContent =
-      (agg.dominantUnit === 'monthly'
-        ? '$/mo'
-        : agg.dominantUnit === 'lesson'
-          ? '$/lesson'
-          : 'unit unknown') + ' · excl. Urban Air';
+      '$/mo tuition (per_enrollee_month, rollable) · never mixed with UA passes';
 
     document.getElementById('kMonthly').textContent = fmtMoney(agg.estMonthly);
     document.getElementById('kAnnual').textContent = fmtMoney(agg.estAnnual);
 
-    let monthlySub = 'from est_* / monthly rule';
-    let annualSub = 'monthly × 12 when solid';
+    let monthlySub =
+      fmtNum(agg.monthlySites) +
+      ' rollable tuition sites · ' +
+      fmtNum(agg.rollableSites) +
+      ' rollable / ' +
+      fmtNum(agg.nonRollableSites) +
+      ' not';
+    let annualSub = '×12 on rollable per_enrollee_month only';
     if (agg.partialSites) {
-      monthlySub += ' · ' + agg.partialSites + ' per_lesson partial (not in $)';
+      monthlySub += ' · ' + agg.partialSites + ' other rollable (not in tuition $)';
     }
-    if (agg.annualSites < agg.monthlySites) annualSub = 'weak when non-monthly';
     document.getElementById('kMonthlySub').textContent = monthlySub;
     document.getElementById('kAnnualSub').textContent = annualSub;
+
+    const kPass = document.getElementById('kPassMonthly');
+    const kPassSub = document.getElementById('kPassSub');
+    if (kPass) kPass.textContent = fmtMoney(agg.passMonthly);
+    if (kPassSub) {
+      kPassSub.textContent = agg.passSites
+        ? fmtNum(agg.passSites) + ' pass/member sites with enroll×price'
+        : 'UA / membership_pass (needs enroll to $)';
+    }
+
+    renderBillingGrid(agg);
 
     document.getElementById('sessStartCap').textContent = String(agg.sessStartCap);
     document.getElementById('sessStartMiss').textContent = fmtNum(agg.sessStartMiss);
@@ -1123,7 +1318,7 @@
 
     if (!slice.length) {
       body.innerHTML =
-        '<tr class="empty-row"><td colspan="15">No sites match the current filters.</td></tr>';
+        '<tr class="empty-row"><td colspan="16">No sites match the current filters.</td></tr>';
       return;
     }
 
@@ -1133,20 +1328,26 @@
         const selected = state.selectedId === id ? ' selected' : '';
         const prog = programOf(s);
         const cat = categoryOf(s);
+        const bm = billingModelOf(s);
         const bucket = unitBucket(s);
         const rev = siteRev(s);
         const fill = fillPctOf(s);
         const fb = prog.fallback
           ? '<span class="fallback-badge" title="No program field — using brand">brand</span>'
           : '';
+        const billCls = rev.rollable ? 'rollable' : 'non-rollable';
         const monthlyCell =
           rev.monthly != null
             ? fmtMoney(rev.monthly)
-            : rev.listPartial != null
-              ? '<span title="list×enrolled; not monthly">' +
-                fmtMoney(rev.listPartial) +
-                '<span class="partial-tag">partial</span></span>'
-              : '—';
+            : rev.passMonthly != null
+              ? '<span title="pass/member — not in tuition KPI">' +
+                fmtMoney(rev.passMonthly) +
+                '<span class="partial-tag">pass</span></span>'
+              : rev.listPartial != null
+                ? '<span title="not rolled into tuition">' +
+                  fmtMoney(rev.listPartial) +
+                  '<span class="partial-tag">n/a</span></span>'
+                : '—';
 
         return (
           '<tr tabindex="0" data-id="' +
@@ -1165,6 +1366,13 @@
           esc(cat) +
           '">' +
           esc(cat) +
+          '</span></td>' +
+          '<td><span class="bill-pill ' +
+          billCls +
+          '" title="' +
+          esc(revenueUnitOf(s) + (rev.rollable ? ' · rollable' : ' · not rollable')) +
+          '">' +
+          esc(bm) +
           '</span></td>' +
           '<td class="name-cell">' +
           esc(s.name || '—') +
@@ -1328,6 +1536,7 @@
     state.brands = new Set();
     state.program = '';
     state.metro = '';
+    state.billingModel = '';
     state.platform = '';
     state.search = '';
     state.selectedId = null;
@@ -1441,6 +1650,15 @@
     writeHash();
     refresh(false);
   });
+  const billingFilter = document.getElementById('billingFilter');
+  if (billingFilter) {
+    billingFilter.addEventListener('change', (e) => {
+      state.billingModel = e.target.value;
+      state.shown = PAGE_SIZE;
+      writeHash();
+      refresh(false);
+    });
+  }
   document.getElementById('platformFilter').addEventListener('change', (e) => {
     state.platform = e.target.value;
     state.shown = PAGE_SIZE;
@@ -1499,7 +1717,7 @@
         state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
       } else {
         state.sortKey = k;
-        const ascDefault = new Set(['brand', 'program', 'category', 'name', 'metro', 'state', 'platform', 'unit', 'session']);
+        const ascDefault = new Set(['brand', 'program', 'category', 'billing', 'name', 'metro', 'state', 'platform', 'unit', 'session']);
         state.sortDir = ascDefault.has(k) ? 'asc' : 'desc';
       }
       refresh(false);
@@ -1512,6 +1730,7 @@
     state.brands = new Set();
     state.program = '';
     state.metro = '';
+    state.billingModel = '';
     state.platform = '';
     applyHash();
     state.shown = PAGE_SIZE;

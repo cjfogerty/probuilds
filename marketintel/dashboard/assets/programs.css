@@ -1086,3 +1086,55 @@
 .table-footer #loadMoreBtn:not([hidden]) {
   font-weight: 700;
 }
+
+
+.billing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+.billing-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: #f7fafc;
+}
+.billing-card .bm-name {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--heading);
+  word-break: break-word;
+}
+.billing-card .bm-count {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2b6cb0;
+}
+.billing-card .bm-sub {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.billing-card.rollable { border-color: #9ae6b4; background: #f0fff4; }
+.billing-card.non-rollable { border-color: #fbd38d; background: #fffaf0; }
+.billing-legend {
+  margin-top: 10px;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.bill-pill {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #edf2f7;
+  color: #4a5568;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bill-pill.rollable { background: #c6f6d5; color: #22543d; }
+.bill-pill.non-rollable { background: #feebc8; color: #7b341e; }

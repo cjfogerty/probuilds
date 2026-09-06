@@ -77,6 +77,12 @@
           <option value="">All metros</option>
         </select>
       </div>
+      <div class="filter-field filter-field-wide">
+        <label for="billingFilter">Billing model</label>
+        <select id="billingFilter" class="filter-select" aria-label="Filter by billing model">
+          <option value="">All billing models</option>
+        </select>
+      </div>
       <div class="filter-field filter-summary-by">
         <label>Summary by</label>
         <div class="mode-toggle" role="group" aria-label="Chart grouping">
@@ -105,14 +111,21 @@
       <div class="kpi"><div class="label">Enroll coverage</div><div class="value" id="kEnrollCov">—</div><div class="sub">enrolled ≠ null</div></div>
       <div class="kpi"><div class="label">Price coverage</div><div class="value" id="kPriceCov">—</div><div class="sub">price_low present</div></div>
       <div class="kpi"><div class="label">Avg price</div><div class="value" id="kAvgPrice">—</div><div class="sub" id="kAvgPriceUnit">excl. Urban Air</div></div>
-      <div class="kpi rev"><div class="label">Est. monthly</div><div class="value" id="kMonthly">—</div><div class="sub" id="kMonthlySub">see formula</div></div>
-      <div class="kpi rev"><div class="label">Est. annualized</div><div class="value" id="kAnnual">—</div><div class="sub" id="kAnnualSub">weak when non-monthly</div></div>
+      <div class="kpi rev"><div class="label">Est. monthly (tuition)</div><div class="value" id="kMonthly">—</div><div class="sub" id="kMonthlySub">revenue_rollable · per_enrollee_month only</div></div>
+      <div class="kpi rev"><div class="label">Est. annualized (tuition)</div><div class="value" id="kAnnual">—</div><div class="sub" id="kAnnualSub">×12 rollable tuition only — never UA passes</div></div>
+      <div class="kpi"><div class="label">Pass / member $</div><div class="value" id="kPassMonthly">—</div><div class="sub" id="kPassSub">UA + membership_pass (separate)</div></div>
     </section>
 
     <div class="panels-row">
+      <section class="panel-card" id="billingPanel" aria-label="Billing model mix">
+        <h3 class="panel-title">Billing model mix</h3>
+        <p class="panel-lead">Est. monthly/annual only when <code>revenue_rollable</code>. Tuition (<code>per_enrollee_month</code>) never mixed with UA <code>per_member_month</code>.</p>
+        <div class="billing-grid" id="billingGrid"></div>
+        <div class="billing-legend" id="billingLegend"></div>
+      </section>
       <section class="panel-card" id="unitPanel" aria-label="Unit of measure">
         <h3 class="panel-title">Unit of measure</h3>
-        <p class="panel-lead" id="unitLead">Derived from <code>billing_interval</code> / <code>price_unit</code> on filtered sites.</p>
+        <p class="panel-lead" id="unitLead">From <code>price_unit</code> / <code>revenue_unit</code> on filtered sites.</p>
         <div class="unit-grid" id="unitGrid"></div>
         <ul class="unit-legend">
           <li><span class="ubadge monthly">monthly</span> → $/mo tuition</li>
@@ -197,6 +210,7 @@
             <th scope="col"><button type="button" class="sort-btn" data-sort="brand" aria-sort="none">Brand</button></th>
             <th scope="col"><button type="button" class="sort-btn" data-sort="program" aria-sort="none">Program</button></th>
             <th scope="col"><button type="button" class="sort-btn" data-sort="category" aria-sort="none">Category</button></th>
+            <th scope="col"><button type="button" class="sort-btn" data-sort="billing" aria-sort="none">Billing</button></th>
             <th scope="col"><button type="button" class="sort-btn" data-sort="name" aria-sort="ascending">Site name</button></th>
             <th scope="col"><button type="button" class="sort-btn" data-sort="metro" aria-sort="none">Metro</button></th>
             <th scope="col"><button type="button" class="sort-btn" data-sort="state" aria-sort="none">ST</button></th>
@@ -230,8 +244,8 @@
           <li><strong>Sites for enroll %:</strong> sites where <code>enrolled != null</code> (includes explicit 0).</li>
           <li><strong>Avg enrollment:</strong> sum(enrolled) / sites_with_enroll.</li>
           <li><strong>Avg price:</strong> mean(<code>price_low</code>) among sites with price; <strong>Urban Air excluded</strong> from revenue/avg-price paths (jump-pass).</li>
-          <li><strong>Est monthly:</strong> for monthly billing: enrolled × price_low (non-UA). Per-lesson: not blind-annualized.</li>
-          <li><strong>Est annual:</strong> monthly × 12 when monthly billing is solid; otherwise weak / —.</li>
+          <li><strong>Billing model:</strong> from Intel <code>billing_model</code> (perpetual_monthly, membership_pass_monthly, term_session, one_off_*, unknown).</li>
+          <li><strong>Est monthly/annual:</strong> only when <code>revenue_rollable</code> and <code>revenue_unit=per_enrollee_month</code> (tuition). UA passes stay in Pass/member $ — never ×12 into tuition KPIs. Prepaid / one-offs stay non-annualized.</li>
           <li><strong>Pull week</strong> is the intel scrape window, <em>not</em> session calendar dates.</li>
           <li><strong>Summary by</strong> only regroups the enrollment bar chart — the site table always lists individual filtered sites.</li>
           <li><strong>Program</strong> = <code>program_name || program || brand</code>.</li>
