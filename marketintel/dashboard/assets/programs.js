@@ -232,8 +232,28 @@
         monthly: null,
         annual: null,
         passMonthly: monthly,
+        passSticker: null,
         strength: 'pass',
-        note: 'rollable pass · separate from tuition',
+        note: 'rollable pass · enroll×price',
+        rollable: true,
+        tuition: false,
+        pass: true,
+      };
+    }
+    if (pass) {
+      const sticker =
+        s.price_monthly_equiv != null && !isNaN(+s.price_monthly_equiv)
+          ? +s.price_monthly_equiv
+          : s.price_low != null && !isNaN(+s.price_low)
+            ? +s.price_low
+            : null;
+      return {
+        monthly: null,
+        annual: null,
+        passMonthly: null,
+        passSticker: sticker,
+        strength: sticker != null ? 'pass_sticker' : 'pass_empty',
+        note: sticker != null ? 'pass sticker (no enroll — not revenue)' : 'pass · missing price',
         rollable: true,
         tuition: false,
         pass: true,
@@ -412,6 +432,8 @@
     let annualSites = 0;
     let passMonthly = 0;
     let passSites = 0;
+    let passStickerSum = 0;
+    let passStickerSites = 0;
     let partialList = 0;
     let partialSites = 0;
     let rollableSites = 0;
@@ -456,6 +478,10 @@
         passMonthly += rev.passMonthly;
         passSites++;
       }
+      if (rev.passSticker != null) {
+        passStickerSum += rev.passSticker;
+        passStickerSites++;
+      }
       if (rev.listPartial != null) {
         partialList += rev.listPartial;
         partialSites++;
@@ -494,6 +520,8 @@
       annualSites,
       passMonthly: passSites ? passMonthly : null,
       passSites,
+      passStickerAvg: passStickerSites ? passStickerSum / passStickerSites : null,
+      passStickerSites,
       partialList: partialSites ? partialList : null,
       partialSites,
       uaSites,
@@ -1049,11 +1077,23 @@
 
     const kPass = document.getElementById('kPassMonthly');
     const kPassSub = document.getElementById('kPassSub');
-    if (kPass) kPass.textContent = fmtMoney(agg.passMonthly);
+    if (kPass) {
+      if (agg.passMonthly != null) kPass.textContent = fmtMoney(agg.passMonthly);
+      else if (agg.passStickerAvg != null)
+        kPass.textContent = '$' + fmtDec(agg.passStickerAvg, 2) + ' avg';
+      else kPass.textContent = '—';
+    }
     if (kPassSub) {
-      kPassSub.textContent = agg.passSites
-        ? fmtNum(agg.passSites) + ' pass/member sites with enroll×price'
-        : 'UA / membership_pass (needs enroll to $)';
+      if (agg.passSites) {
+        kPassSub.textContent = fmtNum(agg.passSites) + ' pass sites · enroll×price (revenue)';
+      } else if (agg.passStickerSites) {
+        kPassSub.textContent =
+          'avg price_monthly_equiv · ' +
+          fmtNum(agg.passStickerSites) +
+          ' sites · no enroll (sticker, not revenue)';
+      } else {
+        kPassSub.textContent = 'UA / membership_pass — no price yet';
+      }
     }
 
     renderBillingGrid(agg);
@@ -1343,7 +1383,11 @@
               ? '<span title="pass/member — not in tuition KPI">' +
                 fmtMoney(rev.passMonthly) +
                 '<span class="partial-tag">pass</span></span>'
-              : rev.listPartial != null
+              : rev.passSticker != null
+                ? '<span title="pass sticker — no enroll, not revenue">$' +
+                  fmtDec(rev.passSticker, 2) +
+                  '<span class="partial-tag">sticker</span></span>'
+                : rev.listPartial != null
                 ? '<span title="not rolled into tuition">' +
                   fmtMoney(rev.listPartial) +
                   '<span class="partial-tag">n/a</span></span>'
