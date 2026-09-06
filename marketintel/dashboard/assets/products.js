@@ -24,7 +24,7 @@
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
   function fmtNum(n) {
     if (n == null || isNaN(n)) return '—';
@@ -74,18 +74,33 @@
     'As of <strong>' + esc(meta.as_of || '—') + '</strong>';
   const w = meta.week || {};
   document.getElementById('weekChip').innerHTML =
-    'Pull week <strong>' + esc(w.from || '—') + '</strong> → <strong>' + esc(w.to || '—') + '</strong>';
+    'Schedule week <strong>' +
+    esc(w.from || '—') +
+    '</strong> → <strong>' +
+    esc(w.to || '—') +
+    '</strong> <span class="chip-sub">(pulled ' +
+    esc(meta.generated || meta.as_of || '—') +
+    ')</span>';
   document.getElementById('skuCountChip').textContent = fmtNum(meta.n_skus || allProducts.length) + ' SKUs';
   document.getElementById('siteCountChip').textContent = fmtNum(meta.n_sites) + ' sites';
+  const enrollPositive = allProducts.filter(
+    (p) => p.enrolled_or_sold != null && !isNaN(+p.enrolled_or_sold) && +p.enrolled_or_sold > 0
+  ).length;
+  const enrollZero = allProducts.filter((p) => +p.enrolled_or_sold === 0).length;
   document.getElementById('enrollChip').textContent =
-    (meta.n_with_enroll || 0) === 0
+    enrollPositive === 0
       ? 'enrolled_or_sold: none — stickers only'
-      : 'enrolled_or_sold on ' + fmtNum(meta.n_with_enroll);
+      : 'enrolled_or_sold > 0 on ' +
+        fmtNum(enrollPositive) +
+        ' · reported 0 on ' +
+        fmtNum(enrollZero);
   const ov = document.getElementById('overlapChip');
   if (ov) {
     ov.textContent =
       'catalog∩classline sites: ' + fmtNum(meta.site_overlap_catalog_classline || 0);
   }
+  const multiNote = document.getElementById('multiNoteCount');
+  if (multiNote) multiNote.textContent = fmtNum(meta.n_multi_billing_sites || 0);
 
   function isRetail(p) {
     const t = +p.product_type_id;
@@ -125,6 +140,8 @@
     const enroll = p.enrolled_or_sold;
     if (enroll == null || isNaN(+enroll) || +enroll <= 0) return false;
     if (p.price == null || isNaN(+p.price)) return false;
+    const cur = String(p.currency || 'USD').toUpperCase();
+    if (cur && cur !== 'USD') return false; // don't sum CAD into $ KPIs
     // Catalog never contributes Est. $ (sticker only)
     if ((p.evidence_tier || '') === 'product_catalog') return false;
     if (state.publishedOnlyEst) {
@@ -137,16 +154,30 @@
     );
   }
 
+  function annualMonths(p) {
+    const t = p.term_months;
+    if (t == null || isNaN(+t) || +t <= 0) return 12;
+    return Math.min(+t, 12);
+  }
+
   function productRev(p) {
     const enroll = p.enrolled_or_sold;
     const price = p.price;
     if (enrollCountsForEst(p)) {
       const monthly = +enroll * +price;
-      return { monthly, annual: monthly * 12, sticker: null, estEligible: true };
+      const months = annualMonths(p);
+      return {
+        monthly,
+        annual: monthly * months,
+        months,
+        sticker: null,
+        estEligible: true,
+      };
     }
     return {
       monthly: null,
       annual: null,
+      months: null,
       sticker: price != null && !isNaN(+price) ? +price : null,
       estEligible: false,
     };
@@ -157,6 +188,7 @@
     const multi = new Set();
     const billing = {};
     const types = {};
+    const typeLabels = {};
     let priceSum = 0;
     let priceN = 0;
     let monthly = 0;
@@ -170,15 +202,19 @@
       if (isMultiSite(p.site_id)) multi.add(p.site_id);
       const bm = p.billing_model || 'unknown';
       billing[bm] = (billing[bm] || 0) + 1;
-      const tl = p.product_type_label || String(p.product_type_id || '?');
-      types[tl] = (types[tl] || 0) + 1;
+      const tid = p.product_type_id == null ? 'null' : String(p.product_type_id);
+      types[tid] = (types[tid] || 0) + 1;
+      typeLabels[tid] = p.product_type_label || tid;
       const ev = p.evidence_tier || 'unknown';
       evidence[ev] = (evidence[ev] || 0) + 1;
       if (p.price != null && !isNaN(+p.price)) {
-        priceSum += +p.price;
-        priceN++;
+        const cur = String(p.currency || 'USD').toUpperCase();
+        if (!cur || cur === 'USD') {
+          priceSum += +p.price;
+          priceN++;
+        }
       }
-      if (p.enrolled_or_sold != null) enrollN++;
+      if (p.enrolled_or_sold != null && !isNaN(+p.enrolled_or_sold) && +p.enrolled_or_sold > 0) enrollN++;
       const rev = productRev(p);
       if (rev.monthly != null) {
         monthly += rev.monthly;
@@ -199,6 +235,7 @@
       multi: multi.size,
       billing,
       types,
+      typeLabels,
       evidence,
       catalogN,
       classlineN,
@@ -480,7 +517,7 @@
     });
   }
 
-  function renderGrid(el, counts, order) {
+  function renderGrid(el, counts, order, labels) {
     if (!el) return;
     const keys = (order || Object.keys(counts)).filter((k) => counts[k]);
     Object.keys(counts).forEach((k) => {
@@ -489,13 +526,14 @@
     el.innerHTML = keys
       .map((k) => {
         const rollable = k === 'perpetual_monthly' || k === 'membership_pass_monthly';
+        const name = labels ? labels[k] || k : k;
         return (
           '<button type="button" class="billing-card ' +
           (rollable ? 'rollable' : 'non-rollable') +
           '" data-k="' +
           esc(k) +
           '"><div class="bm-name">' +
-          esc(k) +
+          esc(name) +
           '</div><div class="bm-count">' +
           fmtNum(counts[k]) +
           '</div></button>'
@@ -544,12 +582,22 @@
         fmtNum(e.class_line_schedule_only || 0) +
         ' schedule';
     }
-    renderGrid(document.getElementById('billingGrid'), agg.billing, BILLING_ORDER);
-    renderGrid(document.getElementById('typeGrid'), agg.types, null);
+    renderGrid(document.getElementById('billingGrid'), agg.billing, BILLING_ORDER, null);
+    renderGrid(document.getElementById('typeGrid'), agg.types, null, agg.typeLabels);
 
     document.querySelectorAll('#billingGrid [data-k]').forEach((btn) => {
       btn.addEventListener('click', () => {
-        state.billing = btn.getAttribute('data-k') || '';
+        const k = btn.getAttribute('data-k') || '';
+        state.billing = state.billing === k ? '' : k;
+        state.shown = PAGE_SIZE;
+        populateFilters();
+        refresh();
+      });
+    });
+    document.querySelectorAll('#typeGrid [data-k]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const k = btn.getAttribute('data-k') || '';
+        state.type = state.type === k ? '' : k;
         state.shown = PAGE_SIZE;
         populateFilters();
         refresh();
@@ -765,6 +813,33 @@
       refresh();
     });
   });
+
+
+  // Published-only default only when the cut actually has published rollable enroll.
+  const PUBLISHED_EST_AVAILABLE = allProducts.some(
+    (p) =>
+      p.revenue_rollable &&
+      p.evidence_tier === 'class_line_published' &&
+      p.enrolled_or_sold != null &&
+      +p.enrolled_or_sold > 0 &&
+      p.price != null &&
+      !isNaN(+p.price) &&
+      String(p.currency || 'USD').toUpperCase() === 'USD'
+  );
+  if (!PUBLISHED_EST_AVAILABLE) {
+    state.publishedOnlyEst = false;
+    const box = document.getElementById('publishedOnlyEst');
+    if (box) {
+      box.checked = false;
+      box.disabled = true;
+      const lab = box.closest('label');
+      if (lab) {
+        lab.title =
+          'No class_line_published SKU in this cut is revenue_rollable with enrollment — KPIs use modeled seats until published monthly lines exist.';
+        lab.classList.add('is-disabled');
+      }
+    }
+  }
 
   populateFilters();
   refresh();

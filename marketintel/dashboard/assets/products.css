@@ -10,3 +10,6 @@
   color: #553c9a;
 }
 .products-page .kpi .value { font-size: 1.35rem; }
+
+.toggle-inline.is-disabled { opacity: 0.5; cursor: not-allowed; }
+.chip-sub { font-weight: 500; opacity: 0.8; margin-left: 4px; }

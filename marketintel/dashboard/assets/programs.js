@@ -387,7 +387,13 @@
   document.getElementById('asOfChip').innerHTML =
     'As of <strong>' + esc(snapshot.as_of || meta.as_of || '—') + '</strong>';
   document.getElementById('weekChip').innerHTML =
-    'Pull week <strong>' + esc(weekFrom) + '</strong> → <strong>' + esc(weekTo) + '</strong>';
+    'Schedule week <strong>' +
+    esc(weekFrom) +
+    '</strong> → <strong>' +
+    esc(weekTo) +
+    '</strong> <span class="chip-sub">(pulled ' +
+    esc(snapshot.as_of || meta.as_of || meta.generated || '—') +
+    ')</span>';
   document.getElementById('pullWeekRange').textContent = pullWeekLabel;
   document.getElementById('pullWeekInline').textContent = pullWeekLabel;
 
