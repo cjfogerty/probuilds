@@ -545,6 +545,9 @@ table.sites tr.selected td.sticky-col { background: #1a2438; }
 .ms-search,
 .ms-trigger,
 input[type="search"],
+input[type="text"],
+#searchFilter,
+#tableSearch,
 select {
   font-size: max(16px, 1rem) !important;
   min-height: 44px;
