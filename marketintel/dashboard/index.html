@@ -1,125 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="cache-control" content="no-cache" />
-  <title>Market Intel — Hub</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" />
-  <style>
-    html, body { height: 100%; margin: 0; }
-    body {
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      font-family: "IBM Plex Sans", system-ui, sans-serif; background: #0b1220;
-      background-image: radial-gradient(ellipse at top, #1a2744 0%, #0b1220 60%);
-    }
-    .card { width: min(420px, 92vw); padding: 2.25rem 2rem; background: rgba(18,26,43,0.96);
-      border: 1px solid #243049; border-radius: 1.25rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.55); text-align: center; }
-    h1 { margin: 0 0 0.4rem; font-size: 1.45rem; color: #e8eefc; }
-    p { color: #9aa8c7; line-height: 1.5; margin: 0 0 1.1rem; }
-    input[type="password"] { width: 100%; box-sizing: border-box; padding: 0.85rem 0.9rem;
-      border: 1px solid #334155; border-radius: 0.8rem; font-size: 16px; margin-bottom: 0.85rem;
-      background: #0b1220; color: #e8eefc; }
-    button { width: 100%; border: 0; border-radius: 0.8rem; padding: 0.9rem; background: #3b82f6;
-      color: #fff; font-weight: 700; font-size: 0.95rem; cursor: pointer; }
-    label { display: flex; align-items: center; gap: 0.55rem; color: #94a3b8; font-size: 0.9rem; margin: 0 0 0.9rem; }
-    .err { color: #f87171; font-size: 0.85rem; min-height: 1.2em; margin: 0 0 0.5rem; }
-    .hint { font-size: 0.8rem; color: #64748b; margin-top: 1rem; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Market Intel — Hub</title>
+<link rel="stylesheet" href="assets/hub.css" />
 </head>
 <body>
-  <div class="card">
-    <h1>Market Intel — Hub</h1>
-    <p>Enter the passphrase to open the metro / brand hub.</p>
-    <form id="f">
-      <input id="pw" type="password" placeholder="Passphrase" autocomplete="current-password" autofocus />
-      <label><input id="remember" type="checkbox" checked /> Remember me</label>
-      <div class="err" id="err"></div>
-      <button type="submit">Unlock</button>
-    </form>
-    <p class="hint">Encrypted · AES-GCM · session only</p>
+  <div class="container">
+    <header class="hub-head">
+      <h1>Market Intel</h1>
+      <p class="sub">Kids activity / gym footprint across US metros</p>
+      <div class="meta-row">
+        <span class="chip" id="asOfChip">As of —</span>
+        <span class="chip" id="weekChip">Week —</span>
+        <span class="chip" id="brandCountChip">— brands</span>
+        <span class="chip" id="siteCountChip">— sites</span>
+        <span class="chip est" title="Tuition estimates exclude Urban Air pass pricing">Est. revenue</span>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <input class="search" id="hubSearch" type="search" placeholder="Search metros or brands…" autocomplete="off" />
+      <a class="btn btn-ghost" href="programs.html">Brand &amp; program facts</a>
+      <a class="btn btn-ghost" href="products.html">Products (SKU grain)</a>
+      <a class="btn btn-primary" id="openMapBtn" href="map.html">Open map command center</a>
+    </div>
+
+    <section class="kpis" id="kpiStrip" aria-label="National KPIs">
+      <div class="kpi"><div class="label">Open sites</div><div class="value" id="kSites">—</div><div class="sub" id="kSitesSub"></div></div>
+      <div class="kpi"><div class="label">Total enrolled</div><div class="value" id="kEnrolled">—</div><div class="sub">visible sites</div></div>
+      <div class="kpi"><div class="label">Capacity</div><div class="value" id="kCapacity">—</div><div class="sub">seats reported</div></div>
+      <div class="kpi rev"><div class="label">Est. monthly $</div><div class="value" id="kMonthly">—</div><div class="sub">tuition brands</div></div>
+      <div class="kpi rev"><div class="label">Est. annual $</div><div class="value" id="kAnnual">—</div><div class="sub">monthly × 12</div></div>
+      <div class="kpi"><div class="label">Brands</div><div class="value" id="kBrands">—</div><div class="sub">Unleashed pull</div></div>
+    </section>
+
+    <h3 class="section feat">Featured<span class="section-count">Houston Heights spotlight</span></h3>
+    <div class="cards" id="featuredCards"></div>
+
+    <h3 class="section">Metros<span class="section-count" id="metroCount"></span></h3>
+    <div class="cards" id="metroCards"></div>
+
+    <h3 class="section brands">Brands<span class="section-count" id="brandCount"></span></h3>
+    <div class="cards" id="brandCards"></div>
+
+    <p class="note">
+      <strong>How to use:</strong> pick a metro or brand card → map opens already filtered.
+      Closed parks and junk/HQ rows are hidden by default. Revenue is <strong>estimated</strong>
+      (<code>enrolled × monthly list price × 12</code>); Urban Air jump-pass pricing is excluded.
+      Data: Unleashed + iClassPro wave2 (brands from meta). iClassPro enrollment uses provisional seat_model_assumed8.
+    </p>
   </div>
-  <script>
-    const SALT_HEX = "9f82c72d69f242c4f35f4077acc96cfb";
-    const KEY_NAME = "marketintel_dash_passphrase_v1";
-    const PART_COUNT = 4;
-    const PART_PREFIX = "hub.enc.part";
-    function b64ToBytes(b64) {
-      const bin = atob(b64);
-      const out = new Uint8Array(bin.length);
-      for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
-      return out;
-    }
-    function hexToBytes(hex) {
-      const out = new Uint8Array(hex.length / 2);
-      for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.substr(i * 2, 2), 16);
-      return out;
-    }
-    function looksLikePayload(text) {
-      const t = (text || "").trim();
-      return t.length > 200 && /^[A-Za-z0-9+/=\s]+$/.test(t);
-    }
-    async function fetchText(url) {
-      const r = await fetch(url, { cache: "no-store" });
-      if (!r.ok) throw new Error("missing " + url);
-      return r.text();
-    }
-    async function loadPayload() {
-      const urls = [];
-      for (let i = 1; i <= PART_COUNT; i++) urls.push(PART_PREFIX + i);
-      const parts = await Promise.all(urls.map(fetchText));
-      const joined = parts.join("");
-      if (!looksLikePayload(joined)) throw new Error("bad payload");
-      return joined;
-    }
-    async function deriveKey(password) {
-      const material = await crypto.subtle.importKey(
-        "raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]
-      );
-      return crypto.subtle.deriveKey(
-        { name: "PBKDF2", salt: hexToBytes(SALT_HEX), iterations: 200000, hash: "SHA-256" },
-        material, { name: "AES-GCM", length: 256 }, false, ["decrypt"]
-      );
-    }
-    async function unlock(password, payload) {
-      const key = await deriveKey(password);
-      const raw = b64ToBytes(payload.trim());
-      const plainBuf = await crypto.subtle.decrypt({ name: "AES-GCM", iv: raw.slice(0, 12) }, key, raw.slice(12));
-      return new TextDecoder().decode(plainBuf);
-    }
-    function installDecryptedHtml(html) {
-      // Blob nav so Leaflet + inline loaders run in normal parser order.
-      // <base> keeps relative hub↔map links on Pages. Preserve hash for deep links.
-      const baseHref = location.href.replace(/[#?].*$/, "").replace(/[^\/]*$/, "");
-      if (!/<base\s/i.test(html)) {
-        html = html.replace(/<head([^>]*)>/i, '<head$1><base href="' + baseHref + '">');
-      }
-      const url = URL.createObjectURL(new Blob([html], { type: "text/html" }));
-      location.replace(url + (location.hash || ""));
-    }
-    async function tryPassword(password, remember) {
-      const payload = await loadPayload();
-      const html = await unlock(password, payload);
-      if (remember) sessionStorage.setItem(KEY_NAME, password);
-      else sessionStorage.removeItem(KEY_NAME);
-      installDecryptedHtml(html);
-    }
-    document.getElementById("f").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const err = document.getElementById("err");
-      err.textContent = "";
-      try {
-        await tryPassword(document.getElementById("pw").value, document.getElementById("remember").checked);
-      } catch (ex) {
-        console.error(ex);
-        err.textContent = "That passphrase didn’t work. Try again.";
-      }
-    });
-    (async () => {
-      const saved = sessionStorage.getItem(KEY_NAME);
-      if (!saved) return;
-      try { await tryPassword(saved, true); } catch (e) { sessionStorage.removeItem(KEY_NAME); }
-    })();
-  </script>
+  <script src="data/sites.js"></script>
+  <script src="assets/hub.js"></script>
 </body>
 </html>

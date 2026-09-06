@@ -1,125 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="cache-control" content="no-cache" />
-  <title>Market Intel — Map</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" />
-  <style>
-    html, body { height: 100%; margin: 0; }
-    body {
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      font-family: "IBM Plex Sans", system-ui, sans-serif; background: #0b1220;
-      background-image: radial-gradient(ellipse at top, #1a2744 0%, #0b1220 60%);
-    }
-    .card { width: min(420px, 92vw); padding: 2.25rem 2rem; background: rgba(18,26,43,0.96);
-      border: 1px solid #243049; border-radius: 1.25rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.55); text-align: center; }
-    h1 { margin: 0 0 0.4rem; font-size: 1.45rem; color: #e8eefc; }
-    p { color: #9aa8c7; line-height: 1.5; margin: 0 0 1.1rem; }
-    input[type="password"] { width: 100%; box-sizing: border-box; padding: 0.85rem 0.9rem;
-      border: 1px solid #334155; border-radius: 0.8rem; font-size: 16px; margin-bottom: 0.85rem;
-      background: #0b1220; color: #e8eefc; }
-    button { width: 100%; border: 0; border-radius: 0.8rem; padding: 0.9rem; background: #3b82f6;
-      color: #fff; font-weight: 700; font-size: 0.95rem; cursor: pointer; }
-    label { display: flex; align-items: center; gap: 0.55rem; color: #94a3b8; font-size: 0.9rem; margin: 0 0 0.9rem; }
-    .err { color: #f87171; font-size: 0.85rem; min-height: 1.2em; margin: 0 0 0.5rem; }
-    .hint { font-size: 0.8rem; color: #64748b; margin-top: 1rem; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Market Intel — Map</title>
+<link rel="stylesheet" href="assets/map.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" />
 </head>
 <body>
-  <div class="card">
-    <h1>Market Intel — Map</h1>
-    <p>Enter the passphrase to open the map command center.</p>
-    <form id="f">
-      <input id="pw" type="password" placeholder="Passphrase" autocomplete="current-password" autofocus />
-      <label><input id="remember" type="checkbox" checked /> Remember me</label>
-      <div class="err" id="err"></div>
-      <button type="submit">Unlock</button>
-    </form>
-    <p class="hint">Encrypted · AES-GCM · session only</p>
+<div class="app v2">
+  <header class="topbar">
+    <a class="back-hub" href="index.html" title="Return to metro / brand hub">← Hub</a>
+    <a class="back-hub" href="programs.html" title="Brand & program facts" style="margin-left:6px">Facts</a>
+    <a class="back-hub" href="products.html" title="Products SKU grain" style="margin-left:6px">Products</a>
+    <div class="brand-mark">
+      <div class="logo">MI</div>
+      <div>Market Intel<small>Map command center</small></div>
+    </div>
+    <div class="scope-banner" id="scopeBanner"></div>
+    <div class="meta-chip" id="asOfChip">As of —</div>
+    <div class="topbar-spacer"></div>
+    <div class="est-badge" title="Tuition revenue figures are estimates, not audited">Est. revenue</div>
+  </header>
+  <section class="kpis" id="kpiStrip">
+    <div class="kpi"><div class="label">Sites in view</div><div class="value" id="kSites">—</div><div class="sub" id="kSitesSub"></div></div>
+    <div class="kpi"><div class="label">Total enrolled</div><div class="value" id="kEnrolled">—</div><div class="sub" id="kEnrolledSub"></div></div>
+    <div class="kpi"><div class="label">Total capacity</div><div class="value" id="kCapacity">—</div><div class="sub">seats reported</div></div>
+    <div class="kpi"><div class="label">Fill %</div><div class="value" id="kFill">—</div><div class="sub">enrolled / capacity</div></div>
+    <div class="kpi rev"><div class="label">Est. monthly $</div><div class="value" id="kMonthly">—</div><div class="sub">tuition brands</div></div>
+    <div class="kpi rev"><div class="label">Est. annual $</div><div class="value" id="kAnnual">—</div><div class="sub">monthly × 12</div></div>
+  </section>
+  <div class="main">
+    <aside class="panel">
+      <div class="panel-hd">Filters <button class="btn-ghost" id="btnReset" type="button" title="Clear filters and return to national view">Reset</button></div>
+      <div class="panel-body">
+        <div class="filter-section">
+          <div class="filter-section-hd">Operators</div>
+          <div class="brand-checks" id="brandChecks"></div>
+        </div>
+        <div class="filter-section">
+          <div class="filter-section-hd">Visibility</div>
+          <div class="toggle-row"><span>Hide likely closed</span><label class="switch"><input type="checkbox" id="hideClosed" checked /><span class="slider"></span></label></div>
+          <div class="toggle-row"><span>Hide junk / HQ rows</span><label class="switch"><input type="checkbox" id="hideJunk" checked /><span class="slider"></span></label></div>
+          <div class="toggle-row"><span>Geocoded only</span><label class="switch"><input type="checkbox" id="geoOnly" checked /><span class="slider"></span></label></div>
+        </div>
+        <div class="filter-section">
+          <div class="filter-section-hd">Location</div>
+          <div class="field"><label>State</label><select id="stateFilter"><option value="">All states</option></select></div>
+          <div class="field"><label>Metro</label><select id="metroFilter"><option value="">All metros</option></select></div>
+          <div class="field"><label>Search city / name / zip</label><input type="text" id="searchFilter" placeholder="e.g. Heights, 77008, Frisco" /></div>
+        </div>
+        <div class="filter-section">
+          <div class="filter-section-hd">Radius</div>
+          <div class="field">
+            <label>Miles around center</label>
+            <div class="radius-row" id="radiusBtns">
+              <button type="button" data-r="5">5</button>
+              <button type="button" data-r="10" class="active">10</button>
+              <button type="button" data-r="15">15</button>
+              <button type="button" data-r="25">25</button>
+            </div>
+            <div class="toggle-row" style="margin-top:8px"><span>Apply radius filter</span><label class="switch"><input type="checkbox" id="useRadius" /><span class="slider"></span></label></div>
+          </div>
+          <div class="field"><label>Jump to metro (intentional)</label><div class="preset-btns" id="presetBtns"></div></div>
+        </div>
+        <div class="filter-hint-box">
+          <strong style="color:var(--accent2)">Map stays anchored.</strong>
+          Radius + brand/closed/search filters redraw the ring and KPIs only — they do not fly the map.
+          Geographic jumps: Hub → map, preset buttons, Recenter, Reset, Back to hub.
+        </div>
+        <p class="hint">Urban Air jump-pass pricing is <strong class="hint-warn">excluded</strong> from tuition revenue estimates.</p>
+      </div>
+    </aside>
+    <div class="center-col" id="centerCol">
+      <div class="map-wrap">
+        <div id="map"></div>
+        <div class="map-overlay">
+          <div class="center-pill" id="centerPill"><span class="dim">Center:</span> not set — open from hub or pick a preset</div>
+          <button type="button" class="map-tool-btn" id="btnRecenter" title="Recenter map on the radius ring" hidden>Recenter on ring</button>
+          <button type="button" class="map-tool-btn" id="btnExpandMap" title="Enlarge map (collapse table)">Enlarge map</button>
+        </div>
+      </div>
+      <div class="table-panel" id="tablePanel">
+        <div class="table-toolbar">
+          <strong class="table-title">Sites</strong>
+          <span class="meta-chip" id="tableCount">0</span>
+          <input type="text" id="tableSearch" placeholder="Filter table" />
+          <div class="topbar-spacer"></div>
+          <span class="hint table-hint">Click row for detail · Sort via headers</span>
+        </div>
+        <div class="table-wrap">
+          <table class="sites" id="sitesTable">
+            <thead>
+              <tr>
+                <th data-k="brand" class="sticky-col sticky-1">Brand</th>
+                <th data-k="name" class="sticky-col sticky-2">Name</th>
+                <th data-k="metro">Metro</th>
+                <th data-k="state">ST</th>
+                <th data-k="zip" class="num-col">Zip</th>
+                <th data-k="enrolled" class="num-col">Enrolled</th>
+                <th data-k="capacity" class="num-col">Cap</th>
+                <th data-k="fill_pct" class="num-col">Fill%</th>
+                <th data-k="price_low" class="num-col">Price</th>
+                <th data-k="est_monthly_rev" class="num-col">Est $/mo</th>
+                <th data-k="n_classes" class="num-col">Classes</th>
+              </tr>
+            </thead>
+            <tbody id="sitesTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <aside class="panel right">
+      <div class="panel-hd">Market share <span id="shareScope" class="scope-label">selection</span></div>
+      <div class="panel-body share-body">
+        <div class="share-tabs" id="shareTabs">
+          <button type="button" class="active" data-m="enrolled">Enrolled</button>
+          <button type="button" data-m="sites">Sites</button>
+          <button type="button" data-m="revenue">Est. Rev</button>
+        </div>
+        <div class="share-bars" id="shareBars"></div>
+        <div class="note-box" id="shareNote">Est. revenue uses tuition brands with monthly billing × enrollment. Urban Air pass pricing excluded.</div>
+        <div class="field" style="margin-top:16px"><label>Legend</label><div id="legend" class="legend-list"></div></div>
+      </div>
+    </aside>
   </div>
-  <script>
-    const SALT_HEX = "9f82c72d69f242c4f35f4077acc96cfb";
-    const KEY_NAME = "marketintel_dash_passphrase_v1";
-    const PART_COUNT = 4;
-    const PART_PREFIX = "map.enc.part";
-    function b64ToBytes(b64) {
-      const bin = atob(b64);
-      const out = new Uint8Array(bin.length);
-      for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
-      return out;
-    }
-    function hexToBytes(hex) {
-      const out = new Uint8Array(hex.length / 2);
-      for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.substr(i * 2, 2), 16);
-      return out;
-    }
-    function looksLikePayload(text) {
-      const t = (text || "").trim();
-      return t.length > 200 && /^[A-Za-z0-9+/=\s]+$/.test(t);
-    }
-    async function fetchText(url) {
-      const r = await fetch(url, { cache: "no-store" });
-      if (!r.ok) throw new Error("missing " + url);
-      return r.text();
-    }
-    async function loadPayload() {
-      const urls = [];
-      for (let i = 1; i <= PART_COUNT; i++) urls.push(PART_PREFIX + i);
-      const parts = await Promise.all(urls.map(fetchText));
-      const joined = parts.join("");
-      if (!looksLikePayload(joined)) throw new Error("bad payload");
-      return joined;
-    }
-    async function deriveKey(password) {
-      const material = await crypto.subtle.importKey(
-        "raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]
-      );
-      return crypto.subtle.deriveKey(
-        { name: "PBKDF2", salt: hexToBytes(SALT_HEX), iterations: 200000, hash: "SHA-256" },
-        material, { name: "AES-GCM", length: 256 }, false, ["decrypt"]
-      );
-    }
-    async function unlock(password, payload) {
-      const key = await deriveKey(password);
-      const raw = b64ToBytes(payload.trim());
-      const plainBuf = await crypto.subtle.decrypt({ name: "AES-GCM", iv: raw.slice(0, 12) }, key, raw.slice(12));
-      return new TextDecoder().decode(plainBuf);
-    }
-    function installDecryptedHtml(html) {
-      // Blob nav so Leaflet + inline loaders run in normal parser order.
-      // <base> keeps relative hub↔map links on Pages. Preserve hash for deep links.
-      const baseHref = location.href.replace(/[#?].*$/, "").replace(/[^\/]*$/, "");
-      if (!/<base\s/i.test(html)) {
-        html = html.replace(/<head([^>]*)>/i, '<head$1><base href="' + baseHref + '">');
-      }
-      const url = URL.createObjectURL(new Blob([html], { type: "text/html" }));
-      location.replace(url + (location.hash || ""));
-    }
-    async function tryPassword(password, remember) {
-      const payload = await loadPayload();
-      const html = await unlock(password, payload);
-      if (remember) sessionStorage.setItem(KEY_NAME, password);
-      else sessionStorage.removeItem(KEY_NAME);
-      installDecryptedHtml(html);
-    }
-    document.getElementById("f").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const err = document.getElementById("err");
-      err.textContent = "";
-      try {
-        await tryPassword(document.getElementById("pw").value, document.getElementById("remember").checked);
-      } catch (ex) {
-        console.error(ex);
-        err.textContent = "That passphrase didn’t work. Try again.";
-      }
-    });
-    (async () => {
-      const saved = sessionStorage.getItem(KEY_NAME);
-      if (!saved) return;
-      try { await tryPassword(saved, true); } catch (e) { sessionStorage.removeItem(KEY_NAME); }
-    })();
-  </script>
+</div>
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-hd">
+    <div><h2 id="dName">—</h2><div class="brand-line" id="dBrand">—</div></div>
+    <button class="btn-ghost" type="button" id="drawerClose">Close</button>
+  </div>
+  <div class="drawer-body"><div class="dl-grid" id="drawerGrid"></div></div>
+</aside>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="data/sites.js"></script>
+<script src="assets/map.js"></script>
 </body>
 </html>
