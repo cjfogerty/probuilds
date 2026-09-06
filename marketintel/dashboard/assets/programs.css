@@ -8,8 +8,27 @@
   z-index: 45;
   background: color-mix(in srgb, var(--bg) 94%, transparent);
   backdrop-filter: blur(10px);
-  padding: 10px 0 8px;
+  padding: 8px 0 6px;
   margin-bottom: 8px;
+}
+
+@media (min-width: 700px) {
+  .layout-doc .toolbar .search,
+  .layout-doc .search,
+  .layout-doc .filter-select,
+  .layout-doc .platform-select,
+  .layout-doc .ms-trigger,
+  .layout-doc .ms-search,
+  .layout-doc input[type="search"],
+  .layout-doc select {
+    min-height: 36px !important;
+    font-size: 0.88rem !important;
+  }
+  .layout-doc .btn,
+  .layout-doc a.btn,
+  .layout-doc .mode-btn {
+    min-height: 36px;
+  }
 }
 
 .programs-toolbar {
@@ -207,8 +226,8 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 12px;
-  padding: 10px 14px;
+  margin-bottom: 10px;
+  padding: 8px 12px;
   background: #fff;
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -262,14 +281,26 @@
   opacity: 0.75;
 }
 
+.programs-page .hub-head { margin-bottom: 12px; }
+.programs-page .hub-head h1 {
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+}
+.programs-page .hub-head .sub { font-size: 0.9rem; }
+
 .programs-page .kpis {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  margin-bottom: 18px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin-bottom: 14px;
+  padding-bottom: 2px;
+}
+.programs-page .kpi {
+  flex: 1 0 128px;
+  min-width: 128px;
+  padding: 10px 12px;
 }
 .programs-page .kpi .value { font-size: 1.12rem; }
-@media (max-width: 1200px) {
-  .programs-page .kpis { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
-}
 
 .panels-row {
   display: grid;
@@ -807,7 +838,7 @@
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 10px 12px;
   margin-bottom: 12px;
-  padding: 12px 14px;
+  padding: 10px 12px;
   background: #fff;
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -1025,11 +1056,11 @@
   color: var(--muted);
 }
 
-@media (min-width: 1100px) {
+@media (min-width: 1280px) {
   .filter-stack {
-    grid-template-columns: 1.1fr 1.4fr 1.2fr 1.2fr auto;
+    grid-template-columns: 1fr 1.3fr 1.1fr 1.1fr 1.2fr minmax(220px, 1.3fr);
   }
-  .filter-field-wide { min-width: 200px; }
+  .filter-field-wide { min-width: 180px; }
 }
 @media (max-width: 700px) {
   .filter-stack { grid-template-columns: 1fr; }
