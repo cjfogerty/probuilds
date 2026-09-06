@@ -220,9 +220,34 @@
         monthly,
         annual,
         passMonthly: null,
+        tuitionSticker: null,
+        passSticker: null,
         strength: 'solid',
         note: 'rollable tuition · ' + model,
         rollable: true,
+        tuition: true,
+        pass: false,
+      };
+    }
+    if (tuition) {
+      const sticker =
+        s.price_monthly_equiv != null && !isNaN(+s.price_monthly_equiv)
+          ? +s.price_monthly_equiv
+          : s.price_low != null && !isNaN(+s.price_low)
+            ? +s.price_low
+            : null;
+      return {
+        monthly: null,
+        annual: null,
+        passMonthly: null,
+        tuitionSticker: sticker,
+        passSticker: null,
+        strength: sticker != null ? 'tuition_sticker' : 'tuition_empty',
+        note:
+          sticker != null
+            ? 'tuition sticker · ' + (s.evidence_tier || 'price_only') + ' (no enroll — not revenue)'
+            : 'tuition · missing price',
+        rollable: !!rollable,
         tuition: true,
         pass: false,
       };
@@ -434,6 +459,8 @@
     let passSites = 0;
     let passStickerSum = 0;
     let passStickerSites = 0;
+    let tuitionStickerSum = 0;
+    let tuitionStickerSites = 0;
     let partialList = 0;
     let partialSites = 0;
     let rollableSites = 0;
@@ -459,7 +486,8 @@
       }
       if (s.price_low != null && !isNaN(+s.price_low)) {
         priceSites++;
-        if (isTuitionUnit(s) && isRollable(s)) {
+        if (isTuitionUnit(s)) {
+          // include price_only stickers (e.g. My Gym) in avg price — not in Est. monthly
           priceCountTuition++;
           priceSumTuition += +s.price_low;
         }
@@ -481,6 +509,10 @@
       if (rev.passSticker != null) {
         passStickerSum += rev.passSticker;
         passStickerSites++;
+      }
+      if (rev.tuitionSticker != null) {
+        tuitionStickerSum += rev.tuitionSticker;
+        tuitionStickerSites++;
       }
       if (rev.listPartial != null) {
         partialList += rev.listPartial;
@@ -522,6 +554,8 @@
       passSites,
       passStickerAvg: passStickerSites ? passStickerSum / passStickerSites : null,
       passStickerSites,
+      tuitionStickerAvg: tuitionStickerSites ? tuitionStickerSum / tuitionStickerSites : null,
+      tuitionStickerSites,
       partialList: partialSites ? partialList : null,
       partialSites,
       uaSites,
@@ -1056,7 +1090,11 @@
     document.getElementById('kAvgPrice').textContent =
       agg.avgPrice != null ? '$' + fmtDec(agg.avgPrice, 0) : '—';
     document.getElementById('kAvgPriceUnit').textContent =
-      '$/mo tuition (per_enrollee_month, rollable) · never mixed with UA passes';
+      agg.tuitionStickerSites
+        ? '$/mo tuition stickers · ' +
+          fmtNum(agg.tuitionStickerSites) +
+          ' price-only (not in Est.) · never mixed with UA'
+        : '$/mo tuition (per_enrollee_month) · never mixed with UA passes';
 
     document.getElementById('kMonthly').textContent = fmtMoney(agg.estMonthly);
     document.getElementById('kAnnual').textContent = fmtMoney(agg.estAnnual);
@@ -1387,11 +1425,15 @@
                 ? '<span title="pass sticker — no enroll, not revenue">$' +
                   fmtDec(rev.passSticker, 2) +
                   '<span class="partial-tag">sticker</span></span>'
-                : rev.listPartial != null
-                ? '<span title="not rolled into tuition">' +
-                  fmtMoney(rev.listPartial) +
-                  '<span class="partial-tag">n/a</span></span>'
-                : '—';
+                : rev.tuitionSticker != null
+                  ? '<span title="tuition sticker — no enroll, not revenue">$' +
+                    fmtDec(rev.tuitionSticker, rev.tuitionSticker < 20 ? 2 : 0) +
+                    '<span class="partial-tag">sticker</span></span>'
+                  : rev.listPartial != null
+                    ? '<span title="not rolled into tuition">' +
+                      fmtMoney(rev.listPartial) +
+                      '<span class="partial-tag">n/a</span></span>'
+                    : '—';
 
         return (
           '<tr tabindex="0" data-id="' +

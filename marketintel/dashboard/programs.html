@@ -244,6 +244,7 @@
           <li><strong>Sites for enroll %:</strong> sites where <code>enrolled != null</code> (includes explicit 0).</li>
           <li><strong>Avg enrollment:</strong> sum(enrolled) / sites_with_enroll.</li>
           <li><strong>Avg price:</strong> mean(<code>price_low</code>) among sites with price; <strong>Urban Air excluded</strong> from revenue/avg-price paths (jump-pass).</li>
+          <li><strong>Price-only (e.g. My Gym):</strong> <code>evidence_tier=price_only</code>, enrolled null — shows tuition sticker / avg price, never Est. monthly/annual until enroll exists.</li>
           <li><strong>Billing model:</strong> from Intel <code>billing_model</code> (perpetual_monthly, membership_pass_monthly, term_session, one_off_*, unknown).</li>
           <li><strong>Est monthly/annual:</strong> only when <code>revenue_rollable</code> and <code>revenue_unit=per_enrollee_month</code> (tuition). UA passes stay in Pass/member $ — never ×12 into tuition KPIs. Prepaid / one-offs stay non-annualized.</li>
           <li><strong>Pull week</strong> is the intel scrape window, <em>not</em> session calendar dates.</li>
