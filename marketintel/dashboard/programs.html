@@ -43,12 +43,13 @@
           <option value="ninja">ninja</option>
           <option value="martial_arts">martial_arts</option>
           <option value="cheer_dance">cheer_dance</option>
-          <option value="adventure">adventure</option>
-          <option value="stem">stem</option>
-                  </select>
+          <option value="adventure_park">adventure_park</option>
+          <option value="stem_makers">stem_makers</option>
+          <option value="other">other</option>
+        </select>
       </div>
       <div class="filter-field filter-field-wide">
-        <label for="brandFilter">Brand</label>
+        <label for="brandMsTrigger">Brand (multi)</label>
         <div class="ms-wrap" id="brandMsWrap">
           <button type="button" class="ms-trigger" id="brandMsTrigger" aria-haspopup="listbox" aria-expanded="false">
             <span id="brandMsLabel">All brands</span>
@@ -186,6 +187,9 @@
     </aside>
 
     <h3 class="section brands" id="tableSectionTitle">Sites <span class="section-count" id="tableCount"></span></h3>
+    <div class="table-truncation-banner is-truncated" id="tableTruncationBanner" hidden role="status">
+      <span id="tableTruncationText">Showing 0 of 0 sites — use Load more or Show all</span>
+    </div>
     <div class="table-wrap">
       <table class="facts-table sites-table" id="factsTable">
         <thead>
@@ -212,14 +216,17 @@
     </div>
     <div class="table-footer" id="tableFooter" hidden>
       <span id="tableShowing">Showing 0 of 0</span>
-      <button type="button" class="btn btn-ghost btn-sm" id="loadMoreBtn" hidden>Load more</button>
+      <div class="table-footer-actions">
+        <button type="button" class="btn btn-primary btn-sm" id="loadMoreBtn" hidden>Load more</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="showAllBtn" hidden>Show all</button>
+      </div>
     </div>
 
     <details class="notes-fold">
       <summary>Metric definitions &amp; honesty notes</summary>
       <div class="note">
         <ul>
-          <li><strong>Category:</strong> from <code>site.category</code> when present; else derived from brand/program/name/session keywords (ninja → martial → cheer/dance → adventure → STEM → gymnastics → other).</li>
+          <li><strong>Category:</strong> from <code>site.category</code> when present; else derived from brand/program/name/session keywords (ninja → martial → cheer/dance → adventure_park → stem_makers → gymnastics → other).</li>
           <li><strong>Sites for enroll %:</strong> sites where <code>enrolled != null</code> (includes explicit 0).</li>
           <li><strong>Avg enrollment:</strong> sum(enrolled) / sites_with_enroll.</li>
           <li><strong>Avg price:</strong> mean(<code>price_low</code>) among sites with price; <strong>Urban Air excluded</strong> from revenue/avg-price paths (jump-pass).</li>

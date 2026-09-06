@@ -19,8 +19,8 @@
     'ninja',
     'martial_arts',
     'cheer_dance',
-    'adventure',
-    'stem',
+    'adventure_park',
+    'stem_makers',
     'other',
   ];
 
@@ -77,34 +77,34 @@
       .trim()
       .replace(/[\s-]+/g, '_');
     if (!v) return '';
-    if (v === 'adventure_park' || v === 'adventurepark') return 'adventure';
-    if (v === 'stem_makers' || v === 'stem_maker' || v === 'stemmakers') return 'stem';
+    if (v === 'adventure' || v === 'adventurepark') return 'adventure_park';
+    if (v === 'stem' || v === 'stem_maker' || v === 'stemmakers') return 'stem_makers';
     if (v === 'cheer' || v === 'dance' || v === 'cheer/dance') return 'cheer_dance';
-    if (v === 'martial' || v === 'martialarts' || v === 'mma') return 'martial_arts';
+    if (v === 'martial' || v === 'martialarts') return 'martial_arts';
+    if (CATEGORY_ORDER.includes(v)) return v;
     return v;
   }
 
-  /** Prefer site.category; heuristic only when missing. */
+  /** Prefer site.category; else derive from brand/program/name/session keywords (spec order). */
   function categoryOf(s) {
     const fromSite = normalizeCategory(s.category);
-    if (fromSite) return fromSite;
+    if (fromSite && CATEGORY_ORDER.includes(fromSite)) return fromSite;
 
-    const blob = [
-      brandNameOf(s),
-      programOf(s).name,
-      s.name || '',
-      s.session_name || '',
-      s.price_low_name || '',
-    ]
+    const hay = [s.brand, s.program_name, s.program, s.name, s.session_name]
+      .filter(Boolean)
       .join(' ')
       .toLowerCase();
 
-    if (/\bninja\b/.test(blob)) return 'ninja';
-    if (/martial|karate|taekwondo|jiu.?jitsu|kung.?fu|mma\b/.test(blob)) return 'martial_arts';
-    if (/cheer|dance|tumbling\b/.test(blob)) return 'cheer_dance';
-    if (/urban.?air|adventure.?park|trampoline|soft.?play|bounce/.test(blob)) return 'adventure';
-    if (/\bstem\b|robotic|coding|maker|snapology|science/.test(blob)) return 'stem';
-    if (/gymnast|little.?gym|tumble|acro/.test(blob)) return 'gymnastics';
+    if (/ninja|parkour|warrior/.test(hay)) return 'ninja';
+    if (/martial|bjj|tkd|mma|combat|karate/.test(hay)) return 'martial_arts';
+    if (/cheer|dance|tumbl/.test(hay)) return 'cheer_dance';
+    if (/urban air|trampoline park/.test(hay)) return 'adventure_park';
+    if (/snapology/.test(hay)) return 'stem_makers';
+    if (
+      /gymnast|little gym|gold medal|dawes|gyminny|tumbles|head over heels|flip|apex/.test(hay)
+    ) {
+      return 'gymnastics';
+    }
     return 'other';
   }
 
@@ -254,9 +254,14 @@
 
   function mapHrefForSite(s) {
     const q = new URLSearchParams();
-    if (s.id) q.set('site', s.id);
-    else if (brandNameOf(s) !== 'Unknown') q.set('brand', brandNameOf(s));
-    if (s.metro) q.set('metro', s.metro);
+    if (s.lat != null && s.lng != null && !isNaN(+s.lat) && !isNaN(+s.lng)) {
+      q.set('lat', String(s.lat));
+      q.set('lng', String(s.lng));
+    } else if (brandNameOf(s) !== 'Unknown') {
+      q.set('brand', brandNameOf(s));
+    } else if ((s.metro || '').trim()) {
+      q.set('metro', (s.metro || '').trim());
+    }
     const hash = q.toString();
     return 'map.html' + (hash ? '#' + hash : '');
   }
@@ -1061,10 +1066,47 @@
     return html;
   }
 
+  function updateTablePager(shownCount, total) {
+    const truncated = total > 0 && shownCount < total;
+    const banner = document.getElementById('tableTruncationBanner');
+    const bannerText = document.getElementById('tableTruncationText');
+    const footer = document.getElementById('tableFooter');
+    const showing = document.getElementById('tableShowing');
+    const moreBtn = document.getElementById('loadMoreBtn');
+    const showAllBtn = document.getElementById('showAllBtn');
+
+    if (banner) {
+      banner.hidden = !truncated;
+      banner.classList.toggle('is-truncated', truncated);
+      if (bannerText) {
+        bannerText.textContent =
+          'Showing ' +
+          fmtNum(shownCount) +
+          ' of ' +
+          fmtNum(total) +
+          ' sites — use Load more or Show all';
+      }
+    }
+
+    if (footer) {
+      const showFooter = total > 0;
+      footer.hidden = !showFooter;
+      footer.classList.toggle('is-active', truncated);
+      footer.classList.toggle('is-truncated', truncated);
+      if (showing) {
+        showing.textContent = 'Showing ' + fmtNum(shownCount) + ' of ' + fmtNum(total);
+      }
+    }
+
+    if (moreBtn) moreBtn.hidden = !truncated;
+    if (showAllBtn) showAllBtn.hidden = !truncated;
+  }
+
   function renderTable(sorted) {
     const body = document.getElementById('factsBody');
     const total = sorted.length;
-    const slice = sorted.slice(0, state.shown);
+    const limit = Number.isFinite(state.shown) ? state.shown : total;
+    const slice = sorted.slice(0, Math.min(limit, total));
 
     document.getElementById('tableCount').textContent = '(' + fmtNum(total) + ')';
 
@@ -1077,16 +1119,7 @@
       }
     });
 
-    const footer = document.getElementById('tableFooter');
-    const showing = document.getElementById('tableShowing');
-    const moreBtn = document.getElementById('loadMoreBtn');
-    if (footer) {
-      footer.hidden = total === 0;
-      if (showing) showing.textContent = 'Showing ' + fmtNum(slice.length) + ' of ' + fmtNum(total);
-      if (moreBtn) {
-        moreBtn.hidden = slice.length >= total;
-      }
-    }
+    updateTablePager(slice.length, total);
 
     if (!slice.length) {
       body.innerHTML =
@@ -1445,7 +1478,16 @@
   const loadMoreBtn = document.getElementById('loadMoreBtn');
   if (loadMoreBtn) {
     loadMoreBtn.addEventListener('click', () => {
-      state.shown += PAGE_SIZE;
+      const cur = Number.isFinite(state.shown) ? state.shown : cachedSorted.length;
+      state.shown = cur + PAGE_SIZE;
+      renderTable(cachedSorted);
+    });
+  }
+
+  const showAllBtn = document.getElementById('showAllBtn');
+  if (showAllBtn) {
+    showAllBtn.addEventListener('click', () => {
+      state.shown = Infinity;
       renderTable(cachedSorted);
     });
   }

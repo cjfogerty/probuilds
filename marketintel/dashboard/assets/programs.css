@@ -1,5 +1,5 @@
 /* Market Intel v2 — Brand / Program facts (extends hub tokens) */
-.programs-page { padding-bottom: 80px; }
+.programs-page { padding-bottom: 120px; }
 .programs-wrap { max-width: 1400px; }
 
 .programs-toolbar {
@@ -1021,4 +1021,68 @@
 @media (max-width: 700px) {
   .filter-stack { grid-template-columns: 1fr; }
   .filter-field-wide { min-width: 0; }
+}
+
+
+/* —— Truncation banner + sticky pager (CueWay pushback) —— */
+[hidden] {
+  display: none !important;
+}
+
+.table-truncation-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 10px;
+  padding: 10px 14px;
+  background: #fffbeb;
+  border: 1px solid #f6e05e;
+  border-radius: 10px;
+  color: #744210;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.35;
+  box-shadow: var(--shadow);
+}
+.table-truncation-banner[hidden],
+.table-truncation-banner:not(.is-truncated) {
+  display: none !important;
+}
+
+.table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  padding: 10px 14px;
+  font-size: 0.84rem;
+  color: var(--muted);
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+.table-footer[hidden] {
+  display: none !important;
+}
+.table-footer.is-active,
+.table-footer.is-truncated {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  background: rgba(255, 255, 255, 0.97);
+  border-color: var(--border2);
+  box-shadow: 0 -6px 20px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(6px);
+}
+.table-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.table-footer #loadMoreBtn:not([hidden]) {
+  font-weight: 700;
 }
