@@ -60,6 +60,7 @@
     type: '',
     metro: '',
     siteId: '',
+    evidence: '',
     hideRetail: true,
     multiOnly: false,
     search: '',
@@ -79,6 +80,11 @@
     (meta.n_with_enroll || 0) === 0
       ? 'enrolled_or_sold: none — stickers only'
       : 'enrolled_or_sold on ' + fmtNum(meta.n_with_enroll);
+  const ov = document.getElementById('overlapChip');
+  if (ov) {
+    ov.textContent =
+      'catalog∩classline sites: ' + fmtNum(meta.site_overlap_catalog_classline || 0);
+  }
 
   function isRetail(p) {
     const t = +p.product_type_id;
@@ -94,10 +100,17 @@
     if (state.type) list = list.filter((p) => String(p.product_type_id) === state.type);
     if (state.metro) list = list.filter((p) => (p.metro || '') === state.metro);
     if (state.siteId) list = list.filter((p) => p.site_id === state.siteId);
+    if (state.evidence) {
+      if (state.evidence === 'class_line_*') {
+        list = list.filter((p) => String(p.evidence_tier || '').startsWith('class_line'));
+      } else {
+        list = list.filter((p) => (p.evidence_tier || '') === state.evidence);
+      }
+    }
     const needle = state.search.trim().toLowerCase();
     if (needle) {
       list = list.filter((p) => {
-        const hay = [p.sku_name, p.site_name, p.brand, p.metro, p.billing_model, p.product_type_label, p.program_name]
+        const hay = [p.sku_name, p.site_name, p.brand, p.metro, p.billing_model, p.product_type_label, p.program_name, p.evidence_tier, p.platform]
           .join(' ')
           .toLowerCase();
         return hay.includes(needle);
@@ -162,6 +175,12 @@
       }
     });
 
+    const catalogN = evidence.product_catalog || 0;
+    const classlineN =
+      (evidence.class_line_modeled || 0) +
+      (evidence.class_line_published || 0) +
+      (evidence.class_line_schedule_only || 0);
+
     return {
       skus: list.length,
       sites: sites.size,
@@ -169,6 +188,8 @@
       billing,
       types,
       evidence,
+      catalogN,
+      classlineN,
       avgPrice: priceN ? priceSum / priceN : null,
       priceN,
       estMonthly: monthlyN ? monthly : null,
@@ -342,6 +363,38 @@
         state.siteId,
         'All locations'
       ) || '';
+
+    const evCounts = {};
+    pool.forEach((p) => {
+      const e = p.evidence_tier || 'unknown';
+      evCounts[e] = (evCounts[e] || 0) + 1;
+    });
+    const evOrder = [
+      'product_catalog',
+      'class_line_modeled',
+      'class_line_published',
+      'class_line_schedule_only',
+    ];
+    const evOpts = [
+      { value: 'class_line_*', label: 'All class-line (*)' },
+      ...evOrder.filter((e) => evCounts[e]).map((e) => ({ value: e, label: e + ' (' + evCounts[e] + ')' })),
+      ...Object.keys(evCounts)
+        .filter((e) => !evOrder.includes(e))
+        .sort()
+        .map((e) => ({ value: e, label: e + ' (' + evCounts[e] + ')' })),
+    ];
+    const evSel = document.getElementById('evidenceFilter');
+    if (evSel) {
+      const cur = state.evidence;
+      evSel.innerHTML =
+        '<option value="">All evidence tiers</option>' +
+        evOpts.map((o) => '<option value="' + esc(o.value) + '">' + esc(o.label) + '</option>').join('');
+      if (cur && (cur === 'class_line_*' || evCounts[cur])) evSel.value = cur;
+      else {
+        evSel.value = '';
+        state.evidence = '';
+      }
+    }
   }
 
   function scopeLabel() {
@@ -354,6 +407,7 @@
       const p = allProducts.find((x) => x.site_id === state.siteId);
       parts.push(p ? p.site_name : '1 location');
     }
+    if (state.evidence) parts.push('evidence: ' + state.evidence);
     if (state.hideRetail) parts.push('membership/prepaid');
     if (state.multiOnly) parts.push('multi-billing only');
     if (state.search.trim()) parts.push('“' + state.search.trim() + '”');
@@ -372,6 +426,7 @@
       const p = allProducts.find((x) => x.site_id === state.siteId);
       items.push({ k: 'site', label: 'site: ' + (p ? p.site_name : state.siteId) });
     }
+    if (state.evidence) items.push({ k: 'evidence', label: 'evidence: ' + state.evidence });
     if (state.search.trim()) items.push({ k: 'search', label: 'search: ' + state.search.trim() });
     if (!items.length) {
       chips.hidden = true;
@@ -399,6 +454,7 @@
         if (k === 'type') state.type = '';
         if (k === 'metro') state.metro = '';
         if (k === 'site') state.siteId = '';
+        if (k === 'evidence') state.evidence = '';
         if (k === 'search') {
           state.search = '';
           document.getElementById('prodSearch').value = '';
@@ -454,8 +510,21 @@
       : 'needs enrolled_or_sold';
     document.getElementById('kAnnual').textContent = fmtMoney(agg.estAnnual);
     document.getElementById('kEnroll').textContent = fmtNum(agg.enrollN);
-    const evKeys = Object.keys(agg.evidence);
-    document.getElementById('kEvidence').textContent = evKeys[0] || '—';
+    const kCat = document.getElementById('kCatalog');
+    if (kCat) kCat.textContent = fmtNum(agg.catalogN);
+    const kCl = document.getElementById('kClassline');
+    if (kCl) kCl.textContent = fmtNum(agg.classlineN);
+    const kClSub = document.getElementById('kClasslineSub');
+    if (kClSub) {
+      const e = agg.evidence || {};
+      kClSub.textContent =
+        fmtNum(e.class_line_modeled || 0) +
+        ' modeled · ' +
+        fmtNum(e.class_line_published || 0) +
+        ' published · ' +
+        fmtNum(e.class_line_schedule_only || 0) +
+        ' schedule';
+    }
     renderGrid(document.getElementById('billingGrid'), agg.billing, BILLING_ORDER);
     renderGrid(document.getElementById('typeGrid'), agg.types, null);
 
@@ -587,6 +656,7 @@
     state.type = '';
     state.metro = '';
     state.siteId = '';
+    state.evidence = '';
     state.search = '';
     state.shown = PAGE_SIZE;
     document.getElementById('prodSearch').value = '';
@@ -622,6 +692,14 @@
     state.shown = PAGE_SIZE;
     refresh();
   });
+  const evidenceFilter = document.getElementById('evidenceFilter');
+  if (evidenceFilter) {
+    evidenceFilter.addEventListener('change', (e) => {
+      state.evidence = e.target.value;
+      state.shown = PAGE_SIZE;
+      refresh();
+    });
+  }
   document.getElementById('hideRetail').addEventListener('change', (e) => {
     state.hideRetail = !!e.target.checked;
     state.shown = PAGE_SIZE;

@@ -18,7 +18,8 @@
         <span class="chip" id="weekChip">Pull week —</span>
         <span class="chip" id="skuCountChip">— SKUs</span>
         <span class="chip" id="siteCountChip">— sites</span>
-        <span class="chip warn-soft" id="enrollChip">enrolled_or_sold: none yet</span>
+        <span class="chip warn-soft" id="enrollChip">enrolled_or_sold: —</span>
+        <span class="chip" id="overlapChip">catalog∩classline: —</span>
       </div>
     </header>
 
@@ -56,6 +57,10 @@
         <label for="siteFilter">Location</label>
         <select id="siteFilter" class="filter-select"><option value="">All locations</option></select>
       </div>
+      <div class="filter-field filter-field-wide">
+        <label for="evidenceFilter">Evidence tier</label>
+        <select id="evidenceFilter" class="filter-select"><option value="">All evidence tiers</option></select>
+      </div>
     </div>
 
     <div class="selection-bar" id="selectionBar">
@@ -72,10 +77,11 @@
       <div class="kpi"><div class="label">Locations</div><div class="value" id="kSites">—</div><div class="sub" id="kSitesSub"></div></div>
       <div class="kpi"><div class="label">Multi-billing sites</div><div class="value" id="kMulti">—</div><div class="sub">≥2 models in scope</div></div>
       <div class="kpi"><div class="label">Avg sticker</div><div class="value" id="kAvgPrice">—</div><div class="sub" id="kAvgPriceSub">catalog price · not revenue</div></div>
-      <div class="kpi rev"><div class="label">Est. monthly</div><div class="value" id="kMonthly">—</div><div class="sub" id="kMonthlySub">needs enrolled_or_sold</div></div>
+      <div class="kpi rev"><div class="label">Est. monthly</div><div class="value" id="kMonthly">—</div><div class="sub" id="kMonthlySub">enroll + revenue_rollable only</div></div>
       <div class="kpi rev"><div class="label">Est. annualized</div><div class="value" id="kAnnual">—</div><div class="sub">never from sticker alone</div></div>
       <div class="kpi"><div class="label">With enroll/sold</div><div class="value" id="kEnroll">—</div><div class="sub">of filtered SKUs</div></div>
-      <div class="kpi"><div class="label">Evidence</div><div class="value" id="kEvidence">—</div><div class="sub">product_catalog</div></div>
+      <div class="kpi"><div class="label">Catalog SKUs</div><div class="value" id="kCatalog">—</div><div class="sub">product_catalog · sticker</div></div>
+      <div class="kpi"><div class="label">Class-line SKUs</div><div class="value" id="kClassline">—</div><div class="sub" id="kClasslineSub">modeled / published / schedule</div></div>
     </section>
 
     <div class="panels-row">
@@ -131,7 +137,8 @@
           <li><strong>Multi-billing:</strong> 483 sites mix ≥2 models in this cut — filter “Multi-billing sites only” to inspect them.</li>
           <li><strong>Est. monthly/annual:</strong> only when <code>revenue_rollable</code> and <code>enrolled_or_sold</code> present. This drop has enroll=null → stickers only.</li>
           <li><strong>Merch/cafe:</strong> product_type_id 3/4 → <code>one_off_package</code>. Default toggle hides them from membership views.</li>
-          <li><strong>Do not</strong> attribute class calendar seats to membership SKUs.</li>
+          <li><strong>evidence_tier:</strong> <code>product_catalog</code> (Unleashed) · <code>class_line_modeled</code> · <code>class_line_published</code> · <code>class_line_schedule_only</code>. Filter/KPI split keeps them separable — 0 site_id overlap with Unleashed.</li>
+          <li><strong>Do not</strong> attribute class calendar seats to Unleashed membership SKUs.</li>
         </ul>
       </div>
     </details>
