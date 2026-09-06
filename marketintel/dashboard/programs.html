@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Market Intel — Brand &amp; Program Facts</title>
+<link rel="stylesheet" href="assets/hub.css" />
+<link rel="stylesheet" href="assets/programs.css" />
+</head>
+<body class="programs-page">
+  <div class="container programs-wrap">
+    <header class="hub-head">
+      <h1>Brand &amp; Program Facts</h1>
+      <p class="sub">Enrollment, pricing units, and session-date coverage by brand or program</p>
+      <div class="meta-row">
+        <span class="chip" id="asOfChip">As of —</span>
+        <span class="chip" id="weekChip">Pull week —</span>
+        <span class="chip" id="entityCountChip">— entities</span>
+        <span class="chip est" title="Tuition estimates exclude Urban Air pass pricing">Est. revenue</span>
+        <span class="chip warn-soft" id="sessionGapChip" title="Schema gap">Session dates: enriched (JR inferred)</span>
+      </div>
+    </header>
+
+    <div class="toolbar programs-toolbar">
+      <a class="btn btn-ghost" href="index.html">← Hub</a>
+      <a class="btn btn-ghost" href="map.html">Open map</a>
+      <div class="mode-toggle" role="group" aria-label="Group by">
+        <button type="button" class="mode-btn active" id="modeBrand" data-mode="brand" aria-pressed="true">By Brand</button>
+        <button type="button" class="mode-btn" id="modeProgram" data-mode="program" aria-pressed="false">By Program</button>
+      </div>
+      <input class="search" id="progSearch" type="search" placeholder="Search name, metro, platform…" autocomplete="off" />
+      <select id="platformFilter" class="platform-select" aria-label="Filter by platform">
+        <option value="">All platforms</option>
+      </select>
+      <label class="toggle-inline" title="Same default as hub/map">
+        <input type="checkbox" id="hideClosed" checked /> Hide closed / junk
+      </label>
+    </div>
+
+    <!-- National / selection KPI strip -->
+    <div class="selection-bar" id="selectionBar">
+      <div class="sel-label"><span class="sel-kicker">Scope</span><strong id="scopeName">National (all visible)</strong></div>
+      <button type="button" class="btn btn-ghost btn-sm" id="clearSelection" hidden>Clear selection</button>
+    </div>
+
+    <section class="kpis" id="kpiStrip" aria-label="KPIs for selected scope">
+      <div class="kpi"><div class="label">Sites</div><div class="value" id="kSites">—</div><div class="sub" id="kSitesSub"></div></div>
+      <div class="kpi"><div class="label">Metros</div><div class="value" id="kMetros">—</div><div class="sub">unique</div></div>
+      <div class="kpi"><div class="label">Total enrolled</div><div class="value" id="kEnrolled">—</div><div class="sub" id="kEnrollSub"></div></div>
+      <div class="kpi"><div class="label">Avg enrolled / site</div><div class="value" id="kAvgEnroll">—</div><div class="sub">sites with enroll</div></div>
+      <div class="kpi"><div class="label">Enroll coverage</div><div class="value" id="kEnrollCov">—</div><div class="sub">enrolled ≠ null</div></div>
+      <div class="kpi"><div class="label">Price coverage</div><div class="value" id="kPriceCov">—</div><div class="sub">price_low present</div></div>
+      <div class="kpi"><div class="label">Avg price</div><div class="value" id="kAvgPrice">—</div><div class="sub" id="kAvgPriceUnit">excl. Urban Air</div></div>
+      <div class="kpi rev"><div class="label">Est. monthly</div><div class="value" id="kMonthly">—</div><div class="sub" id="kMonthlySub">see formula</div></div>
+      <div class="kpi rev"><div class="label">Est. annualized</div><div class="value" id="kAnnual">—</div><div class="sub" id="kAnnualSub">weak when non-monthly</div></div>
+    </section>
+
+    <div class="panels-row">
+      <!-- Unit of measure -->
+      <section class="panel-card" id="unitPanel" aria-label="Unit of measure">
+        <h3 class="panel-title">Unit of measure</h3>
+        <p class="panel-lead" id="unitLead">Derived from <code>billing_interval</code> on sites in scope.</p>
+        <div class="unit-grid" id="unitGrid"></div>
+        <ul class="unit-legend">
+          <li><span class="ubadge monthly">monthly</span> → $/mo tuition</li>
+          <li><span class="ubadge lesson">per_lesson / each</span> → $/lesson</li>
+          <li><span class="ubadge unknown">null</span> → unit unknown — do not annualize blindly</li>
+        </ul>
+      </section>
+
+      <!-- Session coverage — CRITICAL -->
+      <section class="panel-card session-gap" id="sessionPanel" aria-label="Session date coverage">
+        <h3 class="panel-title">
+          Session coverage
+          <span class="gap-pill">COVERAGE GAP</span>
+        </h3>
+        <div class="session-strip" id="sessionStrip">
+          <div class="sess-block pull">
+            <div class="sess-label">Intel pull week</div>
+            <div class="sess-value" id="pullWeekRange">—</div>
+            <div class="sess-hint">NOT session dates — observation / scrape window only</div>
+          </div>
+          <div class="sess-block missing" id="sessStartBlock">
+            <div class="sess-label">Session start dates</div>
+            <div class="sess-value">
+              <span class="cap ok">CAPTURED <strong id="sessStartCap">0</strong></span>
+              / <span class="cap miss">MISSING <strong id="sessStartMiss">—</strong></span>
+              / <span class="cap na">N/A <strong id="sessStartNA">—</strong></span>
+            </div>
+            <div class="sess-hint">From <code>session_dates_status</code>; JR windows may be <strong>inferred</strong></div>
+          </div>
+          <div class="sess-block missing" id="sessEndBlock">
+            <div class="sess-label">Session end dates</div>
+            <div class="sess-value">
+              <span class="cap ok">CAPTURED <strong id="sessEndCap">0</strong></span>
+              / <span class="cap miss">MISSING <strong id="sessEndMiss">—</strong></span>
+              / <span class="cap na">N/A <strong id="sessEndNA">—</strong></span>
+            </div>
+            <div class="sess-hint">Pike13 course packages still mostly missing real windows</div>
+          </div>
+        </div>
+        <div class="session-warn" id="sessionWarn" role="status">
+          <strong>Warning:</strong> Pull week (<span id="pullWeekInline">—</span>) is the intel scrape window — <em>not</em> when classes run.
+          <code>session_start</code>/<code>session_end</code> exist for some Jackrabbit term sessions (often inferred from labels, not published calendars).
+          Ongoing tuition + Urban Air pass sites are typically <code>not_applicable</code>. Ask Intel Snatcher for fuller published session calendars (esp. Pike13).
+        </div>
+      </section>
+    </div>
+
+    <div class="charts-row">
+      <section class="panel-card chart-card">
+        <h3 class="panel-title">Top by enrolled <span class="section-count" id="chartModeLabel">(brands)</span></h3>
+        <div class="bar-chart" id="enrollBars" role="img" aria-label="Bar chart of top entities by enrollment"></div>
+      </section>
+      <section class="panel-card chart-card">
+        <h3 class="panel-title">Billing unit mix <span class="section-count">(sites in scope)</span></h3>
+        <div class="unit-mix" id="unitMixChart"></div>
+      </section>
+    </div>
+
+    <!-- Detail drawer -->
+    <aside class="detail-panel" id="detailPanel" hidden aria-live="polite">
+      <div class="detail-hd">
+        <div>
+          <div class="detail-kicker" id="detailKicker">Selected</div>
+          <h2 id="detailName">—</h2>
+          <div class="detail-meta" id="detailMeta"></div>
+        </div>
+        <div class="detail-actions">
+          <a class="btn btn-primary btn-sm" id="detailMapLink" href="map.html">Open on map</a>
+          <button type="button" class="btn btn-ghost btn-sm" id="detailClose" aria-label="Close detail">Close</button>
+        </div>
+      </div>
+      <div class="detail-body" id="detailBody"></div>
+    </aside>
+
+    <h3 class="section brands" id="tableSectionTitle">Brands <span class="section-count" id="tableCount"></span></h3>
+    <div class="table-wrap">
+      <table class="facts-table" id="factsTable">
+        <thead>
+          <tr>
+            <th scope="col"><button type="button" class="sort-btn" data-sort="name" aria-sort="none">Name</button></th>
+            <th scope="col"><button type="button" class="sort-btn" data-sort="platforms" aria-sort="none">Platform(s)</button></th>
+            <th scope="col" class="num"><button type="button" class="sort-btn" data-sort="sites" aria-sort="descending">Sites</button></th>
+            <th scope="col" class="num"><button type="button" class="sort-btn" data-sort="metros" aria-sort="none">Metros</button></th>
+            <th scope="col" class="num"><button type="button" class="sort-btn" data-sort="enrolled" aria-sort="none">Enrolled</button></th>
+            <th scope="col" class="num"><button type="button" class="sort-btn" data-sort="avgEnroll" aria-sort="none">Avg/site</button></th>
+            <th scope="col" class="num"><button type="button" class="sort-btn" data-sort="enrollCov" aria-sort="none">Enroll %</button></th>
+            <th scope="col" class="num"><button type="button" class="sort-btn" data-sort="priceCov" aria-sort="none">Price %</button></th>
+            <th scope="col"><button type="button" class="sort-btn" data-sort="dominantUnit" aria-sort="none">Dominant unit</button></th>
+            <th scope="col" class="num"><button type="button" class="sort-btn" data-sort="avgPrice" aria-sort="none">Avg price</button></th>
+            <th scope="col" class="num"><button type="button" class="sort-btn" data-sort="estMonthly" aria-sort="none">Est monthly</button></th>
+            <th scope="col" class="num"><button type="button" class="sort-btn" data-sort="estAnnual" aria-sort="none">Est annual</button></th>
+            <th scope="col"><button type="button" class="sort-btn" data-sort="sessionStatus" aria-sort="none">Session dates</button></th>
+          </tr>
+        </thead>
+        <tbody id="factsBody"></tbody>
+      </table>
+    </div>
+
+    <details class="notes-fold">
+      <summary>Metric definitions &amp; honesty notes</summary>
+      <div class="note">
+        <ul>
+          <li><strong>Sites for enroll %:</strong> sites where <code>enrolled != null</code> (includes explicit 0).</li>
+          <li><strong>Avg enrollment:</strong> sum(enrolled) / sites_with_enroll.</li>
+          <li><strong>Avg price:</strong> mean(<code>price_low</code>) among sites with price; <strong>Urban Air excluded</strong> from revenue/avg-price paths (jump-pass).</li>
+          <li><strong>Est monthly:</strong> for <code>billing_interval === monthly</code>: enrolled × price_low (when both present, non-UA). For <code>per_lesson</code>/<code>each</code>: only annualize via assumed lessons/mo when <code>n_classes</code> suggests a rate; otherwise mark <em>partial</em> — show list×enrolled with unit label, do not fake annualize.</li>
+          <li><strong>Est annual:</strong> monthly × 12 when monthly billing is solid; otherwise weak / partial / —.</li>
+          <li><strong>Pull week</strong> (<code>week_start</code>–<code>week_end</code>) is the intel scrape window, <em>not</em> session calendar dates.</li>
+          <li><strong>Program</strong> = <code>program || program_name || brand</code>; badge shown when falling back to brand (no program field in schema yet).</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+  <script src="data/sites.js"></script>
+  <script src="assets/programs.js"></script>
+</body>
+</html>
