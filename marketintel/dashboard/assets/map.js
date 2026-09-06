@@ -185,7 +185,8 @@
   legend.appendChild(shapeHint);
 
   // —— Leaflet map ——
-  const map = L.map('map', { zoomControl: true, attributionControl: true }).setView([39.5, -98], 4);
+  const map = L.map('map', { zoomControl: false, attributionControl: true }).setView([39.5, -98], 4);
+  L.control.zoom({ position: 'bottomright' }).addTo(map);
 
   const esriDark = L.tileLayer(
     'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
@@ -348,10 +349,80 @@
     state.mapExpanded = !state.mapExpanded;
     const col = document.getElementById('centerCol');
     col.classList.toggle('map-expanded', state.mapExpanded);
+    if (state.mapExpanded) {
+      col.dataset.splitRows = col.style.gridTemplateRows || '';
+      col.style.gridTemplateRows = 'minmax(0, 1fr) 0 0';
+    } else {
+      col.style.gridTemplateRows = col.dataset.splitRows || '';
+    }
     document.getElementById('btnExpandMap').textContent = state.mapExpanded ? 'Show table' : 'Enlarge map';
     softInvalidate();
     setTimeout(softInvalidate, 200);
   });
+
+  const appEl = document.querySelector('.app');
+  function syncPanelButtons() {
+    const filtersBtn = document.getElementById('btnToggleFilters');
+    const shareBtn = document.getElementById('btnToggleShare');
+    const filtersOn = !appEl.classList.contains('filters-collapsed');
+    const shareOn = !appEl.classList.contains('share-collapsed');
+    filtersBtn.classList.toggle('is-on', filtersOn);
+    shareBtn.classList.toggle('is-on', shareOn);
+    filtersBtn.setAttribute('aria-pressed', filtersOn ? 'true' : 'false');
+    shareBtn.setAttribute('aria-pressed', shareOn ? 'true' : 'false');
+  }
+  function collapseForViewport() {
+    if (window.matchMedia('(max-width: 820px)').matches) {
+      appEl.classList.add('filters-collapsed');
+    }
+    if (window.matchMedia('(max-width: 1100px)').matches) {
+      appEl.classList.add('share-collapsed');
+    }
+    syncPanelButtons();
+  }
+  collapseForViewport();
+  document.getElementById('btnToggleFilters').addEventListener('click', () => {
+    appEl.classList.toggle('filters-collapsed');
+    syncPanelButtons();
+    softInvalidate();
+    setTimeout(softInvalidate, 220);
+  });
+  document.getElementById('btnToggleShare').addEventListener('click', () => {
+    appEl.classList.toggle('share-collapsed');
+    syncPanelButtons();
+    softInvalidate();
+    setTimeout(softInvalidate, 220);
+  });
+
+  (function setupSplitter() {
+    const handle = document.getElementById('splitHandle');
+    const col = document.getElementById('centerCol');
+    if (!handle || !col) return;
+    let dragging = false;
+    function onMove(clientY) {
+      const rect = col.getBoundingClientRect();
+      const fromBottom = rect.bottom - clientY;
+      const pct = Math.min(48, Math.max(14, (fromBottom / rect.height) * 100));
+      col.style.gridTemplateRows = 'minmax(0, 1fr) 8px minmax(120px, ' + pct + '%)';
+      if (state.mapExpanded) {
+        state.mapExpanded = false;
+        col.classList.remove('map-expanded');
+        document.getElementById('btnExpandMap').textContent = 'Enlarge map';
+      }
+      softInvalidate();
+    }
+    handle.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      handle.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    handle.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      onMove(e.clientY);
+    });
+    handle.addEventListener('pointerup', () => { dragging = false; softInvalidate(); });
+    handle.addEventListener('pointercancel', () => { dragging = false; });
+  })();
 
   const markerById = new Map();
   function makeIcon(s) {
@@ -762,5 +833,10 @@
   setTimeout(softInvalidate, 100);
   setTimeout(softInvalidate, 400);
   window.addEventListener('resize', softInvalidate);
+  const mapWrap = document.querySelector('.map-wrap');
+  if (mapWrap && typeof ResizeObserver !== 'undefined') {
+    const ro = new ResizeObserver(() => softInvalidate());
+    ro.observe(mapWrap);
+  }
   console.info('[MarketIntel map-v2] sites', allSites.length, 'anchorLocked', state.anchorLocked);
 })();

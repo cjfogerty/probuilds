@@ -3,32 +3,36 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="robots" content="noindex, nofollow" />
-<meta name="theme-color" content="#f9f9f7" media="(prefers-color-scheme: light)" />
-<meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0b0e14" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Market Intel — Map</title>
 <link rel="stylesheet" href="assets/tokens.css" />
+<link rel="stylesheet" href="assets/shell.css" />
 <link rel="stylesheet" href="assets/map.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" />
 </head>
-<body>
+<body class="layout-app page-map">
 <div class="app v2">
-  <header class="topbar">
-    <a class="back-hub" href="index.html" title="Return to metro / brand hub">← Hub</a>
-  <a class="back-hub" href="markets.html" title="Market Command" style="margin-left:6px">Markets</a>
-    <a class="back-hub" href="programs.html" title="Brand & program facts" style="margin-left:6px">Facts</a>
-    <a class="back-hub" href="products.html" title="Products SKU grain" style="margin-left:6px">Products</a>
-    <div class="brand-mark">
-      <div class="logo">MI</div>
-      <div>Market Intel<small>Map command center</small></div>
+  <header class="shell-bar">
+    <a class="shell-brand" href="index.html" title="Market Intel hub">
+      <span class="shell-logo">MI</span>
+      <span class="shell-title">Market Intel<small>Map command center</small></span>
+    </a>
+    <nav class="shell-nav" aria-label="Primary">
+      <a href="index.html">Hub</a>
+      <a class="is-active" href="map.html" aria-current="page">Map</a>
+      <a href="markets.html">Markets</a>
+      <a href="programs.html">Facts</a>
+      <a href="products.html">Products</a>
+    </nav>
+    <div class="shell-end">
+      <div class="shell-chip scope" id="scopeBanner"></div>
+      <div class="shell-chip" id="asOfChip">As of —</div>
+      <div class="shell-est" title="Tuition revenue figures are estimates, not audited">Est. revenue</div>
     </div>
-    <div class="scope-banner" id="scopeBanner"></div>
-    <div class="meta-chip" id="asOfChip">As of —</div>
-    <div class="topbar-spacer"></div>
-    <div class="est-badge" title="Tuition revenue figures are estimates, not audited">Est. revenue</div>
   </header>
   <section class="kpis" id="kpiStrip">
     <div class="kpi"><div class="label">Sites in view</div><div class="value" id="kSites">—</div><div class="sub" id="kSitesSub"></div></div>
@@ -40,7 +44,7 @@
     <div class="kpi"><div class="label">Unmapped</div><div class="value" id="kUnmapped">—</div><div class="sub" id="kUnmappedSub">no lat/lng</div></div>
   </section>
   <div class="main">
-    <aside class="panel">
+    <aside class="panel" id="filtersPanel">
       <div class="panel-hd">Filters <button class="btn-ghost" id="btnReset" type="button" title="Clear filters and return to national view">Reset</button></div>
       <div class="panel-body">
         <div class="filter-section">
@@ -86,10 +90,15 @@
         <div id="map"></div>
         <div class="map-overlay">
           <div class="center-pill" id="centerPill"><span class="dim">Center:</span> not set — open from hub or pick a preset</div>
-          <button type="button" class="map-tool-btn" id="btnRecenter" title="Recenter map on the radius ring" hidden>Recenter on ring</button>
-          <button type="button" class="map-tool-btn" id="btnExpandMap" title="Enlarge map (collapse table)">Enlarge map</button>
+          <div class="map-tools">
+            <button type="button" class="map-tool-btn" id="btnToggleFilters" title="Show or hide filters">Filters</button>
+            <button type="button" class="map-tool-btn" id="btnToggleShare" title="Show or hide market share">Share</button>
+            <button type="button" class="map-tool-btn" id="btnRecenter" title="Recenter map on the radius ring" hidden>Recenter</button>
+            <button type="button" class="map-tool-btn" id="btnExpandMap" title="Enlarge map (collapse table)">Enlarge map</button>
+          </div>
         </div>
       </div>
+      <div class="split-handle" id="splitHandle" role="separator" aria-orientation="horizontal" aria-label="Resize map and table" title="Drag to resize map and table"></div>
       <div class="table-panel" id="tablePanel">
         <div class="table-toolbar">
           <strong class="table-title">Sites</strong>
@@ -120,7 +129,7 @@
         </div>
       </div>
     </div>
-    <aside class="panel right">
+    <aside class="panel right" id="sharePanel">
       <div class="panel-hd">Market share <span id="shareScope" class="scope-label">selection</span></div>
       <div class="panel-body share-body">
         <div class="share-tabs" id="shareTabs">

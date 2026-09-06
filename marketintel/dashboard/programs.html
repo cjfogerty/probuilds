@@ -8,28 +8,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Market Intel — Brand &amp; Program Facts</title>
 <link rel="stylesheet" href="assets/tokens.css" />
+<link rel="stylesheet" href="assets/shell.css" />
 <link rel="stylesheet" href="assets/hub.css" />
 <link rel="stylesheet" href="assets/programs.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" />
 </head>
-<body class="programs-page">
-  <div class="container programs-wrap">
+<body class="layout-doc programs-page">
+  <header class="shell-bar">
+    <a class="shell-brand" href="index.html" title="Market Intel hub">
+      <span class="shell-logo">MI</span>
+      <span class="shell-title">Market Intel<small>Brand &amp; program facts</small></span>
+    </a>
+    <nav class="shell-nav" aria-label="Primary">
+      <a href="index.html">Hub</a>
+      <a href="map.html">Map</a>
+      <a href="markets.html">Markets</a>
+      <a class="is-active" href="programs.html" aria-current="page">Facts</a>
+      <a href="products.html">Products</a>
+    </nav>
+    <div class="shell-end">
+      <div class="shell-chip" id="asOfChip">As of —</div>
+      <div class="shell-est" title="Tuition estimates exclude Urban Air pass pricing">Est. revenue</div>
+    </div>
+  </header>
+  <div class="page-body programs-wrap">
     <header class="hub-head">
       <h1>Brand &amp; Program Facts</h1>
       <p class="sub">Filter sites by category, brand, program, and metro — KPIs and table update together</p>
       <div class="meta-row">
-        <span class="chip" id="asOfChip">As of —</span>
         <span class="chip" id="weekChip">Pull week —</span>
         <span class="chip" id="entityCountChip">— sites</span>
-        <span class="chip est" title="Tuition estimates exclude Urban Air pass pricing">Est. revenue</span>
         <span class="chip" id="sessionChip" title="Session date coverage">Session: —</span>
       </div>
     </header>
 
     <div class="toolbar programs-toolbar">
-      <a class="btn btn-ghost" href="index.html">← Hub</a>
-      <a class="btn btn-ghost" href="markets.html">Market Command</a>
-      <a class="btn btn-ghost" href="products.html">Products (SKU)</a>
-      <a class="btn btn-ghost" href="map.html">Open map</a>
       <input class="search" id="progSearch" type="search" placeholder="Search site, city, zip…" autocomplete="off" />
       <select id="platformFilter" class="platform-select" aria-label="Filter by platform">
         <option value="">All platforms</option>

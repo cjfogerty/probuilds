@@ -5,30 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>probuilds — Market Intel</title>
   <style>
+    :root {
+      --bg: #0b0e14; --card: #141924; --border: #243044;
+      --text: #e8eef7; --muted: #8b9bb4; --accent: #5b8cff; --accent2: #7dd3fc;
+    }
+    * { box-sizing: border-box; }
     body {
-      margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      font-family: system-ui, -apple-system, sans-serif; background: #0b1220; color: #e8eefc;
+      margin: 0; min-height: 100dvh; display: grid; place-items: center;
+      font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+      background:
+        radial-gradient(1200px 500px at 50% -10%, rgba(91,140,255,.22), transparent 55%),
+        var(--bg);
+      color: var(--text);
+      padding: 24px;
     }
     .card {
-      width: min(420px, 92vw); padding: 2rem 1.75rem; background: #121a2b;
-      border: 1px solid #243049; border-radius: 1rem; text-align: center;
+      width: min(440px, 92vw); padding: 2rem 1.75rem; background: var(--card);
+      border: 1px solid var(--border); border-radius: 1.1rem;
     }
-    h1 { margin: 0 0 0.35rem; font-size: 1.35rem; }
-    p { margin: 0 0 1.25rem; color: #9aa8c7; line-height: 1.45; font-size: 0.95rem; }
+    .brand {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 1.1rem;
+    }
+    .logo {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      display: grid; place-items: center; font-weight: 700; font-size: 12px;
+    }
+    h1 { margin: 0; font-size: 1.35rem; letter-spacing: -0.02em; }
+    p { margin: 0 0 1.25rem; color: var(--muted); line-height: 1.5; font-size: 0.95rem; }
     nav { display: flex; flex-direction: column; gap: 0.65rem; }
     a {
       display: block; padding: 0.85rem 1rem; border-radius: 0.75rem; text-decoration: none;
-      font-weight: 600; border: 1px solid #334155; color: #e8eefc; background: #0b1220;
+      font-weight: 600; border: 1px solid #334155; color: var(--text); background: #0b1220;
     }
-    a:hover { border-color: #3b82f6; }
-    a.primary { background: #3b82f6; border-color: #3b82f6; color: #fff; }
+    a:hover { border-color: var(--accent); color: var(--accent2); }
+    a.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    a.primary:hover { color: #fff; filter: brightness(1.06); }
     .note { margin-top: 1rem; font-size: 0.8rem; color: #64748b; }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>Market Intel</h1>
-    <p>All pages are plain HTML — no passphrase.</p>
+    <div class="brand"><span class="logo">MI</span><h1>Market Intel</h1></div>
+    <p>Command center for kids-activity footprints — hub, map, program facts, and SKU grain.</p>
     <nav>
       <a class="primary" href="marketintel/dashboard/">Hub</a>
       <a href="marketintel/dashboard/map.html">Map</a>

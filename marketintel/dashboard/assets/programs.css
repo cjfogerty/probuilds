@@ -1,6 +1,16 @@
 /* Market Intel v2 — Brand / Program facts (extends hub tokens) */
-.programs-page { padding-bottom: 120px; }
-.programs-wrap { max-width: 1400px; }
+.programs-page { padding-bottom: 80px; }
+.programs-wrap { max-width: none; }
+
+.layout-doc .programs-toolbar {
+  position: sticky;
+  top: 52px;
+  z-index: 45;
+  background: color-mix(in srgb, var(--bg) 94%, transparent);
+  backdrop-filter: blur(10px);
+  padding: 10px 0 8px;
+  margin-bottom: 8px;
+}
 
 .programs-toolbar {
   gap: 10px;
@@ -253,10 +263,13 @@
 }
 
 .programs-page .kpis {
-  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   margin-bottom: 18px;
 }
-.programs-page .kpi .value { font-size: 1.15rem; }
+.programs-page .kpi .value { font-size: 1.12rem; }
+@media (max-width: 1200px) {
+  .programs-page .kpis { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+}
 
 .panels-row {
   display: grid;
@@ -595,7 +608,7 @@
 /* Table */
 .table-wrap {
   overflow: auto;
-  max-height: min(70vh, 720px);
+  max-height: min(62vh, 760px);
   border: 1px solid var(--border);
   border-radius: 12px;
   background: #fff;

@@ -73,9 +73,24 @@
 /* Never let a control be smaller than 16px: iOS zooms the viewport if it is. */
 input, select, textarea, button { font-size: max(16px, 1rem); font-family: inherit; }
 
-/* Real tap targets. 44px is the floor. */
+/* Real tap targets. 44px is the floor on document pages.
+   Viewport-locked apps (.layout-app) opt out so chrome can stay compact. */
 button, .btn, .sort-btn, a.btn, summary, .chip[role="button"] { min-height: 44px; }
 .sort-btn { padding-block: 12px; }
+body.layout-app button,
+body.layout-app .btn,
+body.layout-app .sort-btn,
+body.layout-app a.btn,
+body.layout-app summary {
+  min-height: 0;
+}
+@media (max-width: 699px) {
+  body.layout-app button,
+  body.layout-app .btn,
+  body.layout-app a.btn {
+    min-height: 44px;
+  }
+}
 
 html { -webkit-text-size-adjust: 100%; }
 body {
@@ -93,6 +108,15 @@ body {
 }
 @media (min-width: 700px) {
   body { padding: 40px 24px 64px; }
+}
+/* Map command center owns the viewport — never add page padding. */
+body.layout-app {
+  padding: 0 !important;
+  overflow: hidden;
+  height: 100%;
+}
+body.layout-doc {
+  padding: 0 !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

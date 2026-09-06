@@ -1,0 +1,180 @@
+/* Shared Market Intel chrome: sticky nav + page shells.
+   Map uses .layout-app (viewport lock). Hub/Facts/Products use .layout-doc. */
+
+.shell-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 52px;
+  padding: 0 14px 0 16px;
+  background: #0b0e14;
+  color: #e8eef7;
+  border-bottom: 1px solid #243044;
+  min-width: 0;
+  flex-shrink: 0;
+  z-index: 80;
+}
+.shell-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+  flex-shrink: 0;
+  min-width: 0;
+}
+.shell-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, #5b8cff, #a78bfa);
+  display: grid;
+  place-items: center;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 0 18px rgba(91, 140, 255, 0.35);
+}
+.shell-title {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  font-size: 14px;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+.shell-title small {
+  display: block;
+  font-weight: 500;
+  color: #8b9bb4;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.shell-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #11151e;
+  border: 1px solid #243044;
+  border-radius: 10px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+.shell-nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 7px;
+  color: #8b9bb4;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: background 0.15s, color 0.15s;
+}
+.shell-nav a:hover { color: #e8eef7; background: rgba(91, 140, 255, 0.1); }
+.shell-nav a.is-active {
+  background: rgba(91, 140, 255, 0.18);
+  color: #7dd3fc;
+}
+.shell-end {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex-shrink: 1;
+}
+.shell-chip {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  color: #8b9bb4;
+  background: #171c28;
+  border: 1px solid #243044;
+  border-radius: 999px;
+  padding: 4px 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+.shell-chip strong { color: #7dd3fc; font-weight: 600; }
+.shell-chip.scope {
+  color: #7dd3fc;
+  background: rgba(56, 189, 248, 0.08);
+  border-color: rgba(56, 189, 248, 0.22);
+}
+.shell-chip.scope:empty,
+.shell-chip:empty { display: none; }
+.shell-est {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(251, 191, 36, 0.82);
+  border: 1px solid rgba(251, 191, 36, 0.22);
+  background: rgba(251, 191, 36, 0.06);
+  border-radius: 999px;
+  padding: 4px 8px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Document pages: sticky chrome, content scrolls underneath */
+body.layout-doc {
+  padding: 0 !important;
+  min-height: 100dvh;
+  background: var(--bg, #f0f4f8);
+}
+body.layout-doc .shell-bar {
+  position: sticky;
+  top: 0;
+}
+body.layout-doc .page-body {
+  width: min(1440px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 72px;
+}
+@media (max-width: 699px) {
+  body.layout-doc .page-body {
+    width: calc(100% - 24px);
+    padding: 18px 0 56px;
+  }
+  .shell-title small { display: none; }
+  .shell-nav a { padding: 0 9px; }
+}
+
+@media (max-width: 820px) {
+  .shell-chip.scope { display: none; }
+}
+
+/* Viewport-locked command center (map) */
+html:has(body.layout-app),
+body.layout-app {
+  height: 100%;
+  max-height: 100dvh;
+  margin: 0;
+  padding: 0 !important;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+body.layout-app .shell-bar {
+  height: 48px;
+}
+
+/* Compact chrome controls — do not inherit the 44px mobile tap floor on desktop */
+@media (min-width: 700px) {
+  body.layout-app button,
+  body.layout-app .btn,
+  body.layout-app .btn-ghost,
+  body.layout-app .map-tool-btn,
+  body.layout-app .share-tabs button,
+  body.layout-app .radius-row button,
+  body.layout-app .preset-btns button,
+  body.layout-app .shell-nav a {
+    min-height: 0;
+  }
+}

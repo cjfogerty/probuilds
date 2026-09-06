@@ -8,17 +8,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Market Intel — Products (SKU grain)</title>
 <link rel="stylesheet" href="assets/tokens.css" />
+<link rel="stylesheet" href="assets/shell.css" />
 <link rel="stylesheet" href="assets/hub.css" />
 <link rel="stylesheet" href="assets/programs.css" />
 <link rel="stylesheet" href="assets/products.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" />
 </head>
-<body class="programs-page products-page">
-  <div class="container programs-wrap">
+<body class="layout-doc programs-page products-page">
+  <header class="shell-bar">
+    <a class="shell-brand" href="index.html" title="Market Intel hub">
+      <span class="shell-logo">MI</span>
+      <span class="shell-title">Market Intel<small>Products · SKU grain</small></span>
+    </a>
+    <nav class="shell-nav" aria-label="Primary">
+      <a href="index.html">Hub</a>
+      <a href="map.html">Map</a>
+      <a href="markets.html">Markets</a>
+      <a href="programs.html">Facts</a>
+      <a class="is-active" href="products.html" aria-current="page">Products</a>
+    </nav>
+    <div class="shell-end">
+      <div class="shell-chip" id="asOfChip">As of —</div>
+      <div class="shell-est" title="Tuition estimates exclude Urban Air pass pricing">Est. revenue</div>
+    </div>
+  </header>
+  <div class="page-body programs-wrap">
     <header class="hub-head">
       <h1>Products <span class="grain-pill">SKU × site</span></h1>
       <p class="sub">One row per catalog SKU — multi billing models at a single location stay separate. Est. $ blank until enroll/sold exists.</p>
       <div class="meta-row">
-        <span class="chip" id="asOfChip">As of —</span>
         <span class="chip" id="weekChip">Pull week —</span>
         <span class="chip" id="skuCountChip">— SKUs</span>
         <span class="chip" id="siteCountChip">— sites</span>
@@ -28,10 +46,6 @@
     </header>
 
     <div class="toolbar programs-toolbar">
-      <a class="btn btn-ghost" href="index.html">← Hub</a>
-      <a class="btn btn-ghost" href="markets.html">Market Command</a>
-      <a class="btn btn-ghost" href="programs.html">Site Facts</a>
-      <a class="btn btn-ghost" href="map.html">Open map</a>
       <input class="search" id="prodSearch" type="search" placeholder="Search SKU, site, metro…" autocomplete="off" />
       <label class="toggle-inline" title="Hide merch (3) and cafe (4)">
         <input type="checkbox" id="hideRetail" checked /> Membership / prepaid only

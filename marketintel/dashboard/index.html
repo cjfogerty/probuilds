@@ -8,19 +8,36 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Market Intel — Hub</title>
 <link rel="stylesheet" href="assets/tokens.css" />
+<link rel="stylesheet" href="assets/shell.css" />
 <link rel="stylesheet" href="assets/hub.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" />
 </head>
-<body>
-  <div class="container">
+<body class="layout-doc page-hub">
+  <header class="shell-bar">
+    <a class="shell-brand" href="index.html" title="Market Intel hub">
+      <span class="shell-logo">MI</span>
+      <span class="shell-title">Market Intel<small>Metro hub</small></span>
+    </a>
+    <nav class="shell-nav" aria-label="Primary">
+      <a class="is-active" href="index.html" aria-current="page">Hub</a>
+      <a href="map.html">Map</a>
+      <a href="markets.html">Markets</a>
+      <a href="programs.html">Facts</a>
+      <a href="products.html">Products</a>
+    </nav>
+    <div class="shell-end">
+      <div class="shell-chip" id="asOfChip">As of —</div>
+      <div class="shell-est" title="Tuition estimates exclude Urban Air pass pricing">Est. revenue</div>
+    </div>
+  </header>
+  <div class="page-body">
     <header class="hub-head">
       <h1>Market Intel</h1>
-      <p class="sub">Kids activity / gym footprint across US metros</p>
+      <p class="sub">Kids activity / gym footprint across US metros — pick a metro or brand, then open the map.</p>
       <div class="meta-row">
-        <span class="chip" id="asOfChip">As of —</span>
         <span class="chip" id="weekChip">Week —</span>
         <span class="chip" id="brandCountChip">— brands</span>
         <span class="chip" id="siteCountChip">— sites</span>
-        <span class="chip est" title="Tuition estimates exclude Urban Air pass pricing">Est. revenue</span>
       </div>
     </header>
 
@@ -29,7 +46,7 @@
       <a class="btn btn-ghost" href="markets.html">Market Command</a>
       <a class="btn btn-ghost" href="programs.html">Brand &amp; program facts</a>
       <a class="btn btn-ghost" href="products.html">Products (SKU grain)</a>
-      <a class="btn btn-primary" id="openMapBtn" href="map.html">Open map command center</a>
+      <a class="btn btn-primary" id="openMapBtn" href="map.html">Open map</a>
     </div>
 
     <section class="kpis" id="kpiStrip" aria-label="National KPIs">
