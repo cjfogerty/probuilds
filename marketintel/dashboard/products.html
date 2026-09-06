@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Market Intel — Products (SKU grain)</title>
+<link rel="stylesheet" href="assets/hub.css" />
+<link rel="stylesheet" href="assets/programs.css" />
+<link rel="stylesheet" href="assets/products.css" />
+</head>
+<body class="programs-page products-page">
+  <div class="container programs-wrap">
+    <header class="hub-head">
+      <h1>Products <span class="grain-pill">SKU × site</span></h1>
+      <p class="sub">One row per catalog SKU — multi billing models at a single location stay separate. Est. $ blank until enroll/sold exists.</p>
+      <div class="meta-row">
+        <span class="chip" id="asOfChip">As of —</span>
+        <span class="chip" id="weekChip">Pull week —</span>
+        <span class="chip" id="skuCountChip">— SKUs</span>
+        <span class="chip" id="siteCountChip">— sites</span>
+        <span class="chip warn-soft" id="enrollChip">enrolled_or_sold: none yet</span>
+      </div>
+    </header>
+
+    <div class="toolbar programs-toolbar">
+      <a class="btn btn-ghost" href="index.html">← Hub</a>
+      <a class="btn btn-ghost" href="programs.html">Site Facts</a>
+      <a class="btn btn-ghost" href="map.html">Open map</a>
+      <input class="search" id="prodSearch" type="search" placeholder="Search SKU, site, metro…" autocomplete="off" />
+      <label class="toggle-inline" title="Hide merch (3) and cafe (4)">
+        <input type="checkbox" id="hideRetail" checked /> Membership / prepaid only
+      </label>
+      <label class="toggle-inline" title="Sites with ≥2 billing models">
+        <input type="checkbox" id="multiOnly" /> Multi-billing sites only
+      </label>
+    </div>
+
+    <div class="filter-stack" id="filterStack" aria-label="Product filters">
+      <div class="filter-field">
+        <label for="brandFilter">Brand</label>
+        <select id="brandFilter" class="filter-select"><option value="">All brands</option></select>
+      </div>
+      <div class="filter-field">
+        <label for="billingFilter">Billing model</label>
+        <select id="billingFilter" class="filter-select"><option value="">All billing models</option></select>
+      </div>
+      <div class="filter-field">
+        <label for="typeFilter">Product type</label>
+        <select id="typeFilter" class="filter-select"><option value="">All types</option></select>
+      </div>
+      <div class="filter-field">
+        <label for="metroFilter">Metro</label>
+        <select id="metroFilter" class="filter-select"><option value="">All metros</option></select>
+      </div>
+      <div class="filter-field filter-field-wide">
+        <label for="siteFilter">Location</label>
+        <select id="siteFilter" class="filter-select"><option value="">All locations</option></select>
+      </div>
+    </div>
+
+    <div class="selection-bar" id="selectionBar">
+      <div class="sel-label">
+        <span class="sel-kicker">Scope</span>
+        <strong id="scopeName">All catalog SKUs</strong>
+        <div class="filter-chips" id="filterChips" hidden></div>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" id="clearFilters" hidden>Clear filters</button>
+    </div>
+
+    <section class="kpis" id="kpiStrip" aria-label="Product KPIs">
+      <div class="kpi"><div class="label">SKUs</div><div class="value" id="kSkus">—</div><div class="sub" id="kSkusSub"></div></div>
+      <div class="kpi"><div class="label">Locations</div><div class="value" id="kSites">—</div><div class="sub" id="kSitesSub"></div></div>
+      <div class="kpi"><div class="label">Multi-billing sites</div><div class="value" id="kMulti">—</div><div class="sub">≥2 models in scope</div></div>
+      <div class="kpi"><div class="label">Avg sticker</div><div class="value" id="kAvgPrice">—</div><div class="sub" id="kAvgPriceSub">catalog price · not revenue</div></div>
+      <div class="kpi rev"><div class="label">Est. monthly</div><div class="value" id="kMonthly">—</div><div class="sub" id="kMonthlySub">needs enrolled_or_sold</div></div>
+      <div class="kpi rev"><div class="label">Est. annualized</div><div class="value" id="kAnnual">—</div><div class="sub">never from sticker alone</div></div>
+      <div class="kpi"><div class="label">With enroll/sold</div><div class="value" id="kEnroll">—</div><div class="sub">of filtered SKUs</div></div>
+      <div class="kpi"><div class="label">Evidence</div><div class="value" id="kEvidence">—</div><div class="sub">product_catalog</div></div>
+    </section>
+
+    <div class="panels-row">
+      <section class="panel-card" id="billingPanel">
+        <h3 class="panel-title">Billing model mix (SKUs)</h3>
+        <p class="panel-lead">Same location can appear in multiple buckets — that is the point of product grain.</p>
+        <div class="billing-grid" id="billingGrid"></div>
+      </section>
+      <section class="panel-card" id="typePanel">
+        <h3 class="panel-title">Product type mix</h3>
+        <div class="billing-grid" id="typeGrid"></div>
+      </section>
+    </div>
+
+    <h3 class="section brands">Products <span class="section-count" id="tableCount"></span></h3>
+    <div class="table-truncation-banner is-truncated" id="tableTruncationBanner" hidden role="status">
+      <span id="tableTruncationText">Showing 0 of 0 SKUs — use Load more or Show all</span>
+    </div>
+    <div class="table-wrap">
+      <table class="facts-table sites-table" id="factsTable">
+        <thead>
+          <tr>
+            <th scope="col"><button type="button" class="sort-btn" data-sort="brand" aria-sort="none">Brand</button></th>
+            <th scope="col"><button type="button" class="sort-btn" data-sort="site" aria-sort="ascending">Location</button></th>
+            <th scope="col"><button type="button" class="sort-btn" data-sort="metro" aria-sort="none">Metro</button></th>
+            <th scope="col"><button type="button" class="sort-btn" data-sort="sku" aria-sort="none">SKU</button></th>
+            <th scope="col"><button type="button" class="sort-btn" data-sort="type" aria-sort="none">Type</button></th>
+            <th scope="col"><button type="button" class="sort-btn" data-sort="billing" aria-sort="none">Billing</button></th>
+            <th scope="col" class="num"><button type="button" class="sort-btn" data-sort="price" aria-sort="none">Price</button></th>
+            <th scope="col"><button type="button" class="sort-btn" data-sort="unit" aria-sort="none">Unit</button></th>
+            <th scope="col" class="num"><button type="button" class="sort-btn" data-sort="term" aria-sort="none">Term mo</button></th>
+            <th scope="col" class="num"><button type="button" class="sort-btn" data-sort="enroll" aria-sort="none">Enroll/sold</button></th>
+            <th scope="col" class="num"><button type="button" class="sort-btn" data-sort="est" aria-sort="none">Est monthly</button></th>
+            <th scope="col"><button type="button" class="sort-btn" data-sort="evidence" aria-sort="none">Evidence</button></th>
+          </tr>
+        </thead>
+        <tbody id="factsBody"></tbody>
+      </table>
+    </div>
+    <div class="table-footer" id="tableFooter" hidden>
+      <span id="tableShowing">Showing 0 of 0</span>
+      <div class="table-footer-actions">
+        <button type="button" class="btn btn-primary btn-sm" id="loadMoreBtn" hidden>Load more</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="showAllBtn" hidden>Show all</button>
+      </div>
+    </div>
+
+    <details class="notes-fold">
+      <summary>Grain notes</summary>
+      <div class="note">
+        <ul>
+          <li><strong>Grain:</strong> Unleashed <code>parkProductId</code> × live park. Site Facts page remains one-row-per-site.</li>
+          <li><strong>Multi-billing:</strong> 483 sites mix ≥2 models in this cut — filter “Multi-billing sites only” to inspect them.</li>
+          <li><strong>Est. monthly/annual:</strong> only when <code>revenue_rollable</code> and <code>enrolled_or_sold</code> present. This drop has enroll=null → stickers only.</li>
+          <li><strong>Merch/cafe:</strong> product_type_id 3/4 → <code>one_off_package</code>. Default toggle hides them from membership views.</li>
+          <li><strong>Do not</strong> attribute class calendar seats to membership SKUs.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+  <script src="data/products.js"></script>
+  <script src="assets/products.js"></script>
+</body>
+</html>

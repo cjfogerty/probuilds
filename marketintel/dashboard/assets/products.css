@@ -1,0 +1,12 @@
+.grain-pill {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  vertical-align: middle;
+  border-radius: 999px;
+  background: #e9d8fd;
+  color: #553c9a;
+}
+.products-page .kpi .value { font-size: 1.35rem; }
