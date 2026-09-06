@@ -453,7 +453,9 @@
     const sites = list.length;
     const metros = new Set(list.map((s) => (s.metro || '').trim()).filter(Boolean));
     let enrolledSum = 0;
+    let enrollPositiveSum = 0;
     let enrollSites = 0;
+    let enrollZeroSites = 0;
     let priceSites = 0;
     let priceSumTuition = 0;
     let priceCountTuition = 0;
@@ -487,8 +489,13 @@
       else nonRollableSites++;
 
       if (s.enrolled != null && !isNaN(+s.enrolled)) {
-        enrollSites++;
         enrolledSum += +s.enrolled;
+        if (+s.enrolled > 0) {
+          enrollSites++;
+          enrollPositiveSum += +s.enrolled;
+        } else {
+          enrollZeroSites++;
+        }
       }
       if (s.price_low != null && !isNaN(+s.price_low)) {
         priceSites++;
@@ -533,7 +540,7 @@
           ? 'lesson'
           : 'unknown';
 
-    const avgEnroll = enrollSites > 0 ? enrolledSum / enrollSites : null;
+    const avgEnroll = enrollSites > 0 ? enrollPositiveSum / enrollSites : null;
     const avgPrice = priceCountTuition > 0 ? priceSumTuition / priceCountTuition : null;
     const cov = sessionCoverageCounts(list);
 
@@ -546,6 +553,7 @@
       priceSites,
       priceCov: sites ? priceSites / sites : null,
       avgEnroll,
+      enrollZeroSites,
       avgPrice,
       units,
       dominantUnit,
@@ -1088,7 +1096,10 @@
     document.getElementById('kMetros').textContent = fmtNum(agg.metros);
     document.getElementById('kEnrolled').textContent = fmtNum(agg.enrolled);
     document.getElementById('kEnrollSub').textContent =
-      fmtNum(agg.enrollSites) + ' sites with enroll field';
+      fmtNum(agg.enrollSites) +
+      ' with enroll > 0 · ' +
+      fmtNum(agg.enrollZeroSites || 0) +
+      ' reported 0';
     document.getElementById('kAvgEnroll').textContent =
       agg.avgEnroll != null ? fmtDec(agg.avgEnroll, 1) : '—';
     document.getElementById('kEnrollCov').textContent = fmtPct(agg.enrollSites, agg.sites);
@@ -1142,7 +1153,17 @@
 
     renderBillingGrid(agg);
 
-    document.getElementById('sessStartCap').textContent = String(agg.sessStartCap);
+        const sessionChip = document.getElementById('sessionChip');
+    if (sessionChip) {
+      const cap = agg.sessStartCap || 0;
+      const miss = agg.sessStartMiss || 0;
+      const na = agg.sessNA || 0;
+      sessionChip.textContent =
+        'Session: ' + fmtNum(cap) + ' captured · ' + fmtNum(miss) + ' missing · ' + fmtNum(na) + ' n/a';
+      sessionChip.title =
+        'Session calendars — N/A is typical for ongoing tuition / pass sites. Pull week ≠ session dates.';
+    }
+document.getElementById('sessStartCap').textContent = String(agg.sessStartCap);
     document.getElementById('sessStartMiss').textContent = fmtNum(agg.sessStartMiss);
     document.getElementById('sessEndCap').textContent = String(agg.sessEndCap);
     document.getElementById('sessEndMiss').textContent = fmtNum(agg.sessEndMiss);
@@ -1447,61 +1468,61 @@
           '" class="' +
           selected.trim() +
           '">' +
-          '<td class="brand-cell">' +
+          '<td class="brand-cell" data-label="Brand">' +
           esc(brandNameOf(s)) +
           '</td>' +
-          '<td class="program-cell">' +
+          '<td class="program-cell" data-label="Program">' +
           esc(prog.name) +
           fb +
           '</td>' +
-          '<td><span class="cat-pill cat-' +
+          '<td data-label="Category"><span class="cat-pill cat-' +
           esc(cat) +
           '">' +
           esc(cat) +
           '</span></td>' +
-          '<td><span class="bill-pill ' +
+          '<td data-label="Billing"><span class="bill-pill ' +
           billCls +
           '" title="' +
           esc(revenueUnitOf(s) + (rev.rollable ? ' · rollable' : ' · not rollable')) +
           '">' +
           esc(bm) +
           '</span></td>' +
-          '<td class="name-cell">' +
+          '<td class="name-cell" data-label="Site">' +
           esc(s.name || '—') +
           '</td>' +
-          '<td>' +
+          '<td data-label="Metro">' +
           esc(s.metro || '—') +
           '</td>' +
-          '<td class="st-cell">' +
+          '<td class="st-cell" data-label="ST">' +
           esc(s.state || '—') +
           '</td>' +
-          '<td><span class="plat-pill">' +
+          '<td data-label="Platform"><span class="plat-pill">' +
           esc(String(s.platform || '—').toLowerCase()) +
           '</span></td>' +
-          '<td class="num">' +
+          '<td class="num" data-label="Enrolled">' +
           fmtNum(s.enrolled) +
           '</td>' +
-          '<td class="num">' +
+          '<td class="num" data-label="Capacity">' +
           fmtNum(s.capacity) +
           '</td>' +
-          '<td class="num">' +
+          '<td class="num" data-label="Fill%">' +
           (fill != null ? fmtDec(fill, 0) + '%' : '—') +
           '</td>' +
-          '<td class="num">' +
+          '<td class="num" data-label="Price">' +
           (s.price_low != null ? '$' + fmtDec(s.price_low, s.price_low < 20 ? 2 : 0) : '—') +
           '</td>' +
-          '<td><span class="ubadge ' +
+          '<td data-label="Unit"><span class="ubadge ' +
           bucket +
           '">' +
           esc(unitLabel(bucket)) +
           '</span></td>' +
-          '<td>' +
+          '<td data-label="Session">' +
           sessionCell(s) +
           '</td>' +
-          '<td class="num rev-cell">' +
+          '<td class="num rev-cell" data-label="Est monthly">' +
           monthlyCell +
           '</td>' +
-          '<td><a class="map-link" href="' +
+          '<td data-label="Map"><a class="map-link" href="' +
           esc(mapHrefForSite(s)) +
           '" title="Open on map">Map</a></td>' +
           '</tr>'

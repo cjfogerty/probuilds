@@ -1138,3 +1138,61 @@
 }
 .bill-pill.rollable { background: #c6f6d5; color: #22543d; }
 .bill-pill.non-rollable { background: #feebc8; color: #7b341e; }
+
+
+/* mobile-baseline: inputs ≥16px (tokens also enforce; beat older rules) */
+.toolbar .search,
+.search,
+.filter-select,
+.platform-select,
+.ms-search,
+.ms-trigger,
+input[type="search"],
+select {
+  font-size: max(16px, 1rem) !important;
+  min-height: 44px;
+}
+
+
+/* Phase 2 start: no nested 1280px table on phones */
+@media (max-width: 699px) {
+  .table-wrap {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+  .facts-table {
+    min-width: 0 !important;
+    display: block;
+  }
+  .facts-table thead { display: none; }
+  .facts-table tbody { display: block; }
+  .facts-table tr {
+    display: block;
+    background: var(--surface-1, #fff);
+    border: 1px solid var(--border);
+    border-radius: var(--radius, 12px);
+    box-shadow: var(--shadow);
+    margin: 0 0 12px;
+    padding: 12px 14px;
+  }
+  .facts-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    border: 0 !important;
+    padding: 4px 0 !important;
+    font-size: 0.95rem;
+  }
+  .facts-table td::before {
+    content: attr(data-label);
+    color: var(--text-muted, #898781);
+    font-weight: 600;
+    flex: 0 0 42%;
+  }
+  .facts-table td.num { font-variant-numeric: tabular-nums; }
+  .kpis {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .session-panel-collapsed,
+  .session-gap[hidden] { display: none !important; }
+}

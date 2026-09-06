@@ -13,3 +13,62 @@
 
 .toggle-inline.is-disabled { opacity: 0.5; cursor: not-allowed; }
 .chip-sub { font-weight: 500; opacity: 0.8; margin-left: 4px; }
+
+
+/* mobile-baseline: inputs ≥16px (tokens also enforce; beat older rules) */
+.toolbar .search,
+.search,
+.filter-select,
+.platform-select,
+.ms-search,
+.ms-trigger,
+input[type="search"],
+select {
+  font-size: max(16px, 1rem) !important;
+  min-height: 44px;
+}
+
+/* Phase 2: products table → cards (mirror programs) */
+@media (max-width: 699px) {
+  .products-page .table-wrap {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+  .products-page .facts-table {
+    min-width: 0 !important;
+    display: block;
+  }
+  .products-page .facts-table thead { display: none; }
+  .products-page .facts-table tbody { display: block; }
+  .products-page .facts-table tr {
+    display: block;
+    background: var(--surface-1, #fff);
+    border: 1px solid var(--border);
+    border-radius: var(--radius, 12px);
+    box-shadow: var(--shadow);
+    margin: 0 0 12px;
+    padding: 12px 14px;
+  }
+  .products-page .facts-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    border: 0 !important;
+    padding: 4px 0 !important;
+    font-size: 0.95rem;
+    max-width: none;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+  .products-page .facts-table td::before {
+    content: attr(data-label);
+    color: var(--text-muted, #898781);
+    font-weight: 600;
+    flex: 0 0 42%;
+  }
+  .products-page .facts-table td.num { font-variant-numeric: tabular-nums; }
+  .products-page .kpis {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}

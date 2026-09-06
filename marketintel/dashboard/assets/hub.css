@@ -267,3 +267,17 @@ a.card.featured .go { color: var(--warn); }
 .card.brand-card .card-foot a.go { text-decoration: none; }
 .card.brand-card .card-foot a.go:hover { text-decoration: underline; }
 .card.brand-card h2 a:hover { text-decoration: underline !important; }
+
+
+/* mobile-baseline: inputs ≥16px (tokens also enforce; beat older rules) */
+.toolbar .search,
+.search,
+.filter-select,
+.platform-select,
+.ms-search,
+.ms-trigger,
+input[type="search"],
+select {
+  font-size: max(16px, 1rem) !important;
+  min-height: 44px;
+}

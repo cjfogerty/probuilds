@@ -1,0 +1,111 @@
+/* assets/tokens.css — the only place a raw hex lives. */
+:root {
+  color-scheme: light;
+
+  --page:           #f9f9f7;
+  --surface-1:      #ffffff;
+  --surface-2:      #f2f4f7;
+  --text-primary:   #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted:     #898781;
+  --border:         rgba(11,11,11,0.10);
+  --gridline:       #e1e0d9;
+  --baseline:       #c3c2b7;
+
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+  --series-6: #008300;
+  --series-7: #4a3aa7;
+  --series-8: #e34948;
+  --series-other: #a8a6a0;
+
+  --seq-100: #cde2fb; --seq-250: #86b6ef; --seq-400: #3987e5;
+  --seq-550: #1c5cab; --seq-700: #0d366b;
+
+  --good:     #0ca30c;
+  --warning:  #fab219;
+  --serious:  #ec835a;
+  --critical: #d03b3b;
+
+  --ev-strong: #1c5cab; --ev-medium: #3987e5; --ev-weak: #86b6ef; --ev-none: #c3c2b7;
+
+  --radius: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* legacy aliases used by existing CSS */
+  --bg: var(--page);
+  --card: var(--surface-1);
+  --heading: var(--text-primary);
+  --muted: var(--text-muted);
+  --soft: var(--text-secondary);
+  --accent: var(--series-1);
+  --border2: var(--baseline);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --page: #0b1220; --surface-1: #121a2b; --surface-2: #162034;
+    --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #898781;
+    --border: rgba(255,255,255,0.10); --gridline: #2c2c2a; --baseline: #383835;
+    --series-1: #3987e5; --series-2: #d95926; --series-3: #199e70; --series-4: #c98500;
+    --series-5: #d55181; --series-6: #008300; --series-7: #9085e9; --series-8: #e66767;
+    --seq-100: #184f95; --seq-250: #256abf; --seq-400: #3987e5;
+    --seq-550: #86b6ef; --seq-700: #cde2fb;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0b1220; --surface-1: #121a2b; --surface-2: #162034;
+  --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #898781;
+  --border: rgba(255,255,255,0.10); --gridline: #2c2c2a; --baseline: #383835;
+  --series-1: #3987e5; --series-2: #d95926; --series-3: #199e70; --series-4: #c98500;
+  --series-5: #d55181; --series-6: #008300; --series-7: #9085e9; --series-8: #e66767;
+  --seq-100: #184f95; --seq-250: #256abf; --seq-400: #3987e5;
+  --seq-550: #86b6ef; --seq-700: #cde2fb;
+}
+
+/* Never let a control be smaller than 16px: iOS zooms the viewport if it is. */
+input, select, textarea, button { font-size: max(16px, 1rem); font-family: inherit; }
+
+/* Real tap targets. 44px is the floor. */
+button, .btn, .sort-btn, a.btn, summary, .chip[role="button"] { min-height: 44px; }
+.sort-btn { padding-block: 12px; }
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--text-primary);
+  font-family: var(--sans);
+  padding:
+    16px
+    max(16px, env(safe-area-inset-right))
+    max(24px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
+  overscroll-behavior-y: contain;
+  overflow-x: hidden;
+}
+@media (min-width: 700px) {
+  body { padding: 40px 24px 64px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* Category series helpers */
+.cat-gymnastics, .series-gymnastics { color: var(--series-1); }
+.cat-martial_arts, .series-martial_arts { color: var(--series-2); }
+.cat-adventure, .cat-adventure_park, .series-adventure { color: var(--series-3); }
+.cat-stem, .cat-stem_makers, .series-stem { color: var(--series-4); }
+.cat-ninja, .series-ninja { color: var(--series-5); }
+.cat-cheer_dance, .series-cheer_dance { color: var(--series-6); }

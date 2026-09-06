@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#f9f9f7" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Market Intel — Map</title>
+<link rel="stylesheet" href="assets/tokens.css" />
 <link rel="stylesheet" href="assets/map.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
@@ -33,6 +36,7 @@
     <div class="kpi"><div class="label">Fill %</div><div class="value" id="kFill">—</div><div class="sub">enrolled / capacity</div></div>
     <div class="kpi rev"><div class="label">Est. monthly $</div><div class="value" id="kMonthly">—</div><div class="sub">tuition brands</div></div>
     <div class="kpi rev"><div class="label">Est. annual $</div><div class="value" id="kAnnual">—</div><div class="sub">monthly × 12</div></div>
+    <div class="kpi"><div class="label">Unmapped</div><div class="value" id="kUnmapped">—</div><div class="sub" id="kUnmappedSub">no lat/lng</div></div>
   </section>
   <div class="main">
     <aside class="panel">
@@ -141,6 +145,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script src="data/sites.js"></script>
+<script src="assets/viz.js"></script>
 <script src="assets/map.js"></script>
 </body>
 </html>

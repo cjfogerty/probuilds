@@ -663,43 +663,43 @@
               : '—';
         return (
           '<tr>' +
-          '<td class="brand-cell">' +
+          '<td class="brand-cell" data-label="Brand">' +
           esc(p.brand) +
           '</td>' +
-          '<td class="name-cell">' +
+          '<td class="name-cell" data-label="Location">' +
           esc(p.site_name) +
           (multi ? ' <span class="bill-pill rollable" title="≥2 billing models at this site">multi</span>' : '') +
           '</td>' +
-          '<td>' +
+          '<td data-label="Metro">' +
           esc(p.metro || '—') +
           '</td>' +
-          '<td class="program-cell">' +
+          '<td class="program-cell" data-label="SKU">' +
           esc(p.sku_name) +
           '</td>' +
-          '<td>' +
+          '<td data-label="Type">' +
           esc(p.product_type_label || p.product_type_id) +
           '</td>' +
-          '<td><span class="bill-pill ' +
+          '<td data-label="Billing"><span class="bill-pill ' +
           billCls +
           '">' +
           esc(p.billing_model) +
           '</span></td>' +
-          '<td class="num">' +
+          '<td class="num" data-label="Price">' +
           (p.price != null ? '$' + fmtDec(p.price, p.price < 20 ? 2 : 0) : '—') +
           '</td>' +
-          '<td>' +
+          '<td data-label="Unit">' +
           esc(p.price_unit || '—') +
           '</td>' +
-          '<td class="num">' +
+          '<td class="num" data-label="Term mo">' +
           (p.term_months != null ? fmtDec(p.term_months, p.term_months % 1 ? 1 : 0) : '—') +
           '</td>' +
-          '<td class="num">' +
+          '<td class="num" data-label="Enroll/sold">' +
           (p.enrolled_or_sold != null ? fmtNum(p.enrolled_or_sold) : '—') +
           '</td>' +
-          '<td class="num rev-cell">' +
+          '<td class="num rev-cell" data-label="Est monthly">' +
           estCell +
           '</td>' +
-          '<td><span class="plat-pill">' +
+          '<td data-label="Evidence"><span class="plat-pill">' +
           esc(p.evidence_tier) +
           '</span></td>' +
           '</tr>'

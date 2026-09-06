@@ -247,6 +247,8 @@ button:focus-visible, input:focus-visible, select:focus-visible {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 40%, transparent), 0 2px 8px rgba(0,0,0,.55);
   background: var(--c);
 }
+.marker-dot.marker-precise { border-radius: 50%; }
+.marker-dot.marker-approx { border-radius: 2px; }
 .marker-dot.closed { opacity: .4; border-style: dashed; }
 .marker-cluster-small,
 .marker-cluster-medium,
@@ -493,7 +495,7 @@ table.sites tr.selected td.sticky-col { background: #1a2438; }
   max-height: none; flex: 1; border-bottom: none; min-height: 0;
 }
 .app.v2 .kpis {
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 .app.v2 .center-col {
   grid-template-rows: minmax(0, 1fr) 200px;
@@ -532,4 +534,18 @@ table.sites tr.selected td.sticky-col { background: #1a2438; }
 }
 .center-col.map-expanded .table-panel {
   overflow: hidden; border-top-width: 0; opacity: 0; pointer-events: none;
+}
+
+
+/* mobile-baseline: inputs ≥16px (tokens also enforce; beat older rules) */
+.toolbar .search,
+.search,
+.filter-select,
+.platform-select,
+.ms-search,
+.ms-trigger,
+input[type="search"],
+select {
+  font-size: max(16px, 1rem) !important;
+  min-height: 44px;
 }

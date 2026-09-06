@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#f9f9f7" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Market Intel — Brand &amp; Program Facts</title>
+<link rel="stylesheet" href="assets/tokens.css" />
 <link rel="stylesheet" href="assets/hub.css" />
 <link rel="stylesheet" href="assets/programs.css" />
 </head>
@@ -18,7 +21,7 @@
         <span class="chip" id="weekChip">Pull week —</span>
         <span class="chip" id="entityCountChip">— sites</span>
         <span class="chip est" title="Tuition estimates exclude Urban Air pass pricing">Est. revenue</span>
-        <span class="chip warn-soft" id="sessionGapChip" title="Schema gap">Session dates: enriched (JR inferred)</span>
+        <span class="chip" id="sessionChip" title="Session date coverage">Session: —</span>
       </div>
     </header>
 
@@ -109,8 +112,8 @@
       <div class="kpi"><div class="label">Sites</div><div class="value" id="kSites">—</div><div class="sub" id="kSitesSub"></div></div>
       <div class="kpi"><div class="label">Metros</div><div class="value" id="kMetros">—</div><div class="sub">unique</div></div>
       <div class="kpi"><div class="label">Total enrolled</div><div class="value" id="kEnrolled">—</div><div class="sub" id="kEnrollSub"></div></div>
-      <div class="kpi"><div class="label">Avg enrolled / site</div><div class="value" id="kAvgEnroll">—</div><div class="sub">sites with enroll</div></div>
-      <div class="kpi"><div class="label">Enroll coverage</div><div class="value" id="kEnrollCov">—</div><div class="sub">enrolled ≠ null</div></div>
+      <div class="kpi"><div class="label">Avg enrolled / site</div><div class="value" id="kAvgEnroll">—</div><div class="sub">among enroll &gt; 0</div></div>
+      <div class="kpi"><div class="label">Enroll coverage</div><div class="value" id="kEnrollCov">—</div><div class="sub">enroll &gt; 0 / sites</div></div>
       <div class="kpi"><div class="label">Price coverage</div><div class="value" id="kPriceCov">—</div><div class="sub">price_low present</div></div>
       <div class="kpi"><div class="label">Avg price</div><div class="value" id="kAvgPrice">—</div><div class="sub" id="kAvgPriceUnit">excl. Urban Air</div></div>
       <div class="kpi rev"><div class="label">Est. monthly (tuition)</div><div class="value" id="kMonthly">—</div><div class="sub" id="kMonthlySub">revenue_rollable · per_enrollee_month only</div></div>
@@ -136,7 +139,7 @@
         </ul>
       </section>
 
-      <section class="panel-card session-gap" id="sessionPanel" aria-label="Session date coverage">
+      <section class="panel-card session-gap session-panel-collapsed" id="sessionPanel" hidden aria-label="Session date coverage">
         <h3 class="panel-title">
           Session coverage
           <span class="gap-pill">COVERAGE GAP</span>
@@ -257,6 +260,7 @@
     </details>
   </div>
   <script src="data/sites.js"></script>
+  <script src="assets/viz.js"></script>
   <script src="assets/programs.js"></script>
 </body>
 </html>

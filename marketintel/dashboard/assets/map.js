@@ -30,7 +30,35 @@
   const allSites = snapshot.sites || [];
   const brandsMeta = meta.brands || [];
   const brandColor = Object.fromEntries(brandsMeta.map(b => [b.name, b.color]));
+  const Viz = window.MarketIntelViz || {};
+  const categoryColorHex = Viz.categoryColorHex || function () { return '#64748B'; };
+  const shapeClass = Viz.shapeClass || function (p) {
+    return p === 'location' ? 'marker-precise' : 'marker-approx';
+  };
+  /** Primary category per brand (mode across sites) for share/legend swatches. */
+  const brandCategory = (function () {
+    const counts = {};
+    (snapshot.sites || []).forEach((s) => {
+      const b = s.brand;
+      const c = s.category || 'other';
+      if (!b) return;
+      if (!counts[b]) counts[b] = {};
+      counts[b][c] = (counts[b][c] || 0) + 1;
+    });
+    const out = {};
+    Object.keys(counts).forEach((b) => {
+      out[b] = Object.entries(counts[b]).sort((a, c) => c[1] - a[1])[0][0];
+    });
+    return out;
+  })();
+  function colorForSite(s) {
+    return categoryColorHex(s.category || brandCategory[s.brand] || 'other');
+  }
+  function colorForBrand(brand) {
+    return categoryColorHex(brandCategory[brand] || 'other');
+  }
   const presets = meta.presets || {};
+  const geoStats = meta.geo_stats || {};
 
   const state = {
     brands: new Set(brandsMeta.map(b => b.name)),
@@ -103,7 +131,8 @@
   const brandChecks = document.getElementById('brandChecks');
   brandsMeta.forEach(b => {
     const lab = document.createElement('label');
-    lab.innerHTML = '<input type="checkbox" value="' + esc(b.name) + '" checked /><span class="swatch" style="color:' + b.color + ';background:' + b.color + '"></span><span>' + esc(b.name) + '</span>';
+    const bc = colorForBrand(b.name);
+    lab.innerHTML = '<input type="checkbox" value="' + esc(b.name) + '" checked /><span class="swatch" style="color:' + bc + ';background:' + bc + '"></span><span>' + esc(b.name) + '</span>';
     brandChecks.appendChild(lab);
   });
   const states = [...new Set(allSites.map(s => s.state).filter(Boolean))].sort();
@@ -132,12 +161,28 @@
   }
 
   const legend = document.getElementById('legend');
-  brandsMeta.forEach(b => {
+  const LEGEND_CATS = [
+    ['gymnastics', 'Gymnastics'],
+    ['martial_arts', 'Martial arts'],
+    ['adventure', 'Adventure'],
+    ['stem', 'STEM'],
+    ['ninja', 'Ninja'],
+    ['cheer_dance', 'Cheer / dance'],
+    ['other', 'Other'],
+  ];
+  LEGEND_CATS.forEach(([key, label]) => {
+    const hex = categoryColorHex(key);
     const row = document.createElement('div');
     row.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:12px';
-    row.innerHTML = '<span class="swatch" style="color:' + b.color + ';background:' + b.color + '"></span><span>' + esc(b.name) + '</span><span style="color:var(--dim);font-size:10px;margin-left:auto">' + esc(b.note || (b.revenue === false ? 'pass $ excl.' : '')) + '</span>';
+    row.innerHTML = '<span class="swatch" style="color:' + hex + ';background:' + hex + '"></span><span>' + esc(label) + '</span>';
     legend.appendChild(row);
   });
+  const shapeHint = document.createElement('div');
+  shapeHint.style.cssText = 'margin-top:10px;padding-top:8px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;font-size:11px;color:var(--muted)';
+  shapeHint.innerHTML =
+    '<div style="display:flex;align-items:center;gap:8px"><span class="marker-dot marker-precise" style="--c:#64748B;width:12px;height:12px;display:inline-block"></span><span>Circle — surveyed (location)</span></div>' +
+    '<div style="display:flex;align-items:center;gap:8px"><span class="marker-dot marker-approx" style="--c:#64748B;width:12px;height:12px;display:inline-block"></span><span>Square — approximate (zip / city / photon)</span></div>';
+  legend.appendChild(shapeHint);
 
   // —— Leaflet map ——
   const map = L.map('map', { zoomControl: true, attributionControl: true }).setView([39.5, -98], 4);
@@ -310,11 +355,13 @@
 
   const markerById = new Map();
   function makeIcon(s) {
-    const c = s.color || brandColor[s.brand] || '#888';
+    const c = colorForSite(s);
+    const prec = s.geo_precision || 'zip_centroid';
+    const shape = shapeClass(prec);
     const closed = s.likely_closed ? ' closed' : '';
     return L.divIcon({
       className: '',
-      html: '<div class="marker-dot' + closed + '" style="--c:' + c + '" title="' + (s.geo_precision || 'zip_centroid') + '"></div>',
+      html: '<div class="marker-dot ' + shape + closed + '" style="--c:' + c + '" title="' + prec + '"></div>',
       iconSize: [14, 14], iconAnchor: [7, 7],
     });
   }
@@ -383,6 +430,25 @@
     requestAnimationFrame(() => { try { map.invalidateSize({ animate: false }); } catch (_) {} });
   }
 
+  function matchesFiltersExceptGeo(s) {
+    if (!state.brands.has(s.brand)) return false;
+    if (state.hideClosed && s.likely_closed) return false;
+    if (state.hideJunk && s.is_junk) return false;
+    if (state.stateFilter && s.state !== state.stateFilter) return false;
+    if (state.metroFilter && s.metro !== state.metroFilter) return false;
+    if (state.search) {
+      const q = state.search.toLowerCase();
+      const blob = (s.name + ' ' + s.city + ' ' + s.metro + ' ' + s.zip + ' ' + s.brand + ' ' + s.state).toLowerCase();
+      if (!blob.includes(q)) return false;
+    }
+    if (state.useRadius && state.center) {
+      const ll = siteLatLng(s);
+      if (!ll) return true; // unmapped still count when radius is on
+      if (haversine(state.center.lat, state.center.lng, ll.lat, ll.lng) > state.radius) return false;
+    }
+    return true;
+  }
+
   function updateKPIs(list) {
     const sites = list.length;
     const enrolled = list.reduce((a, s) => a + (s.enrolled || 0), 0);
@@ -392,6 +458,8 @@
     const annual = list.reduce((a, s) => a + (s.est_annual_rev || 0), 0);
     const closedN = list.filter(s => s.likely_closed).length;
     const live = list.filter(s => (s.n_classes || 0) > 0).length;
+    const unmapped = allSites.filter((s) => matchesFiltersExceptGeo(s) && !siteLatLng(s)).length;
+    const unmappedMeta = geoStats.ungeocoded;
     document.getElementById('kSites').textContent = fmtNum(sites);
     document.getElementById('kSitesSub').textContent = live + ' with live classes' + (closedN ? (' · ' + closedN + ' closed') : '');
     document.getElementById('kEnrolled').textContent = fmtNum(enrolled);
@@ -400,12 +468,20 @@
     document.getElementById('kFill').textContent = fmtPct(fill);
     document.getElementById('kMonthly').textContent = fmtMoney(monthly);
     document.getElementById('kAnnual').textContent = fmtMoney(annual);
+    const kU = document.getElementById('kUnmapped');
+    const kUSub = document.getElementById('kUnmappedSub');
+    if (kU) kU.textContent = fmtNum(unmapped);
+    if (kUSub) {
+      kUSub.textContent = unmappedMeta != null
+        ? ('no lat/lng · meta ungeocoded ' + fmtNum(unmappedMeta))
+        : 'no lat/lng in current filters';
+    }
   }
 
   function updateShare(list) {
     const metric = state.shareMetric;
     const by = {};
-    brandsMeta.forEach(b => { by[b.name] = { brand: b.name, color: b.color, value: 0 }; });
+    brandsMeta.forEach(b => { by[b.name] = { brand: b.name, color: colorForBrand(b.name), value: 0 }; });
     list.forEach(s => {
       if (!by[s.brand]) return;
       if (metric === 'enrolled') by[s.brand].value += (s.enrolled || 0);
@@ -460,7 +536,7 @@
         priceCell = '<td class="num">' + (s.price_low != null ? ('$' + s.price_low) : '—') + '</td>';
       }
       return '<tr data-id="' + esc(s.id) + '" class="' + sel + closedCls + '">' +
-        '<td class="sticky-col sticky-1"><span class="pill"><span class="swatch" style="background:' + (s.color || brandColor[s.brand] || '#888') + ';color:' + (s.color || '#888') + ';width:8px;height:8px"></span>' + esc(s.brand) + '</span></td>' +
+        '<td class="sticky-col sticky-1"><span class="pill"><span class="swatch" style="background:' + colorForSite(s) + ';color:' + colorForSite(s) + ';width:8px;height:8px"></span>' + esc(s.brand) + '</span></td>' +
         '<td class="sticky-col sticky-2" title="' + esc(s.name) + '">' + esc(s.name) + closed + '</td>' +
         '<td>' + esc(s.metro || '—') + '</td>' +
         '<td>' + esc(s.state || '—') + '</td>' +
@@ -509,7 +585,9 @@
   function openDrawer(s) {
     document.getElementById('dName').textContent = s.name;
     document.getElementById('dBrand').innerHTML =
-      '<span class="swatch" style="display:inline-block;vertical-align:middle;margin-right:6px;background:' + (s.color || brandColor[s.brand] || '#888') + '"></span>' + s.brand +
+      '<span class="swatch" style="display:inline-block;vertical-align:middle;margin-right:6px;background:' + colorForSite(s) + '"></span>' +
+      esc(s.brand) +
+      (s.category ? ' · <span style="color:var(--muted)">' + esc(s.category) + '</span>' : '') +
       (s.likely_closed ? ' · <span class="closed-tag">LIKELY CLOSED</span>' : '');
     const ll = siteLatLng(s);
     const revEligible = !!s.revenue_eligible;
