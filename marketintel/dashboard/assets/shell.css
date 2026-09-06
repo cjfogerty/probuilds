@@ -155,6 +155,7 @@ body.layout-doc .page-body {
 html:has(body.layout-app),
 body.layout-app {
   height: 100%;
+  height: 100dvh;
   max-height: 100dvh;
   margin: 0;
   padding: 0 !important;

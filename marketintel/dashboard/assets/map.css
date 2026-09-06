@@ -9,7 +9,12 @@
   --ring: 0 0 0 2px rgba(91,140,255,.45);
 }
 *, *::before, *::after { box-sizing: border-box; }
-html, body { height: 100%; margin: 0; }
+html, body {
+  height: 100%;
+  height: 100dvh;
+  margin: 0;
+  overflow: hidden;
+}
 body {
   font-family: var(--sans); background: var(--bg); color: var(--text);
   overflow: hidden; font-size: 13px; line-height: 1.4;
@@ -24,13 +29,15 @@ button:focus-visible, input:focus-visible, select:focus-visible {
 .app {
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr);
-  height: 100dvh;
   height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
   width: 100%;
   max-width: 100%;
   overflow: hidden;
   min-height: 0;
 }
+.app > * { min-height: 0; min-width: 0; }
 
 /* —— KPI strip: never wrap — horizontal scroll if needed —— */
 .kpis {
@@ -207,17 +214,19 @@ button:focus-visible, input:focus-visible, select:focus-visible {
 }
 .map-overlay {
   position: absolute; z-index: 500; top: 10px; left: 10px; right: 10px;
-  display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start;
+  display: flex; flex-wrap: nowrap; gap: 8px; align-items: flex-start;
   pointer-events: none;
 }
 .map-overlay > * { pointer-events: auto; }
-.map-tools { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+.map-tools { display: flex; flex-wrap: nowrap; gap: 6px; margin-left: auto; flex-shrink: 0; }
 .center-pill {
   background: rgba(12,16,24,.88); backdrop-filter: blur(10px);
   border: 1px solid rgba(125,211,252,.22); border-radius: 999px;
   padding: 6px 12px; font-family: var(--mono); font-size: 11px;
-  box-shadow: 0 4px 20px rgba(0,0,0,.4); max-width: min(520px, 100%);
+  box-shadow: 0 4px 20px rgba(0,0,0,.4); max-width: min(520px, 55%);
   color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  min-width: 0;
 }
 .center-pill .dim { color: var(--muted); }
 .center-pill strong { font-weight: 600; }
