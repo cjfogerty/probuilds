@@ -13,6 +13,17 @@
   const snapshot = DATA.snapshots[DATA.snapshots.length - 1];
   const allSites = snapshot.sites || [];
 
+  const PAGE_SIZE = 200;
+  const CATEGORY_ORDER = [
+    'gymnastics',
+    'ninja',
+    'martial_arts',
+    'cheer_dance',
+    'adventure',
+    'stem',
+    'other',
+  ];
+
   const fmt = new Intl.NumberFormat('en-US');
   const fmtPct = (n, d) => {
     if (d == null || d === 0 || n == null || isNaN(n)) return '—';
@@ -36,7 +47,6 @@
     );
   }
 
-  /** Default visibility: hide closed + junk (same rules as hub/map). */
   function isVisible(s) {
     if (s.likely_closed) return false;
     if (s.is_junk) return false;
@@ -55,11 +65,47 @@
     return (s.brand || s.brand_name || '').trim() || 'Unknown';
   }
 
-  /** Program = program || program_name || brand; fallback flagged when no program field. */
   function programOf(s) {
-    const raw = (s.program || s.program_name || '').trim();
+    const raw = (s.program_name || s.program || '').trim();
     if (raw) return { name: raw, fallback: false };
     return { name: brandNameOf(s), fallback: true };
+  }
+
+  function normalizeCategory(raw) {
+    const v = String(raw || '')
+      .toLowerCase()
+      .trim()
+      .replace(/[\s-]+/g, '_');
+    if (!v) return '';
+    if (v === 'adventure_park' || v === 'adventurepark') return 'adventure';
+    if (v === 'stem_makers' || v === 'stem_maker' || v === 'stemmakers') return 'stem';
+    if (v === 'cheer' || v === 'dance' || v === 'cheer/dance') return 'cheer_dance';
+    if (v === 'martial' || v === 'martialarts' || v === 'mma') return 'martial_arts';
+    return v;
+  }
+
+  /** Prefer site.category; heuristic only when missing. */
+  function categoryOf(s) {
+    const fromSite = normalizeCategory(s.category);
+    if (fromSite) return fromSite;
+
+    const blob = [
+      brandNameOf(s),
+      programOf(s).name,
+      s.name || '',
+      s.session_name || '',
+      s.price_low_name || '',
+    ]
+      .join(' ')
+      .toLowerCase();
+
+    if (/\bninja\b/.test(blob)) return 'ninja';
+    if (/martial|karate|taekwondo|jiu.?jitsu|kung.?fu|mma\b/.test(blob)) return 'martial_arts';
+    if (/cheer|dance|tumbling\b/.test(blob)) return 'cheer_dance';
+    if (/urban.?air|adventure.?park|trampoline|soft.?play|bounce/.test(blob)) return 'adventure';
+    if (/\bstem\b|robotic|coding|maker|snapology|science/.test(blob)) return 'stem';
+    if (/gymnast|little.?gym|tumble|acro/.test(blob)) return 'gymnastics';
+    return 'other';
   }
 
   function unitBucket(intervalOrSite) {
@@ -67,10 +113,12 @@
     if (v && typeof v === 'object') {
       v = v.price_unit || v.billing_interval || '';
     }
-    v = String(v || '').toLowerCase().trim();
+    v = String(v || '')
+      .toLowerCase()
+      .trim();
     if (v === 'monthly' || v === 'per_month') return 'monthly';
     if (v === 'per_lesson' || v === 'per_class' || v === 'each' || v === 'per_visit') return 'lesson';
-    if (v === 'per_session' || v === 'per_package') return 'lesson'; // term/session sticker — not monthly×12
+    if (v === 'per_session' || v === 'per_package') return 'lesson';
     return 'unknown';
   }
 
@@ -80,13 +128,6 @@
     return 'unknown';
   }
 
-  /**
-   * Per-site revenue contribution.
-   * Prefer est_* when present. Monthly billing → solid monthly/annual.
-   * per_lesson/each: list×enrolled with unit label only — do NOT blind-annualize
-   * (SESSION_INVENTORY: don't annualize per_lesson as monthly×12).
-   * Urban Air: membership_pass — excluded from tuition $ paths.
-   */
   function siteRev(s) {
     if (isUrbanAir(s)) {
       return {
@@ -120,7 +161,7 @@
       return { monthly: null, annual: null, strength: 'none', note: 'missing enroll or price' };
     }
 
-    const listX = (+enrolled) * (+price);
+    const listX = +enrolled * +price;
     if (bucket === 'monthly') {
       return {
         monthly: listX,
@@ -146,7 +187,6 @@
           note: 'per_lesson × ' + lessons + ' lessons/mo assumed (weak annualize)',
         };
       }
-      // Prefer list×enrolled with unit label — do NOT blind-annualize
       return {
         monthly: null,
         annual: null,
@@ -163,37 +203,34 @@
     };
   }
 
-  function sessionStatusForSites(list) {
-    const n = list.length || 1;
-    const captured = list.filter((s) => s.session_dates_status === 'captured' || (s.session_start && s.session_end)).length;
-    const missing = list.filter((s) => s.session_dates_status === 'missing').length;
-    const na = list.filter((s) => s.session_dates_status === 'not_applicable').length;
-    if (captured === n) return 'CAPTURED';
-    if (captured > 0) return 'PARTIAL';
-    if (missing > 0 && na === 0) return 'MISSING';
-    if (na === n) return 'N/A';
-    if (missing > 0) return 'MISSING';
+  function sessionStatusForSite(s) {
+    const st = s.session_dates_status;
+    if (st === 'captured' || (s.session_start && s.session_end)) return 'CAPTURED';
+    if (st === 'not_applicable') return 'N/A';
+    if (st === 'missing') return 'MISSING';
+    if (s.session_start || s.session_end) return 'PARTIAL';
     return 'MISSING';
   }
 
-  function sessionHint(list) {
-    const captured = list.filter((s) => s.session_dates_status === 'captured');
-    if (captured.length) {
-      // JR dates inferred from OpeningsJS session names — not published calendars
-      const jr = captured.some((s) => String(s.platform || '').toLowerCase() === 'jackrabbit');
+  function sessionHintForSite(s) {
+    const st = sessionStatusForSite(s);
+    if (st === 'CAPTURED') {
+      const jr = String(s.platform || '').toLowerCase() === 'jackrabbit';
       return jr ? 'inferred from session labels' : 'session window captured';
     }
-    const pike = list.some((s) => String(s.platform || '').toLowerCase() === 'pike13');
-    if (pike) return 'course dates not pulled';
-    if (list.some(isUrbanAir)) return 'membership_pass (not class sessions)';
-    if (list.every((s) => s.session_dates_status === 'not_applicable' || s.session_model === 'ongoing_tuition')) {
-      return 'ongoing — session dates N/A';
+    if (st === 'N/A') {
+      if (isUrbanAir(s)) return 'membership_pass (not class sessions)';
+      if (s.session_model === 'ongoing_tuition') return 'ongoing — session dates N/A';
+      return 'not applicable';
     }
+    if (String(s.platform || '').toLowerCase() === 'pike13') return 'course dates not pulled';
     return '';
   }
 
   function sessionCoverageCounts(list) {
-    let cap = 0, miss = 0, na = 0;
+    let cap = 0,
+      miss = 0,
+      na = 0;
     list.forEach((s) => {
       const st = s.session_dates_status;
       if (st === 'captured' || (s.session_start && s.session_end)) cap++;
@@ -203,18 +240,45 @@
     return { captured: cap, missing: miss, notApplicable: na };
   }
 
+  function fillPctOf(s) {
+    if (s.fill_pct != null && !isNaN(+s.fill_pct)) return +s.fill_pct;
+    if (s.enrolled != null && s.capacity != null && +s.capacity > 0 && !isNaN(+s.enrolled)) {
+      return (100 * +s.enrolled) / +s.capacity;
+    }
+    return null;
+  }
+
+  function siteId(s) {
+    return String(s.id || s.program_id || s.slug || brandNameOf(s) + '|' + (s.name || '') + '|' + (s.zip || ''));
+  }
+
+  function mapHrefForSite(s) {
+    const q = new URLSearchParams();
+    if (s.id) q.set('site', s.id);
+    else if (brandNameOf(s) !== 'Unknown') q.set('brand', brandNameOf(s));
+    if (s.metro) q.set('metro', s.metro);
+    const hash = q.toString();
+    return 'map.html' + (hash ? '#' + hash : '');
+  }
+
   // —— State ——
   const state = {
-    mode: 'brand', // brand | program
+    category: '',
+    brands: new Set(),
+    program: '',
+    metro: '',
+    platform: '',
     hideClosed: true,
     search: '',
-    platform: '',
-    sortKey: 'sites',
-    sortDir: 'desc',
-    selectedKey: null,
+    summaryBy: 'brand', // brand | category | program
+    sortKey: 'name',
+    sortDir: 'asc',
+    selectedId: null,
+    shown: PAGE_SIZE,
+    suppressHash: false,
   };
 
-  // —— Chips / pull week (observation window ≠ session dates) ——
+  // —— Chips / pull week ——
   const weekFrom = snapshot.week_start || meta.week?.from || '—';
   const weekTo = snapshot.week_end || meta.week?.to || '—';
   const pullWeekLabel = weekFrom + ' → ' + weekTo;
@@ -226,32 +290,61 @@
   document.getElementById('pullWeekRange').textContent = pullWeekLabel;
   document.getElementById('pullWeekInline').textContent = pullWeekLabel;
 
-  // —— Helpers ——
+  function baseSites() {
+    return state.hideClosed ? allSites.filter(isVisible) : allSites.slice();
+  }
+
+  /** Sites after all intersecting filters (before table pagination). */
   function filteredSites() {
-    let list = state.hideClosed ? allSites.filter(isVisible) : allSites.slice();
+    let list = baseSites();
+
+    if (state.category) {
+      const cat = normalizeCategory(state.category);
+      list = list.filter((s) => categoryOf(s) === cat);
+    }
+    if (state.brands.size) {
+      list = list.filter((s) => state.brands.has(brandNameOf(s)));
+    }
+    if (state.program) {
+      list = list.filter((s) => programOf(s).name === state.program);
+    }
+    if (state.metro) {
+      list = list.filter((s) => (s.metro || '').trim() === state.metro);
+    }
     if (state.platform) {
       const p = state.platform.toLowerCase();
       list = list.filter((s) => String(s.platform || '').toLowerCase() === p);
     }
+    const needle = state.search.trim().toLowerCase();
+    if (needle) {
+      list = list.filter((s) => {
+        const hay = [
+          s.name,
+          s.city,
+          s.zip,
+          s.state,
+          s.metro,
+          brandNameOf(s),
+          programOf(s).name,
+          categoryOf(s),
+          s.platform,
+        ]
+          .join(' ')
+          .toLowerCase();
+        return hay.includes(needle);
+      });
+    }
     return list;
-  }
-
-  function entityKey(s) {
-    if (state.mode === 'program') return programOf(s).name;
-    return brandNameOf(s);
   }
 
   function aggregate(list) {
     const sites = list.length;
     const metros = new Set(list.map((s) => (s.metro || '').trim()).filter(Boolean));
     let enrolledSum = 0;
-    let enrollSites = 0; // enrolled != null (includes 0)
-    let enrollPositive = 0; // enrolled > 0 for avg
-    let enrollPositiveSum = 0;
+    let enrollSites = 0;
     let priceSites = 0;
-    let priceSum = 0;
-    let priceCountExUA = 0;
     let priceSumExUA = 0;
+    let priceCountExUA = 0;
     let monthly = 0;
     let annual = 0;
     let monthlySites = 0;
@@ -259,29 +352,19 @@
     let partialList = 0;
     let partialSites = 0;
     const units = { monthly: 0, lesson: 0, unknown: 0 };
-    const platforms = new Set();
-    let fallbackCount = 0;
     let uaSites = 0;
 
     list.forEach((s) => {
-      platforms.add(String(s.platform || 'unknown').toLowerCase());
-      if (state.mode === 'program' && programOf(s).fallback) fallbackCount++;
       if (isUrbanAir(s)) uaSites++;
-
       const bucket = unitBucket(s);
       units[bucket]++;
 
       if (s.enrolled != null && !isNaN(+s.enrolled)) {
         enrollSites++;
         enrolledSum += +s.enrolled;
-        if (+s.enrolled > 0) {
-          enrollPositive++;
-          enrollPositiveSum += +s.enrolled;
-        }
       }
       if (s.price_low != null && !isNaN(+s.price_low)) {
         priceSites++;
-        priceSum += +s.price_low;
         if (!isUrbanAir(s)) {
           priceCountExUA++;
           priceSumExUA += +s.price_low;
@@ -310,142 +393,438 @@
           ? 'lesson'
           : 'unknown';
 
-    // Spec: avg enrollment = sum(enrolled) / sites_with_enroll (enrolled != null, includes 0)
     const avgEnroll = enrollSites > 0 ? enrolledSum / enrollSites : null;
     const avgPrice = priceCountExUA > 0 ? priceSumExUA / priceCountExUA : null;
+    const cov = sessionCoverageCounts(list);
 
-    const out = {
+    return {
       sites,
       metros: metros.size,
-      metroList: [...metros].sort(),
       enrolled: enrolledSum,
       enrollSites,
-      enrollPositive,
       enrollCov: sites ? enrollSites / sites : null,
       priceSites,
       priceCov: sites ? priceSites / sites : null,
       avgEnroll,
       avgPrice,
-      avgPriceAll: priceSites ? priceSum / priceSites : null,
       units,
       dominantUnit,
-      platforms: [...platforms].sort(),
       estMonthly: monthlySites ? monthly : null,
       estAnnual: annualSites ? annual : null,
       monthlySites,
       annualSites,
       partialList: partialSites ? partialList : null,
       partialSites,
-      fallbackCount,
       uaSites,
-      sessionStatus: sessionStatusForSites(list),
-      sessionHint: sessionHint(list),
+      sessStartCap: cov.captured,
+      sessStartMiss: cov.missing,
+      sessEndCap: cov.captured,
+      sessEndMiss: cov.missing,
+      sessNA: cov.notApplicable,
     };
-    const cov = sessionCoverageCounts(list);
-    out.sessCov = cov;
-    out.sessStartCap = cov.captured;
-    out.sessStartMiss = cov.missing;
-    out.sessEndCap = cov.captured;
-    out.sessEndMiss = cov.missing;
-    out.sessNA = cov.notApplicable;
-    return out;
   }
 
-  function buildEntities(sites) {
+  function groupForSummary(list, by) {
     const map = new Map();
-    sites.forEach((s) => {
-      const key = entityKey(s);
+    list.forEach((s) => {
+      let key;
+      if (by === 'category') key = categoryOf(s);
+      else if (by === 'program') key = programOf(s).name;
+      else key = brandNameOf(s);
       if (!map.has(key)) map.set(key, []);
       map.get(key).push(s);
     });
     const rows = [];
-    map.forEach((list, name) => {
-      const agg = aggregate(list);
-      const isFallback =
-        state.mode === 'program' && list.every((s) => programOf(s).fallback);
+    map.forEach((sites, name) => {
+      let enrolled = 0;
+      sites.forEach((s) => {
+        if (s.enrolled != null && !isNaN(+s.enrolled)) enrolled += +s.enrolled;
+      });
       rows.push({
         key: name,
         name,
-        list,
-        ...agg,
-        isFallback,
-        brands: [...new Set(list.map(brandNameOf))],
+        sites: sites.length,
+        enrolled,
+        brands: [...new Set(sites.map(brandNameOf))],
       });
     });
     return rows;
   }
 
-  function applySearch(rows) {
-    const needle = state.search.trim().toLowerCase();
-    if (!needle) return rows;
-    return rows.filter((r) => {
-      if (r.name.toLowerCase().includes(needle)) return true;
-      if (r.platforms.some((p) => p.includes(needle))) return true;
-      if (r.metroList.some((m) => m.toLowerCase().includes(needle))) return true;
-      if (r.brands.some((b) => b.toLowerCase().includes(needle))) return true;
-      return false;
-    });
-  }
-
-  function sortRows(rows) {
+  function sortSiteRows(list) {
     const key = state.sortKey;
     const dir = state.sortDir === 'asc' ? 1 : -1;
-    const numKeys = new Set([
-      'sites',
-      'metros',
-      'enrolled',
-      'avgEnroll',
-      'enrollCov',
-      'priceCov',
-      'avgPrice',
-      'estMonthly',
-      'estAnnual',
-    ]);
-    return rows.slice().sort((a, b) => {
-      let av = a[key];
-      let bv = b[key];
-      if (key === 'platforms') {
-        av = (a.platforms || []).join(',');
-        bv = (b.platforms || []).join(',');
+    const numKeys = new Set(['enrolled', 'capacity', 'fillPct', 'price', 'estMonthly']);
+
+    return list.slice().sort((a, b) => {
+      const ra = siteRev(a);
+      const rb = siteRev(b);
+      let av;
+      let bv;
+      switch (key) {
+        case 'brand':
+          av = brandNameOf(a);
+          bv = brandNameOf(b);
+          break;
+        case 'program':
+          av = programOf(a).name;
+          bv = programOf(b).name;
+          break;
+        case 'category':
+          av = categoryOf(a);
+          bv = categoryOf(b);
+          break;
+        case 'name':
+          av = a.name || '';
+          bv = b.name || '';
+          break;
+        case 'metro':
+          av = a.metro || '';
+          bv = b.metro || '';
+          break;
+        case 'state':
+          av = a.state || '';
+          bv = b.state || '';
+          break;
+        case 'platform':
+          av = String(a.platform || '').toLowerCase();
+          bv = String(b.platform || '').toLowerCase();
+          break;
+        case 'enrolled':
+          av = a.enrolled;
+          bv = b.enrolled;
+          break;
+        case 'capacity':
+          av = a.capacity;
+          bv = b.capacity;
+          break;
+        case 'fillPct':
+          av = fillPctOf(a);
+          bv = fillPctOf(b);
+          break;
+        case 'price':
+          av = a.price_low;
+          bv = b.price_low;
+          break;
+        case 'unit':
+          av = unitLabel(unitBucket(a));
+          bv = unitLabel(unitBucket(b));
+          break;
+        case 'session':
+          av = sessionStatusForSite(a) + (sessionHintForSite(a) || '');
+          bv = sessionStatusForSite(b) + (sessionHintForSite(b) || '');
+          break;
+        case 'estMonthly':
+          av = ra.monthly != null ? ra.monthly : ra.listPartial;
+          bv = rb.monthly != null ? rb.monthly : rb.listPartial;
+          break;
+        default:
+          av = a.name || '';
+          bv = b.name || '';
       }
-      if (key === 'dominantUnit') {
-        av = unitLabel(a.dominantUnit);
-        bv = unitLabel(b.dominantUnit);
-      }
-      if (key === 'sessionStatus') {
-        av = a.sessionStatus + (a.sessionHint || '');
-        bv = b.sessionStatus + (b.sessionHint || '');
-      }
+
       if (numKeys.has(key)) {
         av = av == null || isNaN(av) ? -Infinity : +av;
         bv = bv == null || isNaN(bv) ? -Infinity : +bv;
-        if (av === bv) return a.name.localeCompare(b.name);
+        if (av === bv) return brandNameOf(a).localeCompare(brandNameOf(b)) || String(a.name || '').localeCompare(String(b.name || ''));
         return (av - bv) * dir;
       }
       av = String(av ?? '');
       bv = String(bv ?? '');
       const cmp = av.localeCompare(bv, undefined, { sensitivity: 'base' });
-      if (cmp === 0) return a.name.localeCompare(b.name);
+      if (cmp === 0) return String(a.name || '').localeCompare(String(b.name || ''));
       return cmp * dir;
     });
   }
 
-  function mapHrefForEntity(row) {
-    const q = new URLSearchParams();
-    if (state.mode === 'brand') {
-      q.set('brand', row.name);
-    } else if (row.brands.length === 1) {
-      q.set('brand', row.brands[0]);
-    } else if (row.brands.length) {
-      q.set('q', row.name);
-    }
-    const hash = q.toString();
-    return 'map.html' + (hash ? '#' + hash : '');
+  function hasActiveFilters() {
+    return !!(
+      state.category ||
+      state.brands.size ||
+      state.program ||
+      state.metro ||
+      state.platform ||
+      state.search.trim()
+    );
   }
 
-  // —— Render KPIs for scope (national or selected) ——
-  function renderKpis(agg, scopeLabel) {
-    document.getElementById('scopeName').textContent = scopeLabel;
+  function scopeLabel() {
+    const parts = [];
+    if (state.category) parts.push('Category: ' + state.category);
+    if (state.brands.size === 1) parts.push('Brand: ' + [...state.brands][0]);
+    else if (state.brands.size > 1) parts.push(state.brands.size + ' brands');
+    if (state.program) parts.push('Program: ' + state.program);
+    if (state.metro) parts.push('Metro: ' + state.metro);
+    if (state.platform) parts.push('Platform: ' + state.platform);
+    if (state.search.trim()) parts.push('Search: “' + state.search.trim() + '”');
+    return parts.length ? parts.join(' · ') : 'National (all visible)';
+  }
+
+  function writeHash() {
+    if (state.suppressHash) return;
+    const q = new URLSearchParams();
+    if (state.category) q.set('category', state.category);
+    if (state.brands.size === 1) q.set('brand', [...state.brands][0]);
+    else if (state.brands.size > 1) q.set('brand', [...state.brands].join('|'));
+    if (state.program) q.set('program', state.program);
+    if (state.metro) q.set('metro', state.metro);
+    if (state.platform) q.set('platform', state.platform);
+    const hash = q.toString();
+    try {
+      history.replaceState(null, '', location.pathname + location.search + (hash ? '#' + hash : ''));
+    } catch (_) {}
+  }
+
+  function applyHash() {
+    const raw = (location.hash || '').replace(/^#/, '');
+    if (!raw) return;
+    const params = new URLSearchParams(raw.includes('=') ? raw : 'brand=' + raw);
+    const brand = params.get('brand');
+    const category = params.get('category');
+    const metro = params.get('metro');
+    const program = params.get('program');
+    const platform = params.get('platform');
+
+    if (category) state.category = normalizeCategory(category);
+    if (program) state.program = program;
+    if (metro) state.metro = metro;
+    if (platform) state.platform = platform.toLowerCase();
+    if (brand) {
+      state.brands = new Set(
+        brand
+          .split('|')
+          .map((b) => b.trim())
+          .filter(Boolean)
+      );
+    }
+  }
+
+  // —— Cascading option population ——
+  function sitesForBrandOptions() {
+    let list = baseSites();
+    if (state.category) {
+      const cat = normalizeCategory(state.category);
+      list = list.filter((s) => categoryOf(s) === cat);
+    }
+    return list;
+  }
+
+  function sitesForProgramOptions() {
+    let list = sitesForBrandOptions();
+    if (state.brands.size) list = list.filter((s) => state.brands.has(brandNameOf(s)));
+    return list;
+  }
+
+  function sitesForMetroOptions() {
+    let list = sitesForProgramOptions();
+    if (state.program) list = list.filter((s) => programOf(s).name === state.program);
+    return list;
+  }
+
+  function populateCategoryFilter() {
+    const sel = document.getElementById('categoryFilter');
+    if (!sel) return;
+    const present = new Set(baseSites().map(categoryOf));
+    const current = state.category;
+    // Keep static options from HTML; ensure known categories exist
+    const existing = new Set([...sel.options].map((o) => o.value).filter(Boolean));
+    CATEGORY_ORDER.forEach((c) => {
+      if (!existing.has(c) && present.has(c)) {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        sel.appendChild(opt);
+      }
+    });
+    // Disable empty categories? Keep all selectable for hash deep-links.
+    sel.value = current && [...sel.options].some((o) => o.value === current) ? current : '';
+    if (sel.value !== state.category) state.category = sel.value;
+  }
+
+  function renderBrandMs() {
+    const listEl = document.getElementById('brandMsList');
+    const labelEl = document.getElementById('brandMsLabel');
+    const searchEl = document.getElementById('brandMsSearch');
+    if (!listEl || !labelEl) return;
+
+    const brands = [...new Set(sitesForBrandOptions().map(brandNameOf))].sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: 'base' })
+    );
+    // Drop selected brands that vanished after category cascade
+    const next = new Set([...state.brands].filter((b) => brands.includes(b)));
+    if (next.size !== state.brands.size) state.brands = next;
+
+    const needle = (searchEl && searchEl.value ? searchEl.value : '').trim().toLowerCase();
+    const shown = needle ? brands.filter((b) => b.toLowerCase().includes(needle)) : brands;
+
+    listEl.innerHTML = shown
+      .map((b) => {
+        const checked = state.brands.has(b);
+        return (
+          '<label class="ms-option">' +
+          '<input type="checkbox" value="' +
+          esc(b) +
+          '"' +
+          (checked ? ' checked' : '') +
+          ' />' +
+          '<span>' +
+          esc(b) +
+          '</span></label>'
+        );
+      })
+      .join('');
+
+    listEl.querySelectorAll('input[type="checkbox"]').forEach((inp) => {
+      inp.addEventListener('change', () => {
+        if (inp.checked) state.brands.add(inp.value);
+        else state.brands.delete(inp.value);
+        updateBrandLabel();
+        state.shown = PAGE_SIZE;
+        // Cascading: refresh program/metro options + results
+        populateProgramFilter();
+        populateMetroFilter();
+        writeHash();
+        refresh(false);
+      });
+    });
+
+    updateBrandLabel();
+  }
+
+  function updateBrandLabel() {
+    const labelEl = document.getElementById('brandMsLabel');
+    if (!labelEl) return;
+    if (!state.brands.size) labelEl.textContent = 'All brands';
+    else if (state.brands.size === 1) labelEl.textContent = [...state.brands][0];
+    else labelEl.textContent = state.brands.size + ' brands';
+  }
+
+  function populateProgramFilter() {
+    const sel = document.getElementById('programFilter');
+    if (!sel) return;
+    const programs = [...new Set(sitesForProgramOptions().map((s) => programOf(s).name))].sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: 'base' })
+    );
+    const current = state.program;
+    sel.innerHTML =
+      '<option value="">All programs</option>' +
+      programs.map((p) => '<option value="' + esc(p) + '">' + esc(p) + '</option>').join('');
+    if (current && programs.includes(current)) sel.value = current;
+    else {
+      sel.value = '';
+      state.program = '';
+    }
+  }
+
+  function populateMetroFilter() {
+    const sel = document.getElementById('metroFilter');
+    if (!sel) return;
+    const metros = [...new Set(sitesForMetroOptions().map((s) => (s.metro || '').trim()).filter(Boolean))].sort(
+      (a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })
+    );
+    const current = state.metro;
+    sel.innerHTML =
+      '<option value="">All metros</option>' +
+      metros.map((m) => '<option value="' + esc(m) + '">' + esc(m) + '</option>').join('');
+    if (current && metros.includes(current)) sel.value = current;
+    else {
+      sel.value = '';
+      state.metro = '';
+    }
+  }
+
+  function populatePlatformFilter() {
+    const sel = document.getElementById('platformFilter');
+    if (!sel) return;
+    const current = state.platform;
+    const plats = [
+      ...new Set(baseSites().map((s) => String(s.platform || '').toLowerCase()).filter(Boolean)),
+    ].sort();
+    sel.innerHTML =
+      '<option value="">All platforms</option>' +
+      plats.map((p) => '<option value="' + esc(p) + '">' + esc(p) + '</option>').join('');
+    sel.value = current && plats.includes(current) ? current : '';
+    if (sel.value !== state.platform) state.platform = sel.value;
+  }
+
+  function populateFilters() {
+    populateCategoryFilter();
+    renderBrandMs();
+    populateProgramFilter();
+    populateMetroFilter();
+    populatePlatformFilter();
+
+    // Sync select values from state (after options built)
+    const cat = document.getElementById('categoryFilter');
+    if (cat) cat.value = state.category || '';
+    const prog = document.getElementById('programFilter');
+    if (prog) prog.value = state.program || '';
+    const metro = document.getElementById('metroFilter');
+    if (metro) metro.value = state.metro || '';
+    const plat = document.getElementById('platformFilter');
+    if (plat) plat.value = state.platform || '';
+  }
+
+  // —— Render ——
+  function renderFilterChips() {
+    const chips = document.getElementById('filterChips');
+    const clearBtn = document.getElementById('clearFilters');
+    if (!chips) return;
+
+    const items = [];
+    if (state.category) items.push({ k: 'category', label: 'category: ' + state.category });
+    [...state.brands].sort().forEach((b) => items.push({ k: 'brand', v: b, label: 'brand: ' + b }));
+    if (state.program) items.push({ k: 'program', label: 'program: ' + state.program });
+    if (state.metro) items.push({ k: 'metro', label: 'metro: ' + state.metro });
+    if (state.platform) items.push({ k: 'platform', label: 'platform: ' + state.platform });
+    if (state.search.trim()) items.push({ k: 'search', label: 'search: ' + state.search.trim() });
+
+    if (!items.length) {
+      chips.hidden = true;
+      chips.innerHTML = '';
+      if (clearBtn) clearBtn.hidden = true;
+      return;
+    }
+
+    chips.hidden = false;
+    if (clearBtn) clearBtn.hidden = false;
+    chips.innerHTML = items
+      .map((it) => {
+        const data =
+          it.k === 'brand' ? ' data-k="brand" data-v="' + esc(it.v) + '"' : ' data-k="' + esc(it.k) + '"';
+        return (
+          '<button type="button" class="filter-chip"' +
+          data +
+          '>' +
+          esc(it.label) +
+          ' <span aria-hidden="true">×</span></button>'
+        );
+      })
+      .join('');
+
+    chips.querySelectorAll('.filter-chip').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const k = btn.getAttribute('data-k');
+        if (k === 'category') state.category = '';
+        else if (k === 'brand') state.brands.delete(btn.getAttribute('data-v'));
+        else if (k === 'program') state.program = '';
+        else if (k === 'metro') state.metro = '';
+        else if (k === 'platform') state.platform = '';
+        else if (k === 'search') {
+          state.search = '';
+          const inp = document.getElementById('progSearch');
+          if (inp) inp.value = '';
+        }
+        state.shown = PAGE_SIZE;
+        populateFilters();
+        writeHash();
+        refresh(false);
+      });
+    });
+  }
+
+  function renderKpis(agg) {
+    document.getElementById('scopeName').textContent = scopeLabel();
     document.getElementById('kSites').textContent = fmtNum(agg.sites);
     document.getElementById('kSitesSub').textContent =
       (agg.uaSites ? agg.uaSites + ' UA pass sites · ' : '') +
@@ -467,26 +846,18 @@
           ? '$/lesson'
           : 'unit unknown') + ' · excl. Urban Air';
 
-    const monthlyEl = document.getElementById('kMonthly');
-    const annualEl = document.getElementById('kAnnual');
-    monthlyEl.textContent = fmtMoney(agg.estMonthly);
-    annualEl.textContent = fmtMoney(agg.estAnnual);
+    document.getElementById('kMonthly').textContent = fmtMoney(agg.estMonthly);
+    document.getElementById('kAnnual').textContent = fmtMoney(agg.estAnnual);
 
     let monthlySub = 'from est_* / monthly rule';
     let annualSub = 'monthly × 12 when solid';
     if (agg.partialSites) {
-      monthlySub +=
-        ' · ' +
-        agg.partialSites +
-        ' per_lesson partial (not in $)';
+      monthlySub += ' · ' + agg.partialSites + ' per_lesson partial (not in $)';
     }
-    if (agg.annualSites < agg.monthlySites) {
-      annualSub = 'weak when non-monthly';
-    }
+    if (agg.annualSites < agg.monthlySites) annualSub = 'weak when non-monthly';
     document.getElementById('kMonthlySub').textContent = monthlySub;
     document.getElementById('kAnnualSub').textContent = annualSub;
 
-    // Session strip for scope — CAPTURED / MISSING / N/A
     document.getElementById('sessStartCap').textContent = String(agg.sessStartCap);
     document.getElementById('sessStartMiss').textContent = fmtNum(agg.sessStartMiss);
     document.getElementById('sessEndCap').textContent = String(agg.sessEndCap);
@@ -495,6 +866,7 @@
     const na2 = document.getElementById('sessEndNA');
     if (na1) na1.textContent = fmtNum(agg.sessNA);
     if (na2) na2.textContent = fmtNum(agg.sessNA);
+
     const startBlock = document.getElementById('sessStartBlock');
     const endBlock = document.getElementById('sessEndBlock');
     if (startBlock) {
@@ -505,6 +877,7 @@
       endBlock.classList.toggle('has-capture', (agg.sessEndCap || 0) > 0);
       endBlock.classList.toggle('missing', (agg.sessEndMiss || 0) > 0);
     }
+
     const gapChip = document.getElementById('sessionGapChip');
     if (gapChip) {
       gapChip.innerHTML =
@@ -523,6 +896,9 @@
       const thin = !agg.sites || (agg.sessStartCap || 0) / agg.sites < 0.25;
       warn.hidden = !(thin || (agg.sessStartMiss || 0) > 0);
     }
+
+    document.getElementById('entityCountChip').innerHTML =
+      '<strong>' + fmtNum(agg.sites) + '</strong> sites';
   }
 
   function renderUnitPanel(agg) {
@@ -599,31 +975,40 @@
       '</div>';
   }
 
-  function renderBarChart(rows) {
+  function renderBarChart(list) {
     const el = document.getElementById('enrollBars');
+    const by = state.summaryBy;
     document.getElementById('chartModeLabel').textContent =
-      state.mode === 'brand' ? '(brands)' : '(programs)';
-    const top = rows
+      by === 'category' ? '(categories)' : by === 'program' ? '(programs)' : '(brands)';
+
+    const rows = groupForSummary(list, by)
       .slice()
       .sort((a, b) => (b.enrolled || 0) - (a.enrolled || 0) || b.sites - a.sites)
       .slice(0, 12);
-    if (!top.length) {
-      el.innerHTML = '<div class="empty-row" style="padding:20px;color:var(--soft)">No entities to chart.</div>';
+
+    if (!rows.length) {
+      el.innerHTML =
+        '<div class="empty-row" style="padding:20px;color:var(--soft)">No groups to chart.</div>';
       return;
     }
-    const max = Math.max(...top.map((r) => r.enrolled || 0), 1);
-    el.innerHTML = top
+
+    const max = Math.max(...rows.map((r) => r.enrolled || 0), 1);
+    el.innerHTML = rows
       .map((r) => {
         const pct = Math.max(2, Math.round((100 * (r.enrolled || 0)) / max));
         const color =
-          brandsMeta.find((b) => b.name === r.name || (r.brands && r.brands[0] === b.name))
-            ?.color || 'var(--accent)';
+          brandsMeta.find((b) => b.name === r.name || (r.brands && r.brands[0] === b.name))?.color ||
+          'var(--accent)';
         return (
-          '<div class="bar-row" data-key="' +
+          '<div class="bar-row" data-summary-key="' +
           esc(r.key) +
+          '" data-summary-by="' +
+          esc(by) +
           '" title="' +
           esc(r.name) +
-          '">' +
+          ' — ' +
+          fmtNum(r.sites) +
+          ' sites">' +
           '<div class="bar-name">' +
           esc(r.name) +
           '</div>' +
@@ -641,45 +1026,47 @@
 
     el.querySelectorAll('.bar-row').forEach((row) => {
       row.style.cursor = 'pointer';
-      row.addEventListener('click', () => selectEntity(row.getAttribute('data-key')));
+      row.addEventListener('click', () => {
+        const key = row.getAttribute('data-summary-key');
+        const mode = row.getAttribute('data-summary-by');
+        if (mode === 'brand') {
+          state.brands = new Set([key]);
+        } else if (mode === 'category') {
+          state.category = key;
+        } else if (mode === 'program') {
+          state.program = key;
+        }
+        state.shown = PAGE_SIZE;
+        populateFilters();
+        writeHash();
+        refresh(false);
+      });
     });
   }
 
-  function platPills(platforms) {
-    return (
-      '<div class="plat-pills">' +
-      platforms
-        .map((p) => '<span class="plat-pill">' + esc(p) + '</span>')
-        .join('') +
-      '</div>'
-    );
-  }
-
-  function sessionCell(row) {
-    const st = row.sessionStatus || 'MISSING';
+  function sessionCell(s) {
+    const st = sessionStatusForSite(s);
+    const hint = sessionHintForSite(s);
     const cls =
-      st === 'CAPTURED' ? 'ok' :
-      st === 'PARTIAL' ? 'partial' :
-      st === 'N/A' ? 'na' : 'miss';
-    let title = 'session_dates_status mix';
-    if (row.sessionHint && row.sessionHint.indexOf('inferred') >= 0) title = 'Inferred from JR session names — not published calendars';
+      st === 'CAPTURED' ? 'ok' : st === 'PARTIAL' ? 'partial' : st === 'N/A' ? 'na' : 'miss';
+    let title = 'session_dates_status';
+    if (hint && hint.indexOf('inferred') >= 0) title = 'Inferred from JR session names — not published calendars';
     let html = '<span class="sess-status ' + cls + '" title="' + esc(title) + '">' + esc(st) + '</span>';
-    if (row.sessionHint) {
+    if (hint) {
       html +=
-        '<div style="font-size:0.65rem;color:var(--soft);margin-top:3px;max-width:130px;line-height:1.25">' +
-        esc(row.sessionHint) +
+        '<div class="sess-cell-hint">' +
+        esc(hint) +
         '</div>';
     }
     return html;
   }
 
-  function renderTable(rows) {
+  function renderTable(sorted) {
     const body = document.getElementById('factsBody');
-    const label = state.mode === 'brand' ? 'Brands' : 'Programs';
-    document.getElementById('tableSectionTitle').childNodes[0].textContent = label + ' ';
-    document.getElementById('tableCount').textContent = '(' + rows.length + ')';
-    document.getElementById('entityCountChip').innerHTML =
-      '<strong>' + rows.length + '</strong> ' + (state.mode === 'brand' ? 'brands' : 'programs');
+    const total = sorted.length;
+    const slice = sorted.slice(0, state.shown);
+
+    document.getElementById('tableCount').textContent = '(' + fmtNum(total) + ')';
 
     document.querySelectorAll('.sort-btn').forEach((btn) => {
       const k = btn.getAttribute('data-sort');
@@ -690,95 +1077,114 @@
       }
     });
 
-    if (!rows.length) {
+    const footer = document.getElementById('tableFooter');
+    const showing = document.getElementById('tableShowing');
+    const moreBtn = document.getElementById('loadMoreBtn');
+    if (footer) {
+      footer.hidden = total === 0;
+      if (showing) showing.textContent = 'Showing ' + fmtNum(slice.length) + ' of ' + fmtNum(total);
+      if (moreBtn) {
+        moreBtn.hidden = slice.length >= total;
+      }
+    }
+
+    if (!slice.length) {
       body.innerHTML =
-        '<tr class="empty-row"><td colspan="13">No ' +
-        esc(label.toLowerCase()) +
-        ' match the current filters.</td></tr>';
+        '<tr class="empty-row"><td colspan="15">No sites match the current filters.</td></tr>';
       return;
     }
 
-    body.innerHTML = rows
-      .map((r) => {
-        const selected = state.selectedKey === r.key ? ' selected' : '';
-        const fb = r.isFallback
-          ? '<span class="fallback-badge" title="No program field — using brand">brand fallback</span>'
+    body.innerHTML = slice
+      .map((s) => {
+        const id = siteId(s);
+        const selected = state.selectedId === id ? ' selected' : '';
+        const prog = programOf(s);
+        const cat = categoryOf(s);
+        const bucket = unitBucket(s);
+        const rev = siteRev(s);
+        const fill = fillPctOf(s);
+        const fb = prog.fallback
+          ? '<span class="fallback-badge" title="No program field — using brand">brand</span>'
           : '';
-        const unitBadge =
-          '<span class="ubadge ' +
-          r.dominantUnit +
-          '">' +
-          esc(unitLabel(r.dominantUnit)) +
-          '</span>';
         const monthlyCell =
-          r.estMonthly != null
-            ? fmtMoney(r.estMonthly)
-            : r.partialList != null
+          rev.monthly != null
+            ? fmtMoney(rev.monthly)
+            : rev.listPartial != null
               ? '<span title="list×enrolled; not monthly">' +
-                fmtMoney(r.partialList) +
+                fmtMoney(rev.listPartial) +
                 '<span class="partial-tag">partial</span></span>'
-              : '—';
-        const annualCell =
-          r.estAnnual != null
-            ? fmtMoney(r.estAnnual)
-            : r.dominantUnit !== 'monthly' && r.partialList != null
-              ? '<span class="partial-tag" title="Do not blind-annualize per_lesson">weak</span>'
               : '—';
 
         return (
-          '<tr tabindex="0" data-key="' +
-          esc(r.key) +
+          '<tr tabindex="0" data-id="' +
+          esc(id) +
           '" class="' +
           selected.trim() +
           '">' +
-          '<td class="name-cell">' +
-          esc(r.name) +
+          '<td class="brand-cell">' +
+          esc(brandNameOf(s)) +
+          '</td>' +
+          '<td class="program-cell">' +
+          esc(prog.name) +
           fb +
           '</td>' +
-          '<td>' +
-          platPills(r.platforms) +
-          '</td>' +
-          '<td class="num">' +
-          fmtNum(r.sites) +
-          '</td>' +
-          '<td class="num">' +
-          fmtNum(r.metros) +
-          '</td>' +
-          '<td class="num">' +
-          fmtNum(r.enrolled) +
-          '</td>' +
-          '<td class="num">' +
-          (r.avgEnroll != null ? fmtDec(r.avgEnroll, 1) : '—') +
-          '</td>' +
-          '<td class="num">' +
-          fmtPct(r.enrollSites, r.sites) +
-          '</td>' +
-          '<td class="num">' +
-          fmtPct(r.priceSites, r.sites) +
+          '<td><span class="cat-pill cat-' +
+          esc(cat) +
+          '">' +
+          esc(cat) +
+          '</span></td>' +
+          '<td class="name-cell">' +
+          esc(s.name || '—') +
           '</td>' +
           '<td>' +
-          unitBadge +
+          esc(s.metro || '—') +
+          '</td>' +
+          '<td class="st-cell">' +
+          esc(s.state || '—') +
+          '</td>' +
+          '<td><span class="plat-pill">' +
+          esc(String(s.platform || '—').toLowerCase()) +
+          '</span></td>' +
+          '<td class="num">' +
+          fmtNum(s.enrolled) +
           '</td>' +
           '<td class="num">' +
-          (r.avgPrice != null ? '$' + fmtDec(r.avgPrice, 0) : '—') +
+          fmtNum(s.capacity) +
+          '</td>' +
+          '<td class="num">' +
+          (fill != null ? fmtDec(fill, 0) + '%' : '—') +
+          '</td>' +
+          '<td class="num">' +
+          (s.price_low != null ? '$' + fmtDec(s.price_low, s.price_low < 20 ? 2 : 0) : '—') +
+          '</td>' +
+          '<td><span class="ubadge ' +
+          bucket +
+          '">' +
+          esc(unitLabel(bucket)) +
+          '</span></td>' +
+          '<td>' +
+          sessionCell(s) +
           '</td>' +
           '<td class="num rev-cell">' +
           monthlyCell +
           '</td>' +
-          '<td class="num rev-cell">' +
-          annualCell +
-          '</td>' +
-          '<td>' +
-          sessionCell(r) +
-          '</td>' +
+          '<td><a class="map-link" href="' +
+          esc(mapHrefForSite(s)) +
+          '" title="Open on map">Map</a></td>' +
           '</tr>'
         );
       })
       .join('');
 
-    body.querySelectorAll('tr[data-key]').forEach((tr) => {
-      const activate = () => selectEntity(tr.getAttribute('data-key'));
-      tr.addEventListener('click', activate);
+    body.querySelectorAll('tr[data-id]').forEach((tr) => {
+      const activate = () => {
+        state.selectedId = tr.getAttribute('data-id');
+        refresh(false);
+      };
+      tr.addEventListener('click', (e) => {
+        if (e.target.closest('a')) return;
+        activate();
+      });
       tr.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -788,81 +1194,76 @@
     });
   }
 
-  function renderDetail(row) {
+  function renderDetail(s) {
     const panel = document.getElementById('detailPanel');
-    const clearBtn = document.getElementById('clearSelection');
-    if (!row) {
+    if (!panel) return;
+    if (!s) {
       panel.hidden = true;
-      clearBtn.hidden = true;
       document.getElementById('detailMapLink').href = 'map.html';
       return;
     }
     panel.hidden = false;
-    clearBtn.hidden = false;
-    document.getElementById('detailKicker').textContent =
-      state.mode === 'brand' ? 'Brand' : 'Program';
-    document.getElementById('detailName').innerHTML =
-      esc(row.name) +
-      (row.isFallback
-        ? '<span class="fallback-badge">brand fallback</span>'
-        : '');
+    const prog = programOf(s);
+    const cat = categoryOf(s);
+    const rev = siteRev(s);
+    const fill = fillPctOf(s);
+
+    document.getElementById('detailKicker').textContent = 'Site · ' + cat;
+    document.getElementById('detailName').textContent = s.name || '—';
     document.getElementById('detailMeta').innerHTML =
-      platPills(row.platforms) +
-      (row.sessionHint
-        ? '<span class="plat-pill" style="background:#fff5f5;color:#c53030">' +
-          esc(row.sessionHint) +
-          '</span>'
-        : '') +
-      (row.uaSites
-        ? '<span class="plat-pill" title="Urban Air jump-pass">membership_pass</span>'
-        : '');
+      '<span class="plat-pill">' +
+      esc(brandNameOf(s)) +
+      '</span>' +
+      '<span class="plat-pill">' +
+      esc(prog.name) +
+      '</span>' +
+      '<span class="cat-pill cat-' +
+      esc(cat) +
+      '">' +
+      esc(cat) +
+      '</span>' +
+      '<span class="plat-pill">' +
+      esc(String(s.platform || '—').toLowerCase()) +
+      '</span>' +
+      (s.metro ? '<span class="plat-pill">' + esc(s.metro) + '</span>' : '');
 
-    document.getElementById('detailMapLink').href = mapHrefForEntity(row);
+    document.getElementById('detailMapLink').href = mapHrefForSite(s);
 
-    const body = document.getElementById('detailBody');
     const stats = [
-      { l: 'Sites', v: fmtNum(row.sites), s: row.uaSites ? row.uaSites + ' UA excluded from $' : '' },
-      { l: 'Metros', v: fmtNum(row.metros), s: row.metroList.slice(0, 4).join(', ') + (row.metroList.length > 4 ? '…' : '') },
-      { l: 'Total enrolled', v: fmtNum(row.enrolled), s: fmtPct(row.enrollSites, row.sites) + ' coverage' },
-      { l: 'Avg enrolled / site', v: row.avgEnroll != null ? fmtDec(row.avgEnroll, 1) : '—', s: 'sum(enrolled) / sites with enroll' },
-      { l: 'Avg price (excl UA)', v: row.avgPrice != null ? '$' + fmtDec(row.avgPrice, 0) : '—', s: fmtPct(row.priceSites, row.sites) + ' price coverage' },
-      { l: 'Dominant unit', v: unitLabel(row.dominantUnit), s: row.units.monthly + ' mo · ' + row.units.lesson + ' lesson · ' + row.units.unknown + ' unk' },
+      { l: 'Brand', v: brandNameOf(s) },
+      { l: 'Program', v: prog.name, s: prog.fallback ? 'brand fallback' : '' },
+      { l: 'Category', v: cat },
+      { l: 'Metro / ST', v: (s.metro || '—') + ' · ' + (s.state || '—') },
+      { l: 'Enrolled', v: fmtNum(s.enrolled), s: 'capacity ' + fmtNum(s.capacity) },
+      {
+        l: 'Fill %',
+        v: fill != null ? fmtDec(fill, 1) + '%' : '—',
+      },
+      {
+        l: 'Price',
+        v: s.price_low != null ? '$' + fmtDec(s.price_low, s.price_low < 20 ? 2 : 0) : '—',
+        s: unitLabel(unitBucket(s)),
+      },
       {
         l: 'Est. monthly',
-        v: fmtMoney(row.estMonthly),
-        s: row.partialSites
-          ? row.partialSites + ' per_lesson sites not annualized'
-          : 'tuition brands only',
+        v: fmtMoney(rev.monthly != null ? rev.monthly : rev.listPartial),
+        s: rev.note,
         rev: true,
       },
       {
         l: 'Est. annualized',
-        v: fmtMoney(row.estAnnual),
-        s: row.estAnnual == null ? 'weak / — when non-monthly' : 'monthly × 12 when solid',
+        v: fmtMoney(rev.annual),
+        s: rev.annual == null ? 'weak / — when non-monthly' : 'monthly × 12 when solid',
         rev: true,
       },
       {
         l: 'Session dates',
-        v: row.sessionStatus,
-        s:
-          'CAPTURED ' +
-          (row.sessCov ? row.sessCov.captured : 0) +
-          ' / MISSING ' +
-          (row.sessCov ? row.sessCov.missing : 0) +
-          ' / N/A ' +
-          (row.sessCov ? row.sessCov.notApplicable : 0) +
-          (row.sessionHint ? ' — ' + row.sessionHint : ''),
+        v: sessionStatusForSite(s),
+        s: sessionHintForSite(s) || (s.session_start || '') + (s.session_end ? ' → ' + s.session_end : ''),
       },
     ];
-    if (state.mode === 'program' && row.brands.length) {
-      stats.push({
-        l: 'Brand(s)',
-        v: row.brands.slice(0, 3).join(', ') + (row.brands.length > 3 ? '…' : ''),
-        s: row.brands.length + ' brand name(s)',
-      });
-    }
 
-    body.innerHTML = stats
+    document.getElementById('detailBody').innerHTML = stats
       .map(
         (st) =>
           '<div class="detail-stat"><div class="ds-l">' +
@@ -870,7 +1271,7 @@
           '</div><div class="ds-v' +
           (st.rev ? ' rev' : '') +
           '">' +
-          st.v +
+          esc(String(st.v)) +
           '</div>' +
           (st.s ? '<div class="ds-s">' + esc(st.s) + '</div>' : '') +
           '</div>'
@@ -878,127 +1279,176 @@
       .join('');
   }
 
-  let cachedRows = [];
+  function setSummaryMode(mode) {
+    state.summaryBy = mode;
+    ['summaryBrand', 'summaryCategory', 'summaryProgram'].forEach((id) => {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      const on = btn.getAttribute('data-summary') === mode;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
 
-  function selectEntity(key) {
-    state.selectedKey = key;
-    if (state.mode === 'brand' && key) {
-      try {
-        history.replaceState(null, '', '#brand=' + encodeURIComponent(key));
-      } catch (_) {}
-    } else if (state.mode === 'program' && key) {
-      try {
-        history.replaceState(null, '', '#program=' + encodeURIComponent(key));
-      } catch (_) {}
-    }
+  function clearAllFilters() {
+    state.category = '';
+    state.brands = new Set();
+    state.program = '';
+    state.metro = '';
+    state.platform = '';
+    state.search = '';
+    state.selectedId = null;
+    state.shown = PAGE_SIZE;
+    const inp = document.getElementById('progSearch');
+    if (inp) inp.value = '';
+    const hide = document.getElementById('hideClosed');
+    // leave hideClosed as-is
+    populateFilters();
+    writeHash();
     refresh(false);
   }
 
-  function clearSelection() {
-    state.selectedKey = null;
-    try {
-      history.replaceState(null, '', location.pathname + location.search);
-    } catch (_) {}
-    refresh(false);
-  }
+  let cachedSorted = [];
 
-  function populatePlatformFilter(sites) {
-    const sel = document.getElementById('platformFilter');
-    const current = state.platform;
-    const plats = [...new Set(sites.map((s) => String(s.platform || '').toLowerCase()).filter(Boolean))].sort();
-    sel.innerHTML =
-      '<option value="">All platforms</option>' +
-      plats.map((p) => '<option value="' + esc(p) + '">' + esc(p) + '</option>').join('');
-    sel.value = current;
-  }
-
-  function refresh(rebuildPlatforms) {
-    const sites = filteredSites();
-    if (rebuildPlatforms !== false) {
-      // Rebuild from all (respecting hideClosed only) so filter options stay stable
-      const base = state.hideClosed ? allSites.filter(isVisible) : allSites;
-      populatePlatformFilter(base);
+  function refresh(rebuildOptions) {
+    if (rebuildOptions !== false) populateFilters();
+    else {
+      // Keep brand MS list in sync when not full rebuild
+      updateBrandLabel();
     }
 
-    let rows = buildEntities(sites);
-    rows = applySearch(rows);
-    rows = sortRows(rows);
-    cachedRows = rows;
+    const list = filteredSites();
+    const sorted = sortSiteRows(list);
+    cachedSorted = sorted;
+    const agg = aggregate(list);
 
-    const scopeSites = state.selectedKey
-      ? sites.filter((s) => entityKey(s) === state.selectedKey)
-      : sites;
-    const scopeAgg = aggregate(scopeSites);
-    const scopeLabel = state.selectedKey
-      ? (state.mode === 'brand' ? 'Brand: ' : 'Program: ') + state.selectedKey
-      : 'National (all visible)';
+    renderFilterChips();
+    renderKpis(agg);
+    renderUnitPanel(agg);
+    renderUnitMixChart(agg);
+    renderBarChart(list);
+    renderTable(sorted);
 
-    renderKpis(scopeAgg, scopeLabel);
-    renderUnitPanel(scopeAgg);
-    renderUnitMixChart(scopeAgg);
-    renderBarChart(rows);
-    renderTable(rows);
-
-    const selectedRow = state.selectedKey
-      ? rows.find((r) => r.key === state.selectedKey) ||
-        // selected may be filtered out of search — still show from full entity build
-        buildEntities(sites).find((r) => r.key === state.selectedKey)
+    const selected = state.selectedId
+      ? list.find((s) => siteId(s) === state.selectedId) ||
+        allSites.find((s) => siteId(s) === state.selectedId)
       : null;
-    renderDetail(selectedRow || null);
+    renderDetail(selected || null);
 
-    // If selection filtered away entirely from base sites
-    if (state.selectedKey && !selectedRow) {
-      const fromAll = buildEntities(
-        (state.hideClosed ? allSites.filter(isVisible) : allSites).filter(
-          (s) => !state.platform || String(s.platform || '').toLowerCase() === state.platform
-        )
-      ).find((r) => r.key === state.selectedKey);
-      if (fromAll) renderDetail(fromAll);
-    }
+    const clearBtn = document.getElementById('clearFilters');
+    if (clearBtn) clearBtn.hidden = !hasActiveFilters();
   }
+
+  // —— Brand multi-select chrome ——
+  (function wireBrandMs() {
+    const wrap = document.getElementById('brandMsWrap');
+    const trigger = document.getElementById('brandMsTrigger');
+    const panel = document.getElementById('brandMsPanel');
+    const search = document.getElementById('brandMsSearch');
+    const clear = document.getElementById('brandMsClear');
+    const done = document.getElementById('brandMsDone');
+    if (!wrap || !trigger || !panel) return;
+
+    function openPanel(open) {
+      panel.hidden = !open;
+      trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (open && search) {
+        search.value = '';
+        renderBrandMs();
+        setTimeout(() => search.focus(), 0);
+      }
+    }
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openPanel(panel.hidden);
+    });
+    if (done) done.addEventListener('click', () => openPanel(false));
+    if (clear) {
+      clear.addEventListener('click', () => {
+        state.brands = new Set();
+        state.shown = PAGE_SIZE;
+        renderBrandMs();
+        populateProgramFilter();
+        populateMetroFilter();
+        writeHash();
+        refresh(false);
+      });
+    }
+    if (search) {
+      search.addEventListener('input', () => renderBrandMs());
+    }
+    document.addEventListener('click', (e) => {
+      if (!panel.hidden && !wrap.contains(e.target)) openPanel(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !panel.hidden) openPanel(false);
+    });
+  })();
 
   // —— Events ——
-  document.getElementById('modeBrand').addEventListener('click', () => {
-    if (state.mode === 'brand') return;
-    state.mode = 'brand';
-    state.selectedKey = null;
-    document.getElementById('modeBrand').classList.add('active');
-    document.getElementById('modeBrand').setAttribute('aria-pressed', 'true');
-    document.getElementById('modeProgram').classList.remove('active');
-    document.getElementById('modeProgram').setAttribute('aria-pressed', 'false');
-    try {
-      history.replaceState(null, '', location.pathname + location.search);
-    } catch (_) {}
-    refresh();
+  document.getElementById('categoryFilter').addEventListener('change', (e) => {
+    state.category = e.target.value;
+    // Cascade: prune brands / program / metro
+    state.shown = PAGE_SIZE;
+    populateFilters();
+    writeHash();
+    refresh(false);
   });
-  document.getElementById('modeProgram').addEventListener('click', () => {
-    if (state.mode === 'program') return;
-    state.mode = 'program';
-    state.selectedKey = null;
-    document.getElementById('modeProgram').classList.add('active');
-    document.getElementById('modeProgram').setAttribute('aria-pressed', 'true');
-    document.getElementById('modeBrand').classList.remove('active');
-    document.getElementById('modeBrand').setAttribute('aria-pressed', 'false');
-    try {
-      history.replaceState(null, '', location.pathname + location.search);
-    } catch (_) {}
-    refresh();
+  document.getElementById('programFilter').addEventListener('change', (e) => {
+    state.program = e.target.value;
+    state.shown = PAGE_SIZE;
+    populateMetroFilter();
+    writeHash();
+    refresh(false);
   });
-
-  document.getElementById('progSearch').addEventListener('input', (e) => {
-    state.search = e.target.value;
+  document.getElementById('metroFilter').addEventListener('change', (e) => {
+    state.metro = e.target.value;
+    state.shown = PAGE_SIZE;
+    writeHash();
     refresh(false);
   });
   document.getElementById('platformFilter').addEventListener('change', (e) => {
     state.platform = e.target.value;
+    state.shown = PAGE_SIZE;
+    writeHash();
+    refresh(false);
+  });
+  document.getElementById('progSearch').addEventListener('input', (e) => {
+    state.search = e.target.value;
+    state.shown = PAGE_SIZE;
     refresh(false);
   });
   document.getElementById('hideClosed').addEventListener('change', (e) => {
     state.hideClosed = !!e.target.checked;
-    refresh();
+    state.shown = PAGE_SIZE;
+    refresh(true);
   });
-  document.getElementById('clearSelection').addEventListener('click', clearSelection);
-  document.getElementById('detailClose').addEventListener('click', clearSelection);
+
+  const clearFiltersBtn = document.getElementById('clearFilters');
+  if (clearFiltersBtn) clearFiltersBtn.addEventListener('click', clearAllFilters);
+
+  document.getElementById('detailClose').addEventListener('click', () => {
+    state.selectedId = null;
+    refresh(false);
+  });
+
+  ['summaryBrand', 'summaryCategory', 'summaryProgram'].forEach((id) => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      setSummaryMode(btn.getAttribute('data-summary') || 'brand');
+      refresh(false);
+    });
+  });
+
+  const loadMoreBtn = document.getElementById('loadMoreBtn');
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener('click', () => {
+      state.shown += PAGE_SIZE;
+      renderTable(cachedSorted);
+    });
+  }
 
   document.querySelectorAll('.sort-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -1007,52 +1457,46 @@
         state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
       } else {
         state.sortKey = k;
-        state.sortDir = k === 'name' || k === 'platforms' || k === 'dominantUnit' || k === 'sessionStatus'
-          ? 'asc'
-          : 'desc';
+        const ascDefault = new Set(['brand', 'program', 'category', 'name', 'metro', 'state', 'platform', 'unit', 'session']);
+        state.sortDir = ascDefault.has(k) ? 'asc' : 'desc';
       }
       refresh(false);
     });
   });
 
-  // Hash: #brand=Name or #program=Name
-  function applyHash() {
-    const raw = (location.hash || '').replace(/^#/, '');
-    if (!raw) return;
-    const params = new URLSearchParams(raw.includes('=') ? raw : 'brand=' + raw);
-    const brand = params.get('brand');
-    const program = params.get('program');
-    if (brand) {
-      state.mode = 'brand';
-      state.selectedKey = brand;
-      document.getElementById('modeBrand').classList.add('active');
-      document.getElementById('modeBrand').setAttribute('aria-pressed', 'true');
-      document.getElementById('modeProgram').classList.remove('active');
-      document.getElementById('modeProgram').setAttribute('aria-pressed', 'false');
-    } else if (program) {
-      state.mode = 'program';
-      state.selectedKey = program;
-      document.getElementById('modeProgram').classList.add('active');
-      document.getElementById('modeProgram').setAttribute('aria-pressed', 'true');
-      document.getElementById('modeBrand').classList.remove('active');
-      document.getElementById('modeBrand').setAttribute('aria-pressed', 'false');
-    }
-  }
-
   window.addEventListener('hashchange', () => {
+    state.suppressHash = true;
+    state.category = '';
+    state.brands = new Set();
+    state.program = '';
+    state.metro = '';
+    state.platform = '';
     applyHash();
+    state.shown = PAGE_SIZE;
+    populateFilters();
+    state.suppressHash = false;
     refresh(false);
   });
 
   applyHash();
-  refresh();
+  setSummaryMode(state.summaryBy);
+  refresh(true);
+
+  // Expose for smoke / verification
+  window.__PROGRAMS_DEBUG = {
+    filteredSites,
+    categoryOf,
+    brandNameOf,
+    state,
+    PAGE_SIZE,
+  };
 
   console.info(
     '[MarketIntel programs] sites',
     allSites.length,
     'visible',
     allSites.filter(isVisible).length,
-    'mode',
-    state.mode
+    'summaryBy',
+    state.summaryBy
   );
 })();
