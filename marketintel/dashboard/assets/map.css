@@ -213,7 +213,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
   z-index: 0;
 }
 .map-overlay {
-  position: absolute; z-index: 500; top: 10px; left: 10px; right: 10px;
+  position: absolute; z-index: 1100; top: 10px; left: 10px; right: 10px;
   display: flex; flex-wrap: nowrap; gap: 8px; align-items: flex-start;
   pointer-events: none;
 }
