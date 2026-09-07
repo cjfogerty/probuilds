@@ -38,147 +38,17 @@
   "CC & Co. Dance Complex: CC & Co. Dance Complex ()"
  ],
  "plausibility": {
-  "flagged_sites": 17,
+  "flagged_sites": 9,
   "by_flag": {
-   "capacity_ratio_implausible": 12,
-   "capacity_implausible": 9,
-   "revenue_implausible": 4,
-   "enrolled_implausible": 2,
+   "capacity_ratio_implausible": 6,
+   "revenue_implausible": 2,
    "price_implausible_high": 2
   },
-  "enrolled_excluded": 27026,
-  "enrolled_excluded_pct": 0.1218,
-  "capacity_excluded": 168850798393,
-  "revenue_excluded": 60594528,
+  "enrolled_excluded": 4020,
+  "enrolled_excluded_pct": 0.02,
+  "capacity_excluded": 17086,
+  "revenue_excluded": 21180456,
   "examples": [
-   {
-    "brand": "Gymnastics World",
-    "name": "Gymnastics World",
-    "enrolled": 8,
-    "capacity": 166223113257,
-    "price": 168.0,
-    "est_annual_rev": 16128.0,
-    "platform": "jackrabbit",
-    "evidence_tier": "observed_max",
-    "flags": [
-     "capacity_implausible",
-     "capacity_ratio_implausible"
-    ]
-   },
-   {
-    "brand": "The Peach Pit",
-    "name": "The Peach Pit Westside",
-    "enrolled": 414,
-    "capacity": 2626322312,
-    "price": 123.0,
-    "est_annual_rev": 611064.0,
-    "platform": "jackrabbit",
-    "evidence_tier": "observed_max",
-    "flags": [
-     "capacity_implausible",
-     "capacity_ratio_implausible"
-    ]
-   },
-   {
-    "brand": "Fit City Kids",
-    "name": "Fit City Kids",
-    "enrolled": 89,
-    "capacity": 1077982,
-    "price": 120.0,
-    "est_annual_rev": 128160.0,
-    "platform": "jackrabbit",
-    "evidence_tier": "observed_max",
-    "flags": [
-     "capacity_implausible",
-     "capacity_ratio_implausible"
-    ]
-   },
-   {
-    "brand": "The Peach Pit",
-    "name": "The Peach Pit Prado",
-    "enrolled": 185,
-    "capacity": 89693,
-    "price": 112.0,
-    "est_annual_rev": 248640.0,
-    "platform": "jackrabbit",
-    "evidence_tier": "observed_max",
-    "flags": [
-     "capacity_implausible",
-     "capacity_ratio_implausible"
-    ]
-   },
-   {
-    "brand": "Texas Dreams Gymnastics",
-    "name": "Texas Dreams Gymnastics",
-    "enrolled": 276,
-    "capacity": 80416,
-    "price": 125.0,
-    "est_annual_rev": 414000.0,
-    "platform": "jackrabbit",
-    "evidence_tier": "observed_max",
-    "flags": [
-     "capacity_implausible",
-     "capacity_ratio_implausible"
-    ]
-   },
-   {
-    "brand": "The Peach Pit",
-    "name": "The Peach Pit Gymnastics",
-    "enrolled": 249,
-    "capacity": 69949,
-    "price": 123.0,
-    "est_annual_rev": 367524.0,
-    "platform": "jackrabbit",
-    "evidence_tier": "observed_max",
-    "flags": [
-     "capacity_implausible",
-     "capacity_ratio_implausible"
-    ]
-   },
-   {
-    "brand": "Carolina Ninja Academy",
-    "name": "Carolina Ninja Academy",
-    "enrolled": 15822,
-    "capacity": 16825,
-    "price": 110.0,
-    "est_annual_rev": 20885040.0,
-    "platform": "iclasspro",
-    "evidence_tier": "observed_max",
-    "flags": [
-     "capacity_implausible",
-     "enrolled_implausible",
-     "revenue_implausible"
-    ]
-   },
-   {
-    "brand": "Carolina Flipz",
-    "name": "Carolina Flipz",
-    "enrolled": 7197,
-    "capacity": 7521,
-    "price": 199.0,
-    "est_annual_rev": 17186436.0,
-    "platform": "iclasspro",
-    "evidence_tier": "observed_max",
-    "flags": [
-     "capacity_implausible",
-     "enrolled_implausible",
-     "revenue_implausible"
-    ]
-   },
-   {
-    "brand": "UMDGC",
-    "name": "UMDGC - Upper Merion Dance & Gymnastics Center",
-    "enrolled": 1656,
-    "capacity": 6448,
-    "price": 325.0,
-    "est_annual_rev": 6458400.0,
-    "platform": "iclasspro",
-    "evidence_tier": "observed_max",
-    "flags": [
-     "capacity_implausible",
-     "revenue_implausible"
-    ]
-   },
    {
     "brand": "The GymStation",
     "name": "The GymStation",
@@ -216,6 +86,19 @@
     "evidence_tier": "observed_max",
     "flags": [
      "price_implausible_high",
+     "revenue_implausible"
+    ]
+   },
+   {
+    "brand": "Carolina Flipz",
+    "name": "Carolina Flipz",
+    "enrolled": 2890,
+    "capacity": 3096,
+    "price": 199.0,
+    "est_annual_rev": 6901320.0,
+    "platform": "iclasspro",
+    "evidence_tier": "observed_max",
+    "flags": [
      "revenue_implausible"
     ]
    },
@@ -287,38 +170,38 @@
   ]
  },
  "national_median_price_by_category": {
+  "cheer_dance": 129.0,
+  "ninja": 119.5,
   "adventure": 7.49,
-  "martial_arts": 139.0,
-  "ninja": 120.0,
+  "stem": 49.99,
   "gymnastics": 122.0,
-  "cheer_dance": 135.0,
-  "stem": 49.99
+  "martial_arts": 139.0
  },
  "enrollment_model_by_category": {
-  "adventure": "not_published",
-  "martial_arts": "reported",
-  "ninja": "reported",
-  "gymnastics": "reported",
   "cheer_dance": "reported",
-  "stem": "not_published"
+  "ninja": "reported",
+  "adventure": "not_published",
+  "stem": "not_published",
+  "gymnastics": "reported",
+  "martial_arts": "reported"
  },
- "qa_sites_visible_plausible": 1379,
+ "qa_sites_visible_plausible": 1389,
  "qa_sites_visible": 1405,
- "qa_sites_in_markets": 1333,
- "qa_enrolled_source": 198195,
- "qa_enrolled_rolled": 194875,
- "qa_rev_source": 312249281,
- "qa_rev_rolled": 307418342,
+ "qa_sites_in_markets": 1341,
+ "qa_enrolled_source": 201636,
+ "qa_enrolled_rolled": 197017,
+ "qa_rev_source": 318515645,
+ "qa_rev_rolled": 311992070,
  "qa_confidence_mix": {
-  "B": 94,
+  "B": 95,
   "C": 53,
   "N": 37,
   "A": 18
  },
  "qa_markets_without_demand": 3,
  "qa_site_reconcile_ok": true,
- "qa_unassigned_plausible": 46,
- "qa_enrolled_reconcile_delta": 3320,
+ "qa_unassigned_plausible": 48,
+ "qa_enrolled_reconcile_delta": 4619,
  "qa_repeated_coords_top5": [
   {
    "at": "35.8344,-78.8466",
