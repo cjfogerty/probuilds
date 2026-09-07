@@ -12,6 +12,8 @@
 html, body {
   height: 100%;
   height: 100dvh;
+  width: 100%;
+  max-width: 100%;
   margin: 0;
   overflow: hidden;
 }
@@ -36,6 +38,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
   max-width: 100%;
   overflow: hidden;
   min-height: 0;
+  min-width: 0;
 }
 .app > * { min-height: 0; min-width: 0; }
 
@@ -79,7 +82,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
 /* —— Main grid —— */
 .main {
   display: grid;
-  grid-template-columns: 250px minmax(0, 1fr) 280px;
+  grid-template-columns: minmax(0, 220px) minmax(0, 1fr) minmax(0, 250px);
   min-height: 0; min-width: 0;
   overflow: hidden; height: 100%;
   position: relative;
@@ -105,8 +108,8 @@ button:focus-visible, input:focus-visible, select:focus-visible {
   min-height: 0;
 }
 
-.app.filters-collapsed .main { grid-template-columns: 0 minmax(0, 1fr) 280px; }
-.app.share-collapsed .main { grid-template-columns: 250px minmax(0, 1fr) 0; }
+.app.filters-collapsed .main { grid-template-columns: 0 minmax(0, 1fr) minmax(0, 250px); }
+.app.share-collapsed .main { grid-template-columns: minmax(0, 220px) minmax(0, 1fr) 0; }
 .app.filters-collapsed.share-collapsed .main { grid-template-columns: 0 minmax(0, 1fr) 0; }
 .app.filters-collapsed #filtersPanel,
 .app.share-collapsed #sharePanel {
@@ -210,7 +213,13 @@ button:focus-visible, input:focus-visible, select:focus-visible {
 }
 #map {
   position: absolute; inset: 0; width: 100%; height: 100%;
+  max-width: 100%;
   z-index: 0;
+  overflow: hidden;
+}
+.leaflet-container {
+  width: 100% !important;
+  max-width: 100% !important;
 }
 .map-overlay {
   position: absolute; z-index: 1100; top: 10px; left: 10px; right: 10px;
@@ -529,7 +538,7 @@ table.sites tr.selected td.sticky-col { background: #1a2438; }
 
 @media (max-width: 1100px) {
   .main,
-  .app.share-collapsed .main { grid-template-columns: 230px minmax(0, 1fr); }
+  .app.share-collapsed .main { grid-template-columns: minmax(0, 220px) minmax(0, 1fr); }
   .app.filters-collapsed .main,
   .app.filters-collapsed.share-collapsed .main { grid-template-columns: minmax(0, 1fr); }
   .panel.right { display: none; }
@@ -538,7 +547,7 @@ table.sites tr.selected td.sticky-col { background: #1a2438; }
     position: absolute;
     z-index: 1200;
     top: 0; right: 0; bottom: 0;
-    width: min(300px, 90vw);
+    width: min(300px, 92%);
     box-shadow: var(--shadow);
     pointer-events: auto;
     border-left: 1px solid var(--border);
