@@ -1,0 +1,344 @@
+{
+ "as_of": "2026-09-06",
+ "week_start": "2026-09-07",
+ "week_end": "2026-09-13",
+ "sites_in": 1547,
+ "geo_method": {
+  "zip_xwalk": 1419,
+  "latlng_reverse": 73,
+  "unresolved": 55
+ },
+ "market_type": {
+  "metro": 1453,
+  "null": 55,
+  "non_cbsa": 24,
+  "micro": 15
+ },
+ "unassigned_sites": 55,
+ "unassigned_examples": [
+  "Urban Air: Sudbury, ON (ON)",
+  "The Little Gym: E. Brunswick, NJ (NJ)",
+  "The Little Gym: Edmonton, AB (AB)",
+  "The Little Gym: Airdrie, AB (AB)",
+  "The Little Gym: St John's, NL (NL)",
+  "The Little Gym: London, ON (ON)",
+  "The Little Gym: Temple, TX (TX)",
+  "The Little Gym: Halifax ()",
+  "The Ridge Gymnastics Academy: The Ridge Gymnastics Academy ()",
+  "Bohemian Gymnastic Association Sokol of the City of New York: Bohemian Gymnastic Association Sokol of the City of New York ()",
+  "KPAC: KPAC ()",
+  "Newburgh Tumbling: Newburgh Tumbling ()",
+  "Tuck and Tumble: Tuck and Tumble ()",
+  "Gym World 2: Gym World 2 ()",
+  "Kristi's Academy of Dance & PA: Kristi's Academy of Dance & PA ()",
+  "Central Missouri All Stars: Central Missouri All Stars ()",
+  "Gotta Dance: Gotta Dance ()",
+  "East Cheer: East Cheer ()",
+  "Ideal Cheer Elite: Ideal Cheer Elite ()",
+  "CC & Co. Dance Complex: CC & Co. Dance Complex ()"
+ ],
+ "plausibility": {
+  "flagged_sites": 17,
+  "by_flag": {
+   "capacity_ratio_implausible": 12,
+   "capacity_implausible": 9,
+   "revenue_implausible": 4,
+   "enrolled_implausible": 2,
+   "price_implausible_high": 2
+  },
+  "enrolled_excluded": 27026,
+  "enrolled_excluded_pct": 0.1218,
+  "capacity_excluded": 168850798393,
+  "revenue_excluded": 60594528,
+  "examples": [
+   {
+    "brand": "Gymnastics World",
+    "name": "Gymnastics World",
+    "enrolled": 8,
+    "capacity": 166223113257,
+    "price": 168.0,
+    "est_annual_rev": 16128.0,
+    "platform": "jackrabbit",
+    "evidence_tier": "observed_max",
+    "flags": [
+     "capacity_implausible",
+     "capacity_ratio_implausible"
+    ]
+   },
+   {
+    "brand": "The Peach Pit",
+    "name": "The Peach Pit Westside",
+    "enrolled": 414,
+    "capacity": 2626322312,
+    "price": 123.0,
+    "est_annual_rev": 611064.0,
+    "platform": "jackrabbit",
+    "evidence_tier": "observed_max",
+    "flags": [
+     "capacity_implausible",
+     "capacity_ratio_implausible"
+    ]
+   },
+   {
+    "brand": "Fit City Kids",
+    "name": "Fit City Kids",
+    "enrolled": 89,
+    "capacity": 1077982,
+    "price": 120.0,
+    "est_annual_rev": 128160.0,
+    "platform": "jackrabbit",
+    "evidence_tier": "observed_max",
+    "flags": [
+     "capacity_implausible",
+     "capacity_ratio_implausible"
+    ]
+   },
+   {
+    "brand": "The Peach Pit",
+    "name": "The Peach Pit Prado",
+    "enrolled": 185,
+    "capacity": 89693,
+    "price": 112.0,
+    "est_annual_rev": 248640.0,
+    "platform": "jackrabbit",
+    "evidence_tier": "observed_max",
+    "flags": [
+     "capacity_implausible",
+     "capacity_ratio_implausible"
+    ]
+   },
+   {
+    "brand": "Texas Dreams Gymnastics",
+    "name": "Texas Dreams Gymnastics",
+    "enrolled": 276,
+    "capacity": 80416,
+    "price": 125.0,
+    "est_annual_rev": 414000.0,
+    "platform": "jackrabbit",
+    "evidence_tier": "observed_max",
+    "flags": [
+     "capacity_implausible",
+     "capacity_ratio_implausible"
+    ]
+   },
+   {
+    "brand": "The Peach Pit",
+    "name": "The Peach Pit Gymnastics",
+    "enrolled": 249,
+    "capacity": 69949,
+    "price": 123.0,
+    "est_annual_rev": 367524.0,
+    "platform": "jackrabbit",
+    "evidence_tier": "observed_max",
+    "flags": [
+     "capacity_implausible",
+     "capacity_ratio_implausible"
+    ]
+   },
+   {
+    "brand": "Carolina Ninja Academy",
+    "name": "Carolina Ninja Academy",
+    "enrolled": 15822,
+    "capacity": 16825,
+    "price": 110.0,
+    "est_annual_rev": 20885040.0,
+    "platform": "iclasspro",
+    "evidence_tier": "observed_max",
+    "flags": [
+     "capacity_implausible",
+     "enrolled_implausible",
+     "revenue_implausible"
+    ]
+   },
+   {
+    "brand": "Carolina Flipz",
+    "name": "Carolina Flipz",
+    "enrolled": 7197,
+    "capacity": 7521,
+    "price": 199.0,
+    "est_annual_rev": 17186436.0,
+    "platform": "iclasspro",
+    "evidence_tier": "observed_max",
+    "flags": [
+     "capacity_implausible",
+     "enrolled_implausible",
+     "revenue_implausible"
+    ]
+   },
+   {
+    "brand": "UMDGC",
+    "name": "UMDGC - Upper Merion Dance & Gymnastics Center",
+    "enrolled": 1656,
+    "capacity": 6448,
+    "price": 325.0,
+    "est_annual_rev": 6458400.0,
+    "platform": "iclasspro",
+    "evidence_tier": "observed_max",
+    "flags": [
+     "capacity_implausible",
+     "revenue_implausible"
+    ]
+   },
+   {
+    "brand": "The GymStation",
+    "name": "The GymStation",
+    "enrolled": 34,
+    "capacity": 3890,
+    "price": 68.0,
+    "est_annual_rev": 27744.0,
+    "platform": "jackrabbit",
+    "evidence_tier": "observed_max",
+    "flags": [
+     "capacity_ratio_implausible"
+    ]
+   },
+   {
+    "brand": "The GymStation",
+    "name": "The GymStation",
+    "enrolled": 52,
+    "capacity": 3518,
+    "price": 68.0,
+    "est_annual_rev": 42432.0,
+    "platform": "jackrabbit",
+    "evidence_tier": "observed_max",
+    "flags": [
+     "capacity_ratio_implausible"
+    ]
+   },
+   {
+    "brand": "Gotham Gymnastics",
+    "name": "Gotham Gymnastics",
+    "enrolled": 759,
+    "capacity": 3297,
+    "price": 1280.0,
+    "est_annual_rev": 11658240.0,
+    "platform": "jackrabbit",
+    "evidence_tier": "observed_max",
+    "flags": [
+     "price_implausible_high",
+     "revenue_implausible"
+    ]
+   },
+   {
+    "brand": "All American Gymnastics",
+    "name": "All American Gymnastics",
+    "enrolled": 264,
+    "capacity": 1954,
+    "price": 795.0,
+    "est_annual_rev": 2518560.0,
+    "platform": "jackrabbit",
+    "evidence_tier": "observed_max",
+    "flags": [
+     "price_implausible_high"
+    ]
+   },
+   {
+    "brand": "Tumbles",
+    "name": "Princeton",
+    "enrolled": 7,
+    "capacity": 394,
+    "price": 119.0,
+    "est_annual_rev": 9996.0,
+    "platform": "iclasspro",
+    "evidence_tier": "observed_max",
+    "flags": [
+     "capacity_ratio_implausible"
+    ]
+   },
+   {
+    "brand": "Tumbles",
+    "name": "Tumbles - West Caldwell, NJ",
+    "enrolled": 3,
+    "capacity": 372,
+    "price": 139.0,
+    "est_annual_rev": 5004.0,
+    "platform": "iclasspro",
+    "evidence_tier": "observed_max",
+    "flags": [
+     "capacity_ratio_implausible"
+    ]
+   },
+   {
+    "brand": "Tumbles",
+    "name": "Tumbles FloMo",
+    "enrolled": 8,
+    "capacity": 372,
+    "price": 130.0,
+    "est_annual_rev": 12480.0,
+    "platform": "iclasspro",
+    "evidence_tier": "observed_max",
+    "flags": [
+     "capacity_ratio_implausible"
+    ]
+   },
+   {
+    "brand": "Philadelphia Boys' Gymnastics",
+    "name": "Philadelphia Boys' Gymnastics",
+    "enrolled": 3,
+    "capacity": 193,
+    "price": 130.0,
+    "est_annual_rev": 4680.0,
+    "platform": "jackrabbit",
+    "evidence_tier": "observed_max",
+    "flags": [
+     "capacity_ratio_implausible"
+    ]
+   }
+  ]
+ },
+ "national_median_price_by_category": {
+  "adventure": 7.49,
+  "martial_arts": 139.0,
+  "ninja": 120.0,
+  "gymnastics": 122.0,
+  "cheer_dance": 135.0,
+  "stem": 49.99
+ },
+ "enrollment_model_by_category": {
+  "adventure": "not_published",
+  "martial_arts": "reported",
+  "ninja": "reported",
+  "gymnastics": "reported",
+  "cheer_dance": "reported",
+  "stem": "not_published"
+ },
+ "qa_sites_visible_plausible": 1379,
+ "qa_sites_visible": 1405,
+ "qa_sites_in_markets": 1333,
+ "qa_enrolled_source": 198195,
+ "qa_enrolled_rolled": 194875,
+ "qa_rev_source": 312249281,
+ "qa_rev_rolled": 307418342,
+ "qa_confidence_mix": {
+  "B": 94,
+  "C": 53,
+  "N": 37,
+  "A": 18
+ },
+ "qa_markets_without_demand": 3,
+ "qa_site_reconcile_ok": true,
+ "qa_unassigned_plausible": 46,
+ "qa_enrolled_reconcile_delta": 3320,
+ "qa_repeated_coords_top5": [
+  {
+   "at": "35.8344,-78.8466",
+   "n": 4
+  },
+  {
+   "at": "33.6308,-112.2072",
+   "n": 4
+  },
+  {
+   "at": "30.4772,-97.8176",
+   "n": 4
+  },
+  {
+   "at": "32.886,-96.4095",
+   "n": 3
+  },
+  {
+   "at": "32.5773,-97.1416",
+   "n": 3
+  }
+ ]
+}
