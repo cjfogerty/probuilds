@@ -2,14 +2,14 @@
  "as_of": "2026-09-06",
  "week_start": "2026-09-07",
  "week_end": "2026-09-13",
- "sites_in": 1547,
+ "sites_in": 1549,
  "geo_method": {
-  "zip_xwalk": 1419,
+  "zip_xwalk": 1421,
   "latlng_reverse": 73,
   "unresolved": 55
  },
  "market_type": {
-  "metro": 1453,
+  "metro": 1455,
   "null": 55,
   "non_cbsa": 24,
   "micro": 15
@@ -45,7 +45,7 @@
    "price_implausible_high": 2
   },
   "enrolled_excluded": 4020,
-  "enrolled_excluded_pct": 0.02,
+  "enrolled_excluded_pct": 0.0199,
   "capacity_excluded": 17086,
   "revenue_excluded": 21180456,
   "examples": [
@@ -170,28 +170,28 @@
   ]
  },
  "national_median_price_by_category": {
-  "cheer_dance": 129.0,
   "ninja": 119.5,
-  "adventure": 7.49,
+  "cheer_dance": 129.0,
   "stem": 49.99,
-  "gymnastics": 122.0,
-  "martial_arts": 139.0
+  "martial_arts": 139.0,
+  "adventure": 7.49,
+  "gymnastics": 122.0
  },
  "enrollment_model_by_category": {
-  "cheer_dance": "reported",
   "ninja": "reported",
-  "adventure": "not_published",
+  "cheer_dance": "reported",
   "stem": "not_published",
-  "gymnastics": "reported",
-  "martial_arts": "reported"
+  "martial_arts": "reported",
+  "adventure": "not_published",
+  "gymnastics": "reported"
  },
- "qa_sites_visible_plausible": 1389,
- "qa_sites_visible": 1405,
- "qa_sites_in_markets": 1341,
- "qa_enrolled_source": 201636,
- "qa_enrolled_rolled": 197017,
- "qa_rev_source": 318515645,
- "qa_rev_rolled": 311992070,
+ "qa_sites_visible_plausible": 1391,
+ "qa_sites_visible": 1407,
+ "qa_sites_in_markets": 1343,
+ "qa_enrolled_source": 202205,
+ "qa_enrolled_rolled": 197586,
+ "qa_rev_source": 319213181,
+ "qa_rev_rolled": 312689606,
  "qa_confidence_mix": {
   "B": 95,
   "C": 53,
