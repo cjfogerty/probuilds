@@ -1,0 +1,14 @@
+{
+  "name": "probuilds",
+  "install": "python3 --version && node --version",
+  "ports": [
+    { "name": "static site", "port": 8000 }
+  ],
+  "terminals": [
+    {
+      "name": "static-server",
+      "command": "python3 -m http.server 8000",
+      "description": "Serves the repository root over HTTP so the Market Intel dashboards (marketintel/dashboard/) and other static pages can be opened in a browser at http://localhost:8000/"
+    }
+  ]
+}
