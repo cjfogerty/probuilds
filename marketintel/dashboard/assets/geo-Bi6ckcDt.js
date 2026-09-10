@@ -1,0 +1,1 @@
+function e(e,t,n,r){let i=Math.PI/180,a=(n-e)*i,o=(r-t)*i,s=Math.sin(a/2)**2+Math.cos(e*i)*Math.cos(n*i)*Math.sin(o/2)**2;return 7917.5226*Math.asin(Math.sqrt(s))}function t(e){let t=e.lat,n=e.lng;return t==null||n==null||Number.isNaN(+t)||Number.isNaN(+n)?null:{lat:+t,lng:+n}}function n(e){return e.split(/[-–,]/)[0]?.trim()||e}export{n,t as r,e as t};

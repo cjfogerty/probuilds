@@ -1,8 +1,12 @@
-# Market Intel (encrypted remake)
+# Market Intel dashboard
 
-FOFNIntel-style hub → map drill-down on probuilds.
+Static SPA for GitHub Pages.
 
-- Hub: `index.html`
-- Map: `map.html`
+- Hub / briefing: `index.html` (also `/`)
+- Map: `/map` (old `map.html` redirects)
+- Markets: `/markets`
+- Operators: `/brands`
+- Quality: `/quality`
+- In build: `/build`
 
-~1,164 sites / 61 brands. Same passphrase as prior marketintel dashboard.
+SKU / program grain pages (`products.html`, `programs.html`) are the prior static tools and still work.
