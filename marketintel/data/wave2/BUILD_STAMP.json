@@ -6,7 +6,25 @@
     "to": "2026-09-13"
   },
   "dataset_version": "v2",
-  "sites_n": 1612,
-  "products_n": 34612,
-  "note": "TeamUnify wave-1 fold: +65 sites / +743 classlines; term_session fees not monthly; no swim"
+  "wave": "daxko+activenet",
+  "wave_label": "Daxko + ActiveNet wave-1",
+  "sites_n": 2020,
+  "products_n": 38187,
+  "skus": 38187,
+  "brands": 307,
+  "markets": 217,
+  "trade_areas": 9793,
+  "holds": 9,
+  "plausibility_holds": 9,
+  "platforms": {
+    "unleashed": 1083,
+    "activenet": 327,
+    "mygym": 174,
+    "iclasspro": 173,
+    "jackrabbit": 100,
+    "daxko": 81,
+    "teamunify": 65,
+    "pike13": 17
+  },
+  "note": "Daxko+ActiveNet wave-1: +81 Y / +327 rec centers; TeamUnify prior; term_session not monthly; no swim; SPA JSON mirrors regenerated"
 }
