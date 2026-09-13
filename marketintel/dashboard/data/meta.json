@@ -54,7 +54,7 @@
     }
   },
   "geo_stats": {
-    "zip_centroid": 1254,
+    "zip_centroid": 7350,
     "ungeocoded": 123,
     "city_centroid": 428,
     "location": 187,
@@ -65,7 +65,8 @@
       "Urban Air: Corporate",
       "Snapology: Corporate",
       "The Little Gym: Corporate",
-      "Premier Martial Arts: Corporate"
+      "Premier Martial Arts: Corporate",
+      "Fuse Dance Incorporated: Fuse Dance Incorporated"
     ],
     "zdelete": [
       "The Little Gym: zDelete Me (33534)",
@@ -93,12 +94,12 @@
     ],
     "urban_air_pass_priced_sites": 217
   },
-  "n_sites_raw": 2020,
-  "n_sites_visible": 1878,
-  "n_brands": 307,
-  "n_markets": 217,
-  "n_trade_areas": 9793,
-  "unassigned_sites": 414,
+  "n_sites_raw": 8116,
+  "n_sites_visible": 7973,
+  "n_brands": 6028,
+  "n_markets": 633,
+  "n_trade_areas": 11413,
+  "unassigned_sites": 641,
   "plausibility": {
     "flagged_sites": 9,
     "by_flag": {
@@ -233,20 +234,20 @@
   },
   "enrollment_model_by_category": {
     "adventure": "not_published",
-    "cheer_dance": "reported",
-    "gymnastics": "reported",
-    "martial_arts": "reported",
+    "cheer_dance": "not_published",
+    "gymnastics": "not_published",
+    "martial_arts": "not_published",
     "ninja": "reported",
     "stem": "not_published"
   },
   "national_median_hh_income": 78538,
   "national_median_price_by_category": {
     "adventure": 7.49,
-    "ninja": 119.5,
-    "martial_arts": 139,
+    "ninja": 119,
+    "cheer_dance": 107,
     "stem": 49.99,
-    "cheer_dance": 129,
-    "gymnastics": 122
+    "gymnastics": 121,
+    "martial_arts": 139
   },
   "caveat": "Share and penetration are measured against platform-visible supply only (Unleashed, iClassPro, Jackrabbit, Pike13, My Gym). Off-platform independents are not in the universe, so shares are upper bounds and penetration figures are lower bounds.",
   "demand_source": "ACS 2023 5-year (B01001, B19013, B11005) via Census table-based summary file",

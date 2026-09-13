@@ -6,18 +6,19 @@
     "to": "2026-09-13"
   },
   "dataset_version": "v2",
-  "wave": "daxko+activenet",
-  "wave_label": "Daxko + ActiveNet wave-1",
-  "sites_n": 2020,
-  "products_n": 38187,
-  "skus": 38187,
+  "wave": "sportsengine-directory",
+  "wave_label": "SportsEngine directory (last of four-platform wave)",
+  "sites_n": 8116,
+  "products_n": 38358,
+  "skus": 38358,
   "brands": 307,
-  "markets": 217,
-  "trade_areas": 9793,
+  "markets": 633,
+  "trade_areas": 11413,
   "holds": 9,
   "plausibility_holds": 9,
   "platforms": {
     "unleashed": 1083,
+    "sportsengine": 6096,
     "activenet": 327,
     "mygym": 174,
     "iclasspro": 173,
@@ -26,5 +27,5 @@
     "teamunify": 65,
     "pike13": 17
   },
-  "note": "Daxko+ActiveNet wave-1: +81 Y / +327 rec centers; TeamUnify prior; term_session not monthly; no swim; SPA JSON mirrors regenerated"
+  "note": "SportsEngine directory +6096 (enrolled/capacity null, revenue_rollable=false); products +171 price_only only. build_dashboard_data preserves null enroll (no coerce to 0)."
 }
