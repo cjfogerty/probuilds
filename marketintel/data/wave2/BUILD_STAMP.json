@@ -11,7 +11,7 @@
   "sites_n": 8116,
   "products_n": 38358,
   "skus": 38358,
-  "brands": 307,
+  "brands": 6028,
   "markets": 633,
   "trade_areas": 11413,
   "holds": 9,
@@ -27,5 +27,5 @@
     "teamunify": 65,
     "pike13": 17
   },
-  "note": "SportsEngine directory +6096 (enrolled/capacity null, revenue_rollable=false); products +171 price_only only. build_dashboard_data preserves null enroll (no coerce to 0)."
+  "note": "SportsEngine directory +6096 (enrolled/capacity null, revenue_rollable=false); products +171 price_only only. build_dashboard_data preserves null enroll (no coerce to 0). BUILD_STAMP brands corrected 307\u21926028 (distinct site brand labels; SE-heavy)."
 }
