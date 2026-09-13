@@ -1,0 +1,12 @@
+{
+  "generated_at": "2026-09-13",
+  "as_of": "2026-09-13",
+  "observation_week": {
+    "from": "2026-09-07",
+    "to": "2026-09-13"
+  },
+  "dataset_version": "v2",
+  "sites_n": 1612,
+  "products_n": 34612,
+  "note": "TeamUnify wave-1 fold: +65 sites / +743 classlines; term_session fees not monthly; no swim"
+}
