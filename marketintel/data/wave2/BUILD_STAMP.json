@@ -1,24 +1,25 @@
 {
-  "generated_at": "2026-09-13",
-  "as_of": "2026-09-13",
+  "generated_at": "2026-09-14",
+  "as_of": "2026-09-14",
   "observation_week": {
     "from": "2026-09-07",
     "to": "2026-09-13"
   },
   "dataset_version": "v2",
-  "wave": "sportsengine-directory",
-  "wave_label": "SportsEngine directory (last of four-platform wave)",
-  "sites_n": 8116,
+  "wave": "top300-web-discovery",
+  "wave_label": "Top-300 SAM/TAM web discovery fold",
+  "sites_n": 8677,
   "products_n": 38358,
   "skus": 38358,
-  "brands": 6028,
+  "brands": 6589,
   "markets": 633,
   "trade_areas": 11413,
   "holds": 9,
   "plausibility_holds": 9,
   "platforms": {
-    "unleashed": 1083,
     "sportsengine": 6096,
+    "web_discovery": 561,
+    "unleashed": 1083,
     "activenet": 327,
     "mygym": 174,
     "iclasspro": 173,
@@ -27,5 +28,5 @@
     "teamunify": 65,
     "pike13": 17
   },
-  "note": "SportsEngine directory +6096 (enrolled/capacity null, revenue_rollable=false); products +171 price_only only. build_dashboard_data preserves null enroll (no coerce to 0). BUILD_STAMP brands corrected 307\u21926028 (distinct site brand labels; SE-heavy)."
+  "note": "Top-300 fold +561 web_discovery (17 name-duped of 578). geo=search_center_proxy; enrolled/capacity null; no product invent. Products still 38358."
 }

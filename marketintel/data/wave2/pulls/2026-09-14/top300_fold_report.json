@@ -1,0 +1,20 @@
+{
+  "folded_at": "2026-09-14",
+  "source": "/workspace/marketintel-dashboard/data/wave2/pulls/2026-09-14/top300_net_new_candidates.json",
+  "prior_n": 8116,
+  "added": 561,
+  "new_n": 8677,
+  "skipped": {
+    "name_dupe": 17
+  },
+  "by_category": {
+    "cheer_dance": 150,
+    "gymnastics": 85,
+    "martial_arts": 180,
+    "ninja": 146
+  },
+  "platform": "web_discovery",
+  "geo_precision": "search_center_proxy",
+  "products_unchanged": true,
+  "note": "No product SKUs invented. enrolled/capacity null. directory_listing / revenue_rollable=false."
+}

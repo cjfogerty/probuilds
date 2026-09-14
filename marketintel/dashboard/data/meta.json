@@ -1,11 +1,11 @@
 {
-  "as_of": "2026-09-13",
+  "as_of": "2026-09-14",
   "week": {
     "from": "2026-09-07",
     "to": "2026-09-13"
   },
   "source": "Unleashed Brands public API + iClassPro wave2 (Intel Snatcher)",
-  "generated": "2026-09-13",
+  "generated": "2026-09-14",
   "revenue_methodology": "ESTIMATED: enrolled x price_low x 12 for monthly billing only. Urban Air (brand_id==1) excluded. iClassPro brands included when enrolled+price_low. Wave2 evidence_tier seat_model_assumed8 is provisional. Not audited.",
   "legend_notes": [
     "Urban Air pass pricing excluded from tuition revenue",
@@ -58,7 +58,8 @@
     "ungeocoded": 123,
     "city_centroid": 428,
     "location": 187,
-    "street": 28
+    "street": 28,
+    "search_center_proxy": 561
   },
   "data_quality": {
     "corporate_hq": [
@@ -94,9 +95,9 @@
     ],
     "urban_air_pass_priced_sites": 217
   },
-  "n_sites_raw": 8116,
-  "n_sites_visible": 7973,
-  "n_brands": 6028,
+  "n_sites_raw": 8677,
+  "n_sites_visible": 8534,
+  "n_brands": 6589,
   "n_markets": 633,
   "n_trade_areas": 11413,
   "unassigned_sites": 641,
@@ -237,17 +238,17 @@
     "cheer_dance": "not_published",
     "gymnastics": "not_published",
     "martial_arts": "not_published",
-    "ninja": "reported",
+    "ninja": "not_published",
     "stem": "not_published"
   },
   "national_median_hh_income": 78538,
   "national_median_price_by_category": {
-    "adventure": 7.49,
     "ninja": 119,
-    "cheer_dance": 107,
-    "stem": 49.99,
     "gymnastics": 121,
-    "martial_arts": 139
+    "martial_arts": 139,
+    "stem": 49.99,
+    "cheer_dance": 107,
+    "adventure": 7.49
   },
   "caveat": "Share and penetration are measured against platform-visible supply only (Unleashed, iClassPro, Jackrabbit, Pike13, My Gym). Off-platform independents are not in the universe, so shares are upper bounds and penetration figures are lower bounds.",
   "demand_source": "ACS 2023 5-year (B01001, B19013, B11005) via Census table-based summary file",
