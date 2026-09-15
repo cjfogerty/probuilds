@@ -1,17 +1,17 @@
 {
-  "generated_at": "2026-09-14",
-  "as_of": "2026-09-14",
+  "generated_at": "2026-09-15",
+  "as_of": "2026-09-15",
   "observation_week": {
     "from": "2026-09-07",
     "to": "2026-09-13"
   },
   "dataset_version": "v2",
-  "wave": "top300-web-discovery",
-  "wave_label": "Top-300 SAM/TAM web discovery fold",
-  "sites_n": 8677,
-  "products_n": 38358,
-  "skus": 38358,
-  "brands": 6589,
+  "wave": "ghl-leadconnector-boyer",
+  "wave_label": "GHL/LeadConnector Boyer + 4 (trial widget + schedule-image class caps)",
+  "sites_n": 8682,
+  "products_n": 38384,
+  "skus": 38384,
+  "brands": 6594,
   "markets": 633,
   "trade_areas": 11413,
   "holds": 9,
@@ -26,7 +26,8 @@
     "jackrabbit": 100,
     "daxko": 81,
     "teamunify": 65,
-    "pike13": 17
+    "pike13": 17,
+    "leadconnector": 5
   },
-  "note": "Top-300 fold +561 web_discovery (17 name-duped of 578). geo=search_center_proxy; enrolled/capacity null; no product invent. Products still 38358."
+  "note": "GHL fold +5 sites (Boyer site capacity null; 26 class SKUs observed_max_only caps 5\u201332). Trial appointment_per_slot not used as site capacity. No Est.$ invent."
 }

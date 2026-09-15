@@ -1,0 +1,56 @@
+{
+  "folded_at": "2026-09-15",
+  "source_dir": "/workspace/marketintel-dashboard/data/wave2/pulls/2026-09-15",
+  "prior_sites": 8677,
+  "added_sites": 5,
+  "new_sites_n": 8682,
+  "prior_products": 38358,
+  "added_products": 26,
+  "new_products_n": 38384,
+  "boyer_site_capacity": null,
+  "boyer_trial_widget_cap_not_used_as_site_capacity": 20,
+  "boyer_class_caps_observed": {
+    "n": 26,
+    "min": 5,
+    "max": 32,
+    "sum": 420
+  },
+  "sites": [
+    {
+      "name": "Boyer Academy \u2014 Troy, MO",
+      "park_id": "ghl:x7MayrIxNPJrkBBJ053j",
+      "capacity": null,
+      "evidence_tier": "observed_max_only",
+      "geo_precision": "city_zip"
+    },
+    {
+      "name": "SGRO Karate \u2014 Fayetteville, NC",
+      "park_id": "ghl:LYiMgJEEDCXUJl7jVlCx",
+      "capacity": null,
+      "evidence_tier": "schedule_only_no_capacity",
+      "geo_precision": "city"
+    },
+    {
+      "name": "Star City Taekwondo \u2014 Roanoke, VA",
+      "park_id": "ghl:vFMI3rOK3x3UG5Dkib8K",
+      "capacity": 6,
+      "evidence_tier": "published",
+      "geo_precision": "city"
+    },
+    {
+      "name": "Stay Strong BJJ \u2014 Hillsborough, NJ",
+      "park_id": "ghl:4aDDRCDq6tuuRvvdGWjX",
+      "capacity": 3,
+      "evidence_tier": "published",
+      "geo_precision": "city"
+    },
+    {
+      "name": "Fast Fist Martial Arts \u2014 DeSoto, TX",
+      "park_id": "ghl:nmn:fastfistma",
+      "capacity": null,
+      "evidence_tier": "schedule_only_no_capacity",
+      "geo_precision": "street"
+    }
+  ],
+  "note": "Boyer site capacity left null; 26 class SKUs carry observed_max_only caps from schedule image. Trial appointment_per_slot=20 not rolled to site. No Est.$/price invented."
+}
