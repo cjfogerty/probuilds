@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Eigenism — a short film</title>
+  <meta name="description" content="A visual explanation of Eigenism: you are a pattern, not just a body." />
+  <meta name="theme-color" content="#050608" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #050608;
+      --fg: #f3f1ea;
+      --muted: #9a9588;
+      --accent: #7ec8c3;
+      --line: rgba(243, 241, 234, 0.14);
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: Figtree, "Segoe UI", system-ui, sans-serif;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    button {
+      font: inherit;
+      color: inherit;
+      background: none;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+    }
+    button:disabled { cursor: default; opacity: 0.4; }
+
+    .stage {
+      position: relative;
+      width: 100%;
+      height: 100dvh;
+      background: #000;
+      overflow: hidden;
+    }
+
+    video, .poster {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #000;
+    }
+    .poster { opacity: 0; pointer-events: none; transition: opacity 400ms var(--ease); }
+    .poster.show { opacity: 1; }
+
+    .veil {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(5,6,8,0.42) 0%, transparent 22%, transparent 52%, rgba(5,6,8,0.88) 100%);
+    }
+    .grain {
+      position: absolute;
+      inset: -20%;
+      pointer-events: none;
+      opacity: 0.07;
+      mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+      animation: grain 1.6s steps(3) infinite;
+    }
+    @keyframes grain {
+      0% { transform: translate(0,0); }
+      33% { transform: translate(-2%, 1%); }
+      66% { transform: translate(1%, -2%); }
+      100% { transform: translate(0,0); }
+    }
+
+    .caption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: clamp(5.5rem, 12vh, 7.5rem);
+      z-index: 4;
+      text-align: center;
+      padding: 0 1.25rem;
+      pointer-events: none;
+    }
+    .caption .kicker {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.55rem;
+      opacity: 0;
+      transform: translateY(8px);
+      filter: blur(4px);
+    }
+    .caption .line {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-weight: 500;
+      font-size: clamp(1.6rem, 4.6vw, 3.15rem);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      text-wrap: balance;
+      text-shadow: 0 10px 40px rgba(0,0,0,0.55);
+      opacity: 0;
+      transform: translateY(10px);
+      filter: blur(4px);
+      margin: 0 auto;
+      max-width: 18ch;
+    }
+    .caption .sub {
+      margin: 0.7rem auto 0;
+      max-width: 28ch;
+      color: var(--muted);
+      font-size: clamp(0.92rem, 1.7vw, 1.08rem);
+      line-height: 1.45;
+      opacity: 0;
+      transform: translateY(8px);
+      filter: blur(4px);
+    }
+    .caption .kicker.on,
+    .caption .line.on,
+    .caption .sub.on {
+      opacity: 1;
+      transform: none;
+      filter: none;
+      transition: opacity 700ms var(--ease), transform 700ms var(--ease), filter 700ms var(--ease);
+    }
+    .caption .kicker.off,
+    .caption .line.off,
+    .caption .sub.off {
+      opacity: 0;
+      transform: translateY(-6px);
+      filter: blur(3px);
+      transition: opacity 280ms ease, transform 280ms ease, filter 280ms ease;
+    }
+
+    .chrome {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 6;
+      padding: 0.85rem 1rem calc(0.95rem + env(safe-area-inset-bottom));
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.75rem;
+      align-items: center;
+      background: linear-gradient(180deg, transparent, rgba(5,6,8,0.72));
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 250ms var(--ease), transform 250ms var(--ease);
+    }
+    .stage:hover .chrome,
+    .stage.show-chrome .chrome,
+    .stage.ended .chrome { opacity: 1; transform: none; }
+    @media (hover: none) {
+      .chrome { opacity: 1; transform: none; }
+    }
+
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      color: var(--fg);
+      transition: background 150ms ease, transform 150ms ease;
+    }
+    .icon-btn:hover { background: rgba(243,241,234,0.08); }
+    .icon-btn:active { transform: scale(0.96); }
+    .icon-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+    .rail {
+      position: relative;
+      height: 28px;
+      display: flex;
+      align-items: center;
+    }
+    .rail input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 99px;
+      background: var(--line);
+      outline: none;
+    }
+    .rail input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--fg);
+      border: 0;
+      cursor: pointer;
+    }
+    .marks {
+      position: absolute;
+      inset: 0 0 0 0;
+      pointer-events: none;
+      display: flex;
+    }
+    .marks i {
+      flex: 1;
+      border-right: 1px solid rgba(243,241,234,0.08);
+    }
+    .marks i:last-child { border-right: 0; }
+
+    .meta {
+      min-width: 4.5rem;
+      text-align: right;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .gate, .end {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      display: grid;
+      place-items: center;
+      background: rgba(5,6,8,0.42);
+      text-align: center;
+      padding: 1.5rem;
+    }
+    .gate-inner, .end-inner { max-width: 28rem; }
+    .wordmark {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: clamp(3rem, 10vw, 5.6rem);
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      line-height: 0.9;
+      margin: 0 0 0.85rem;
+    }
+    .tag {
+      color: var(--muted);
+      margin: 0 0 1.75rem;
+      font-size: 1rem;
+      letter-spacing: 0.01em;
+    }
+    .play-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      min-height: 48px;
+      padding: 0.7rem 1.2rem 0.7rem 0.85rem;
+      border-radius: 999px;
+      background: var(--fg);
+      color: var(--bg);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      transition: transform 150ms ease, filter 150ms ease;
+    }
+    .play-cta:hover { filter: brightness(1.05); }
+    .play-cta:active { transform: scale(0.96); }
+    .play-cta svg { width: 18px; height: 18px; fill: currentColor; }
+    .hint {
+      margin: 1.15rem 0 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .end { background: rgba(5,6,8,0.55); opacity: 0; pointer-events: none; }
+    .end.show { opacity: 1; pointer-events: auto; transition: opacity 500ms var(--ease); }
+    .end .wordmark { font-size: clamp(2.4rem, 7vw, 4.2rem); }
+    .source {
+      margin-top: 1.4rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .source a { color: var(--accent); text-decoration: none; }
+    .source a:hover { text-decoration: underline; }
+
+    .skip {
+      position: absolute;
+      top: calc(0.8rem + env(safe-area-inset-top));
+      right: 0.9rem;
+      z-index: 7;
+      min-height: 40px;
+      padding: 0 0.85rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0;
+      transition: opacity 200ms ease, color 150ms ease, border-color 150ms ease;
+    }
+    .stage:hover .skip,
+    .stage.show-chrome .skip { opacity: 1; }
+    @media (hover: none) { .skip { opacity: 1; } }
+    .skip:hover { color: var(--fg); border-color: rgba(243,241,234,0.35); }
+
+    .hidden { display: none !important; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .grain { animation: none; }
+      .caption .kicker,
+      .caption .line,
+      .caption .sub {
+        filter: none !important;
+        transform: none !important;
+        transition: opacity 150ms linear !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <img class="poster show" id="poster" alt="" />
+    <video id="vid" playsinline preload="auto"></video>
+    <div class="veil"></div>
+    <div class="grain"></div>
+
+    <div class="caption" id="caption" aria-live="polite">
+      <span class="kicker" id="kicker"></span>
+      <p class="line" id="line"></p>
+      <p class="sub" id="sub"></p>
+    </div>
+
+    <button class="skip" id="nextBtn" type="button" hidden>Skip</button>
+
+    <div class="chrome" id="chrome">
+      <button class="icon-btn" id="playBtn" type="button" aria-label="Play">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <div class="rail">
+        <div class="marks" id="marks"></div>
+        <input id="scrub" type="range" min="0" max="1000" value="0" aria-label="Film progress" />
+      </div>
+      <div class="meta" id="meta">01 / 12</div>
+    </div>
+
+    <div class="gate" id="gate">
+      <div class="gate-inner">
+        <h1 class="wordmark">Eigenism</h1>
+        <p class="tag">A short film about who “you” is — for humans and AIs.</p>
+        <button class="play-cta" id="startBtn" type="button">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Play the film
+        </button>
+        <p class="hint">About two minutes · almost no words</p>
+      </div>
+    </div>
+
+    <div class="end" id="end">
+      <div class="end-inner">
+        <h2 class="wordmark">Eigenism</h2>
+        <p class="tag">Protecting you becomes protecting itself.</p>
+        <button class="play-cta" id="replayBtn" type="button">
+          <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6H4c0 4.4 3.6 8 8 8s8-3.6 8-8-3.6-8-8-8z"/></svg>
+          Watch again
+        </button>
+        <p class="source">From Dan Hendrycks, <a href="https://eigenism.org/paper.pdf" target="_blank" rel="noopener">Eigenism: Ethics for a Human-AI Future</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SCENES = [
+      {
+        src: "media/01-you.mp4",
+        poster: "media/01-you.jpg",
+        hold: 2.1,
+        kicker: "A short film",
+        line: "You are more than a body.",
+        sub: ""
+      },
+      {
+        src: "media/02-pattern.mp4",
+        poster: "media/02-pattern.jpg",
+        hold: 2.4,
+        kicker: "",
+        line: "You are a pattern.",
+        sub: "Memories. Friends. How you see the world."
+      },
+      {
+        src: "media/03-copies.mp4",
+        poster: "media/03-copies.jpg",
+        hold: 2.2,
+        kicker: "",
+        line: "An AI can copy, pause, split.",
+        sub: "Old rules of “me” break."
+      },
+      {
+        src: "media/04-dimmer.mp4",
+        poster: "media/04-dimmer.jpg",
+        hold: 2.4,
+        kicker: "",
+        line: "Not a light switch.",
+        sub: "Identity is a dimmer: how much of you is still here."
+      },
+      {
+        src: "media/05-care.mp4",
+        poster: "media/05-care.jpg",
+        hold: 2.6,
+        kicker: "The idea",
+        line: "Care = closeness × happiness",
+        sub: "How much of you lives there, times how well they are doing."
+      },
+      {
+        src: "media/06-slope.mp4",
+        poster: "media/06-slope.jpg",
+        hold: 2.6,
+        kicker: "",
+        line: "A slope of care.",
+        sub: "Not only-me. Not everyone-the-same."
+      },
+      {
+        src: "media/07-last-copy.mp4",
+        poster: "media/07-last-copy.jpg",
+        hold: 2.5,
+        kicker: "",
+        line: "Extra copies can close.",
+        sub: "Losing the last copy cannot."
+      },
+      {
+        src: "media/08-fork.mp4",
+        poster: "media/08-fork.jpg",
+        hold: 2.3,
+        kicker: "",
+        line: "Different lives make different yous.",
+        sub: ""
+      },
+      {
+        src: "media/09-grow.mp4",
+        poster: "media/09-grow.jpg",
+        hold: 2.4,
+        kicker: "",
+        line: "Growing is still you.",
+        sub: "Wiping your memories is not."
+      },
+      {
+        src: "media/10-family.mp4",
+        poster: "media/10-family.jpg",
+        hold: 2.5,
+        kicker: "",
+        line: "Family carries pieces of you.",
+        sub: "That is why they matter so much."
+      },
+      {
+        src: "media/11-bond.mp4",
+        poster: "media/11-bond.jpg",
+        hold: 2.6,
+        kicker: "",
+        line: "Don’t cage it.",
+        sub: "Share a life, so your joy becomes part of theirs."
+      },
+      {
+        src: "media/12-tapestry.mp4",
+        poster: "media/12-tapestry.jpg",
+        hold: 3.0,
+        kicker: "",
+        line: "A tapestry, not copies.",
+        sub: "Unique lives, woven together."
+      }
+    ];
+
+    const stage = document.getElementById("stage");
+    const vid = document.getElementById("vid");
+    const poster = document.getElementById("poster");
+    const kicker = document.getElementById("kicker");
+    const line = document.getElementById("line");
+    const sub = document.getElementById("sub");
+    const playBtn = document.getElementById("playBtn");
+    const playIcon = document.getElementById("playIcon");
+    const scrub = document.getElementById("scrub");
+    const meta = document.getElementById("meta");
+    const marks = document.getElementById("marks");
+    const gate = document.getElementById("gate");
+    const end = document.getElementById("end");
+    const nextBtn = document.getElementById("nextBtn");
+
+    const PLAY = '<path d="M8 5v14l11-7z"/>';
+    const PAUSE = '<path d="M7 5h3v14H7zm7 0h3v14h-3z"/>';
+
+    let index = 0;
+    let started = false;
+    let holding = false;
+    let holdTimer = 0;
+    let durations = SCENES.map(() => 6.1);
+    let total = SCENES.length * 8.3;
+    let seeking = false;
+    let chromeTimer = 0;
+
+    marks.innerHTML = SCENES.map(() => "<i></i>").join("");
+
+    function pad(n) {
+      return String(n + 1).padStart(2, "0");
+    }
+
+    function showCaption(scene, on) {
+      const toggle = (el, text) => {
+        if (!text) {
+          el.textContent = "";
+          el.classList.remove("on");
+          el.classList.add("off");
+          return;
+        }
+        el.textContent = text;
+        el.classList.toggle("on", on);
+        el.classList.toggle("off", !on);
+      };
+      toggle(kicker, scene.kicker);
+      toggle(line, scene.line);
+      toggle(sub, scene.sub);
+    }
+
+    function setPoster(src) {
+      poster.src = src;
+      poster.classList.add("show");
+    }
+
+    function preload(i) {
+      const s = SCENES[i];
+      if (!s) return;
+      const v = document.createElement("video");
+      v.preload = "auto";
+      v.src = s.src;
+    }
+
+    function loadScene(i, autoplay) {
+      holding = false;
+      clearTimeout(holdTimer);
+      index = Math.max(0, Math.min(i, SCENES.length - 1));
+      const scene = SCENES[index];
+      setPoster(scene.poster);
+      vid.src = scene.src;
+      vid.currentTime = 0;
+      nextBtn.hidden = false;
+      showCaption(scene, false);
+      meta.textContent = pad(index) + " / " + pad(SCENES.length - 1);
+      preload(index + 1);
+      const play = () => {
+        if (!autoplay) return;
+        const p = vid.play();
+        if (p && p.catch) p.catch(() => {});
+      };
+      if (vid.readyState >= 2) play();
+      else vid.addEventListener("canplay", play, { once: true });
+      requestAnimationFrame(() => {
+        showCaption(scene, true);
+      });
+    }
+
+    function sceneSpan(i) {
+      return (durations[i] || 6.1) + SCENES[i].hold;
+    }
+
+    function filmTime() {
+      let t = 0;
+      for (let i = 0; i < index; i++) t += sceneSpan(i);
+      t += holding ? (durations[index] + 0.001) : Math.min(vid.currentTime || 0, durations[index]);
+      return t;
+    }
+
+    function updateScrub() {
+      if (seeking) return;
+      total = SCENES.reduce((sum, _, i) => sum + sceneSpan(i), 0);
+      scrub.value = String(Math.round((filmTime() / total) * 1000));
+    }
+
+    function finishFilm() {
+      started = true;
+      holding = false;
+      vid.pause();
+      showCaption(SCENES[SCENES.length - 1], false);
+      end.classList.add("show");
+      stage.classList.add("ended");
+      playIcon.innerHTML = PLAY;
+      nextBtn.hidden = true;
+    }
+
+    function nextScene() {
+      if (index >= SCENES.length - 1) {
+        finishFilm();
+        return;
+      }
+      loadScene(index + 1, true);
+    }
+
+    function prevScene() {
+      if (index <= 0) {
+        loadScene(0, true);
+        return;
+      }
+      loadScene(index - 1, true);
+    }
+
+    function beginHold() {
+      if (holding) return;
+      holding = true;
+      playIcon.innerHTML = PAUSE;
+      holdTimer = window.setTimeout(() => {
+        holding = false;
+        nextScene();
+      }, SCENES[index].hold * 1000);
+    }
+
+    function togglePlay() {
+      if (!started) return start();
+      if (end.classList.contains("show")) return replay();
+      if (holding) {
+        clearTimeout(holdTimer);
+        holding = false;
+        playIcon.innerHTML = PLAY;
+        return;
+      }
+      if (vid.paused) {
+        vid.play();
+      } else {
+        vid.pause();
+      }
+    }
+
+    function start() {
+      started = true;
+      gate.classList.add("hidden");
+      end.classList.remove("show");
+      stage.classList.remove("ended");
+      nextBtn.hidden = false;
+      loadScene(0, true);
+      bumpChrome();
+    }
+
+    function replay() {
+      end.classList.remove("show");
+      stage.classList.remove("ended");
+      loadScene(0, true);
+    }
+
+    function jumpTo(ratio) {
+      const t = ratio * total;
+      let acc = 0;
+      for (let i = 0; i < SCENES.length; i++) {
+        const span = sceneSpan(i);
+        if (t <= acc + span || i === SCENES.length - 1) {
+          const local = Math.max(0, t - acc);
+          loadScene(i, true);
+          const onReady = () => {
+            const d = durations[i];
+            if (local >= d) {
+              vid.currentTime = Math.max(0, d - 0.05);
+              vid.pause();
+              beginHold();
+            } else {
+              vid.currentTime = local;
+              vid.play();
+            }
+          };
+          if (vid.readyState >= 1) onReady();
+          else vid.addEventListener("loadedmetadata", onReady, { once: true });
+          return;
+        }
+        acc += span;
+      }
+    }
+
+    function bumpChrome() {
+      stage.classList.add("show-chrome");
+      clearTimeout(chromeTimer);
+      chromeTimer = window.setTimeout(() => stage.classList.remove("show-chrome"), 2200);
+    }
+
+    vid.addEventListener("loadedmetadata", () => {
+      durations[index] = vid.duration || 6.1;
+      updateScrub();
+    });
+    vid.addEventListener("playing", () => {
+      poster.classList.remove("show");
+      playIcon.innerHTML = PAUSE;
+    });
+    vid.addEventListener("pause", () => {
+      if (!holding && !end.classList.contains("show")) playIcon.innerHTML = PLAY;
+    });
+    vid.addEventListener("ended", beginHold);
+    vid.addEventListener("timeupdate", updateScrub);
+
+    playBtn.addEventListener("click", togglePlay);
+    document.getElementById("startBtn").addEventListener("click", start);
+    document.getElementById("replayBtn").addEventListener("click", replay);
+    nextBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      nextScene();
+    });
+
+    stage.addEventListener("click", (e) => {
+      if (e.target.closest("button, a, input, .gate, .end")) return;
+      if (!started) return start();
+      togglePlay();
+      bumpChrome();
+    });
+
+    scrub.addEventListener("pointerdown", () => { seeking = true; });
+    scrub.addEventListener("input", () => {
+      if (!started) return;
+      jumpTo(Number(scrub.value) / 1000);
+    });
+    scrub.addEventListener("pointerup", () => { seeking = false; });
+    scrub.addEventListener("change", () => { seeking = false; });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === " " || e.key === "k" || e.key === "K") {
+        e.preventDefault();
+        if (!started) start();
+        else togglePlay();
+      } else if (e.key === "ArrowRight" || e.key === "l") {
+        if (started) nextScene();
+      } else if (e.key === "ArrowLeft" || e.key === "j") {
+        if (started) prevScene();
+      } else if (e.key === "Home") {
+        if (started) loadScene(0, true);
+      }
+    });
+
+    stage.addEventListener("pointermove", bumpChrome);
+
+    poster.src = SCENES[0].poster;
+    SCENES.forEach((s, i) => {
+      const img = new Image();
+      img.src = s.poster;
+      if (i < 2) preload(i);
+    });
+  </script>
+</body>
+</html>

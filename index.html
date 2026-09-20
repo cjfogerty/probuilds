@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>probuilds — Market Intel</title>
+  <title>probuilds</title>
   <style>
     :root {
       --bg: #0b0e14; --card: #141924; --border: #243044;
@@ -19,8 +19,13 @@
       color: var(--text);
       padding: 24px;
     }
+    .stack {
+      display: grid;
+      gap: 1rem;
+      width: min(440px, 92vw);
+    }
     .card {
-      width: min(440px, 92vw); padding: 2rem 1.75rem; background: var(--card);
+      padding: 2rem 1.75rem; background: var(--card);
       border: 1px solid var(--border); border-radius: 1.1rem;
     }
     .brand {
@@ -31,6 +36,7 @@
       background: linear-gradient(135deg, var(--accent), #a78bfa);
       display: grid; place-items: center; font-weight: 700; font-size: 12px;
     }
+    .logo.eg { background: linear-gradient(135deg, #7ec8c3, #f3f1ea); color: #0b0e14; }
     h1 { margin: 0; font-size: 1.35rem; letter-spacing: -0.02em; }
     p { margin: 0 0 1.25rem; color: var(--muted); line-height: 1.5; font-size: 0.95rem; }
     nav { display: flex; flex-direction: column; gap: 0.65rem; }
@@ -41,21 +47,32 @@
     a:hover { border-color: var(--accent); color: var(--accent2); }
     a.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
     a.primary:hover { color: #fff; filter: brightness(1.06); }
+    a.film { background: #7ec8c3; border-color: #7ec8c3; color: #0b0e14; }
+    a.film:hover { color: #0b0e14; filter: brightness(1.06); }
     .note { margin-top: 1rem; font-size: 0.8rem; color: #64748b; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="brand"><span class="logo">MI</span><h1>Market Intel</h1></div>
-    <p>Command center for kids-activity footprints — hub, map, program facts, and SKU grain.</p>
-    <nav>
-      <a class="primary" href="marketintel/dashboard/">Hub</a>
-      <a href="marketintel/dashboard/map.html">Map</a>
-      <a href="marketintel/dashboard/markets.html">Market Command</a>
-      <a href="marketintel/dashboard/programs.html">Brand &amp; program facts</a>
-      <a href="marketintel/dashboard/products.html">Products (SKU grain)</a>
-    </nav>
-    <p class="note">CBSA metros + Market Command (ACS/demand layer).</p>
+  <div class="stack">
+    <div class="card">
+      <div class="brand"><span class="logo eg">EG</span><h1>Eigenism</h1></div>
+      <p>A two-minute silent film: you are a pattern, not just a body. Almost no words.</p>
+      <nav>
+        <a class="film" href="AI-content/">Watch the film</a>
+      </nav>
+    </div>
+    <div class="card">
+      <div class="brand"><span class="logo">MI</span><h1>Market Intel</h1></div>
+      <p>Command center for kids-activity footprints — hub, map, program facts, and SKU grain.</p>
+      <nav>
+        <a class="primary" href="marketintel/dashboard/">Hub</a>
+        <a href="marketintel/dashboard/map.html">Map</a>
+        <a href="marketintel/dashboard/markets.html">Market Command</a>
+        <a href="marketintel/dashboard/programs.html">Brand & program facts</a>
+        <a href="marketintel/dashboard/products.html">Products (SKU grain)</a>
+      </nav>
+      <p class="note">CBSA metros + Market Command (ACS/demand layer).</p>
+    </div>
   </div>
 </body>
 </html>
