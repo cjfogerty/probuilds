@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Eigenism — a short film</title>
-  <meta name="description" content="A visual explanation of Eigenism: you are a pattern, not just a body." />
+  <meta name="description" content="A narrated visual explanation of Eigenism: you are a pattern, not just a body." />
   <meta name="theme-color" content="#050608" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -150,7 +150,7 @@
       z-index: 6;
       padding: 0.85rem 1rem calc(0.95rem + env(safe-area-inset-bottom));
       display: grid;
-      grid-template-columns: auto 1fr auto;
+      grid-template-columns: auto 1fr auto auto;
       gap: 0.75rem;
       align-items: center;
       background: linear-gradient(180deg, transparent, rgba(5,6,8,0.72));
@@ -322,6 +322,8 @@
   <div class="stage" id="stage">
     <img class="poster show" id="poster" alt="" />
     <video id="vid" playsinline preload="auto"></video>
+    <audio id="vo" preload="auto"></audio>
+    <audio id="score" src="media/audio/score.mp3" preload="auto" loop></audio>
     <div class="veil"></div>
     <div class="grain"></div>
 
@@ -341,6 +343,9 @@
         <div class="marks" id="marks"></div>
         <input id="scrub" type="range" min="0" max="1000" value="0" aria-label="Film progress" />
       </div>
+      <button class="icon-btn" id="soundBtn" type="button" aria-label="Mute" aria-pressed="false">
+        <svg id="soundIcon" viewBox="0 0 24 24"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2c0-1.8-1-3.3-2.5-4v8c1.5-.7 2.5-2.2 2.5-4zM14 3.2v2.1c2.9.9 5 3.5 5 6.7s-2.1 5.8-5 6.7v2.1c4-1 7-4.6 7-8.8s-3-7.8-7-8.8z"/></svg>
+      </button>
       <div class="meta" id="meta">01 / 12</div>
     </div>
 
@@ -352,7 +357,7 @@
           <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           Play the film
         </button>
-        <p class="hint">About two minutes · almost no words</p>
+        <p class="hint">About two minutes · narrated · sound on</p>
       </div>
     </div>
 
@@ -374,6 +379,8 @@
       {
         src: "media/01-you.mp4",
         poster: "media/01-you.jpg",
+        vo: "media/audio/01-you.mp3",
+        voDur: 7.24,
         hold: 2.1,
         kicker: "A short film",
         line: "You are more than a body.",
@@ -382,6 +389,8 @@
       {
         src: "media/02-pattern.mp4",
         poster: "media/02-pattern.jpg",
+        vo: "media/audio/02-pattern.mp3",
+        voDur: 7.34,
         hold: 2.4,
         kicker: "",
         line: "You are a pattern.",
@@ -390,6 +399,8 @@
       {
         src: "media/03-copies.mp4",
         poster: "media/03-copies.jpg",
+        vo: "media/audio/03-copies.mp3",
+        voDur: 7.66,
         hold: 2.2,
         kicker: "",
         line: "An AI can copy, pause, split.",
@@ -398,6 +409,8 @@
       {
         src: "media/04-dimmer.mp4",
         poster: "media/04-dimmer.jpg",
+        vo: "media/audio/04-dimmer.mp3",
+        voDur: 7.34,
         hold: 2.4,
         kicker: "",
         line: "Not a light switch.",
@@ -406,6 +419,8 @@
       {
         src: "media/05-care.mp4",
         poster: "media/05-care.jpg",
+        vo: "media/audio/05-care.mp3",
+        voDur: 8.82,
         hold: 2.6,
         kicker: "The idea",
         line: "Care = closeness × happiness",
@@ -414,6 +429,8 @@
       {
         src: "media/06-slope.mp4",
         poster: "media/06-slope.jpg",
+        vo: "media/audio/06-slope.mp3",
+        voDur: 7.43,
         hold: 2.6,
         kicker: "",
         line: "A slope of care.",
@@ -422,6 +439,8 @@
       {
         src: "media/07-last-copy.mp4",
         poster: "media/07-last-copy.jpg",
+        vo: "media/audio/07-last-copy.mp3",
+        voDur: 7.24,
         hold: 2.5,
         kicker: "",
         line: "Extra copies can close.",
@@ -430,6 +449,8 @@
       {
         src: "media/08-fork.mp4",
         poster: "media/08-fork.jpg",
+        vo: "media/audio/08-fork.mp3",
+        voDur: 8.92,
         hold: 2.3,
         kicker: "",
         line: "Different lives make different yous.",
@@ -438,6 +459,8 @@
       {
         src: "media/09-grow.mp4",
         poster: "media/09-grow.jpg",
+        vo: "media/audio/09-grow.mp3",
+        voDur: 8.36,
         hold: 2.4,
         kicker: "",
         line: "Growing is still you.",
@@ -446,6 +469,8 @@
       {
         src: "media/10-family.mp4",
         poster: "media/10-family.jpg",
+        vo: "media/audio/10-family.mp3",
+        voDur: 8.03,
         hold: 2.5,
         kicker: "",
         line: "Family carries pieces of you.",
@@ -454,6 +479,8 @@
       {
         src: "media/11-bond.mp4",
         poster: "media/11-bond.jpg",
+        vo: "media/audio/11-bond.mp3",
+        voDur: 6.5,
         hold: 2.6,
         kicker: "",
         line: "Don’t cage it.",
@@ -462,6 +489,8 @@
       {
         src: "media/12-tapestry.mp4",
         poster: "media/12-tapestry.jpg",
+        vo: "media/audio/12-tapestry.mp3",
+        voDur: 7.38,
         hold: 3.0,
         kicker: "",
         line: "A tapestry, not copies.",
@@ -471,6 +500,8 @@
 
     const stage = document.getElementById("stage");
     const vid = document.getElementById("vid");
+    const vo = document.getElementById("vo");
+    const score = document.getElementById("score");
     const poster = document.getElementById("poster");
     const kicker = document.getElementById("kicker");
     const line = document.getElementById("line");
@@ -483,9 +514,18 @@
     const gate = document.getElementById("gate");
     const end = document.getElementById("end");
     const nextBtn = document.getElementById("nextBtn");
+    const soundBtn = document.getElementById("soundBtn");
+    const soundIcon = document.getElementById("soundIcon");
 
     const PLAY = '<path d="M8 5v14l11-7z"/>';
     const PAUSE = '<path d="M7 5h3v14H7zm7 0h3v14h-3z"/>';
+    const SOUND_ON = '<path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2c0-1.8-1-3.3-2.5-4v8c1.5-.7 2.5-2.2 2.5-4zM14 3.2v2.1c2.9.9 5 3.5 5 6.7s-2.1 5.8-5 6.7v2.1c4-1 7-4.6 7-8.8s-3-7.8-7-8.8z"/>';
+    const SOUND_OFF = '<path d="M3 10v4h4l5 5V5L7 10H3zm16.5 2l2.2-2.2-1.4-1.4-2.3 2.2-2.3-2.2-1.4 1.4 2.2 2.2-2.2 2.3 1.4 1.4 2.3-2.2 2.3 2.2 1.4-1.4-2.2-2.3z"/>';
+
+    const LEAD = 0.35;        // beat of picture before the narrator speaks
+    const TAIL = 0.5;         // silence after the line before the cut
+    const SCORE_BED = 0.26;   // score level between lines
+    const SCORE_DUCK = 0.12;  // score level under the voice
 
     let index = 0;
     let started = false;
@@ -495,11 +535,103 @@
     let total = SCENES.length * 8.3;
     let seeking = false;
     let chromeTimer = 0;
+    let muted = false;
+    let voTimer = 0;
+    let voArmed = false;
+    let voCue = 0;        // where in the scene the narration should pick up
+    let voCued = false;   // has this scene's line been cued yet
+    let rampTimer = 0;
 
     marks.innerHTML = SCENES.map(() => "<i></i>").join("");
 
     function pad(n) {
       return String(n + 1).padStart(2, "0");
+    }
+
+    function rampScore(target, ms) {
+      clearInterval(rampTimer);
+      if (muted) {
+        score.volume = 0;
+        return;
+      }
+      const from = score.volume;
+      const steps = Math.max(1, Math.round(ms / 40));
+      let n = 0;
+      rampTimer = window.setInterval(() => {
+        n += 1;
+        const v = from + (target - from) * (n / steps);
+        score.volume = Math.max(0, Math.min(1, v));
+        if (n >= steps) clearInterval(rampTimer);
+      }, 40);
+    }
+
+    function playVoice(from) {
+      const seek = () => {
+        try { vo.currentTime = from || 0; } catch (e) {}
+      };
+      if (vo.readyState >= 1) seek();
+      else vo.addEventListener("loadedmetadata", seek, { once: true });
+      rampScore(SCORE_DUCK, 320);
+      const p = vo.play();
+      if (p && p.catch) p.catch(() => {});
+    }
+
+    // Hand the narration its cue: LEAD seconds into the shot, or straight
+    // away when we land mid-scene after a scrub.
+    function armVoice(offset) {
+      clearTimeout(voTimer);
+      voArmed = false;
+      vo.pause();
+      const scene = SCENES[index];
+      if (!scene.vo) return;
+      if (!vo.src || !vo.src.endsWith(scene.vo)) vo.src = scene.vo;
+      const at = offset || 0;
+      if (at >= LEAD) {
+        playVoice(at - LEAD);
+        return;
+      }
+      voArmed = true;
+      voTimer = window.setTimeout(() => {
+        voArmed = false;
+        playVoice(0);
+      }, (LEAD - at) * 1000);
+    }
+
+    function pauseAudio() {
+      clearTimeout(voTimer);
+      vo.pause();
+      score.pause();
+    }
+
+    function resumeAudio() {
+      const s = score.play();
+      if (s && s.catch) s.catch(() => {});
+      if (voArmed) {
+        voArmed = false;
+        playVoice(0);
+        return;
+      }
+      if (vo.src && !vo.ended && vo.currentTime > 0) {
+        const p = vo.play();
+        if (p && p.catch) p.catch(() => {});
+      }
+    }
+
+    function startScore() {
+      try { score.currentTime = 0; } catch (e) {}
+      score.volume = muted ? 0 : SCORE_BED;
+      const s = score.play();
+      if (s && s.catch) s.catch(() => {});
+    }
+
+    function setMuted(m) {
+      muted = m;
+      vo.muted = m;
+      score.volume = m ? 0 : (vo.paused ? SCORE_BED : SCORE_DUCK);
+      soundIcon.innerHTML = m ? SOUND_OFF : SOUND_ON;
+      soundBtn.setAttribute("aria-label", m ? "Unmute" : "Mute");
+      soundBtn.setAttribute("aria-pressed", m ? "true" : "false");
+      try { localStorage.setItem("eigenism-muted", m ? "1" : "0"); } catch (e) {}
     }
 
     function showCaption(scene, on) {
@@ -536,6 +668,8 @@
       holding = false;
       clearTimeout(holdTimer);
       index = Math.max(0, Math.min(i, SCENES.length - 1));
+      voCue = 0;
+      voCued = false;
       const scene = SCENES[index];
       setPoster(scene.poster);
       vid.src = scene.src;
@@ -556,8 +690,16 @@
       });
     }
 
+    // The written hold, stretched when the narration needs longer — the
+    // picture never cuts a sentence in half.
+    function holdFor(i) {
+      const d = durations[i] || 6.1;
+      const spoken = LEAD + (SCENES[i].voDur || 0) + TAIL;
+      return Math.max(SCENES[i].hold, spoken - d);
+    }
+
     function sceneSpan(i) {
-      return (durations[i] || 6.1) + SCENES[i].hold;
+      return (durations[i] || 6.1) + holdFor(i);
     }
 
     function filmTime() {
@@ -577,6 +719,10 @@
       started = true;
       holding = false;
       vid.pause();
+      clearTimeout(voTimer);
+      vo.pause();
+      rampScore(0, 900);
+      window.setTimeout(() => score.pause(), 1000);
       showCaption(SCENES[SCENES.length - 1], false);
       end.classList.add("show");
       stage.classList.add("ended");
@@ -604,10 +750,14 @@
       if (holding) return;
       holding = true;
       playIcon.innerHTML = PAUSE;
+      let wait = holdFor(index) * 1000;
+      if (!vo.paused && isFinite(vo.duration)) {
+        wait = Math.max(wait, (vo.duration - vo.currentTime + TAIL) * 1000);
+      }
       holdTimer = window.setTimeout(() => {
         holding = false;
         nextScene();
-      }, SCENES[index].hold * 1000);
+      }, wait);
     }
 
     function togglePlay() {
@@ -617,12 +767,15 @@
         clearTimeout(holdTimer);
         holding = false;
         playIcon.innerHTML = PLAY;
+        pauseAudio();
         return;
       }
       if (vid.paused) {
         vid.play();
+        resumeAudio();
       } else {
         vid.pause();
+        pauseAudio();
       }
     }
 
@@ -632,6 +785,7 @@
       end.classList.remove("show");
       stage.classList.remove("ended");
       nextBtn.hidden = false;
+      startScore();
       loadScene(0, true);
       bumpChrome();
     }
@@ -639,6 +793,7 @@
     function replay() {
       end.classList.remove("show");
       stage.classList.remove("ended");
+      startScore();
       loadScene(0, true);
     }
 
@@ -655,9 +810,13 @@
             if (local >= d) {
               vid.currentTime = Math.max(0, d - 0.05);
               vid.pause();
+              voCued = true;
+              armVoice(local);
               beginHold();
             } else {
               vid.currentTime = local;
+              voCue = local;
+              voCued = false;
               vid.play();
             }
           };
@@ -682,14 +841,31 @@
     vid.addEventListener("playing", () => {
       poster.classList.remove("show");
       playIcon.innerHTML = PAUSE;
+      // Speak only once the picture is really running, so a slow-starting
+      // clip can't leave the narrator talking over a frozen frame.
+      if (!voCued) {
+        voCued = true;
+        armVoice(voCue);
+      }
     });
     vid.addEventListener("pause", () => {
       if (!holding && !end.classList.contains("show")) playIcon.innerHTML = PLAY;
     });
     vid.addEventListener("ended", beginHold);
+
+    // Let the score breathe back in between lines; on the last shot, fade it out.
+    vo.addEventListener("ended", () => {
+      if (index === SCENES.length - 1) rampScore(0, 3500);
+      else rampScore(SCORE_BED, 1200);
+    });
     vid.addEventListener("timeupdate", updateScrub);
 
     playBtn.addEventListener("click", togglePlay);
+    soundBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      setMuted(!muted);
+      bumpChrome();
+    });
     document.getElementById("startBtn").addEventListener("click", start);
     document.getElementById("replayBtn").addEventListener("click", replay);
     nextBtn.addEventListener("click", (e) => {
@@ -723,10 +899,17 @@
         if (started) prevScene();
       } else if (e.key === "Home") {
         if (started) loadScene(0, true);
+      } else if (e.key === "m" || e.key === "M") {
+        setMuted(!muted);
+        bumpChrome();
       }
     });
 
     stage.addEventListener("pointermove", bumpChrome);
+
+    let savedMute = null;
+    try { savedMute = localStorage.getItem("eigenism-muted"); } catch (e) {}
+    setMuted(savedMute === "1");
 
     poster.src = SCENES[0].poster;
     SCENES.forEach((s, i) => {
