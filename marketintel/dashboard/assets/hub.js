@@ -1,5 +1,6 @@
 (function () {
   'use strict';
+  async function boot() {
   const DATA = window.MARKETINTEL_OVERRIDE || window.MARKETINTEL;
   if (!DATA || !DATA.snapshots || !DATA.snapshots.length) {
     document.body.innerHTML = '<p style="padding:40px;font-family:sans-serif;color:#c53030">Missing data/sites.js — rebuild with scripts/build_dashboard_data.py</p>';
@@ -9,7 +10,14 @@
   const meta = DATA.meta || {};
   const snapshot = DATA.snapshots[DATA.snapshots.length - 1];
   const allSites = snapshot.sites || [];
-  const brandsMeta = meta.brands || [];
+  let brandsMeta = meta.brands || [];
+  try {
+    const br = await fetch('data/brands.json');
+    if (br.ok) {
+      const bj = await br.json();
+      if (Array.isArray(bj) && bj.length) brandsMeta = bj;
+    }
+  } catch (e) { /* keep meta.brands */ }
   const presets = meta.presets || {};
 
   const fmt = new Intl.NumberFormat('en-US');
@@ -46,12 +54,21 @@
 
   const visible = allSites.filter(isVisible);
 
+  function sumKnown(list, key) {
+    let sum = 0, known = 0;
+    for (const s of list) {
+      const v = s[key];
+      if (v != null && v !== '' && !isNaN(+v)) { sum += +v; known++; }
+    }
+    return known ? sum : null;
+  }
   function kpiOf(list) {
     const sites = list.length;
-    const enrolled = list.reduce((a, s) => a + (s.enrolled || 0), 0);
-    const capacity = list.reduce((a, s) => a + (s.capacity || 0), 0);
-    const monthly = list.reduce((a, s) => a + (s.est_monthly_rev || 0), 0);
-    const annual = list.reduce((a, s) => a + (s.est_annual_rev || 0), 0);
+    // null enroll/Est.$ stay unknown — never coerce to 0 (My Gym / SE / web / GHL)
+    const enrolled = sumKnown(list, 'enrolled');
+    const capacity = sumKnown(list, 'capacity');
+    const monthly = sumKnown(list, 'est_monthly_rev');
+    const annual = sumKnown(list, 'est_annual_rev');
     const brands = [...new Set(list.map(s => s.brand).filter(Boolean))];
     const live = list.filter(s => (s.n_classes || 0) > 0).length;
     return { sites, enrolled, capacity, monthly, annual, brands, live };
@@ -79,7 +96,7 @@
       covEl.hidden = false;
     }
   }
-  document.getElementById('brandCountChip').innerHTML = '<strong>' + brandsMeta.length + '</strong> brands';
+  document.getElementById('brandCountChip').innerHTML = '<strong>' + (meta.n_brands || brandsMeta.length) + '</strong> brands';
   document.getElementById('siteCountChip').innerHTML = '<strong>' + fmtNum(visible.length) + '</strong> open sites';
 
   // —— National KPIs ——
@@ -90,7 +107,7 @@
   document.getElementById('kCapacity').textContent = fmtNum(nat.capacity);
   document.getElementById('kMonthly').textContent = fmtMoney(nat.monthly);
   document.getElementById('kAnnual').textContent = fmtMoney(nat.annual);
-  document.getElementById('kBrands').textContent = String(brandsMeta.length);
+  document.getElementById('kBrands').textContent = String(meta.n_brands || brandsMeta.length);
 
   // —— Featured: Houston Heights 10mi ——
   const hhKey = Object.keys(presets).find(k => /houston heights/i.test(k));
@@ -133,7 +150,7 @@
 
   const metroRows = [...byMetro.entries()]
     .map(([metro, list]) => ({ metro, list, k: kpiOf(list) }))
-    .sort((a, b) => b.k.enrolled - a.k.enrolled || b.k.sites - a.k.sites);
+    .sort((a, b) => (b.k.enrolled ?? -1) - (a.k.enrolled ?? -1) || b.k.sites - a.k.sites);
 
   document.getElementById('metroCount').textContent = '(' + metroRows.length + ')';
 
@@ -177,22 +194,27 @@
   });
 
   // —— Brand cards ——
-  document.getElementById('brandCount').textContent = '(' + brandsMeta.length + ')';
+  document.getElementById('brandCount').textContent = '(' + (meta.n_brands || brandsMeta.length) + ')';
   const brandEl = document.getElementById('brandCards');
   brandEl.innerHTML = brandsMeta.map(b => {
     const list = visible.filter(s => s.brand === b.name);
     const k = kpiOf(list);
+    const sitesN = (b.sites != null ? b.sites : k.sites);
+    // Brand-grain null enroll/Est.$ must show — (not 0 from site-sum || 0)
+    const enrolledDisp = ('enrolled' in b) ? fmtNum(b.enrolled) : fmtNum(k.enrolled);
+    const annualDisp = ('est_annual_rev' in b)
+      ? (b.revenue === false ? 'n/a' : fmtMoney(b.est_annual_rev))
+      : (b.revenue === false ? 'n/a' : fmtMoney(k.annual));
     const revNote = b.revenue === false
       ? 'Pass pricing excluded from tuition $'
       : (b.note || 'Tuition estimate when priced');
     const factsHref = 'programs.html#brand=' + encodeURIComponent(b.name);
     return '<div class="card brand-card" style="--brand-c:' + b.color + '">' +
       '<h2><a href="' + factsHref + '" style="color:inherit;text-decoration:none">' + esc(b.name) + '</a></h2>' +
-      '<div class="card-meta"><span class="pill" style="background:' + b.color + '22;color:#1a202c">' + k.sites + ' sites</span></div>' +
+      '<div class="card-meta"><span class="pill" style="background:' + b.color + '22;color:#1a202c">' + sitesN + ' sites</span></div>' +
       '<div class="card-stats">' +
-      '<div class="row"><span class="k">Enrolled</span><span class="v">' + fmtNum(k.enrolled) + '</span></div>' +
-      '<div class="row"><span class="k">Est. annual</span><span class="v rev">' +
-        (b.revenue === false ? 'n/a' : fmtMoney(k.annual)) + '</span></div>' +
+      '<div class="row"><span class="k">Enrolled</span><span class="v">' + enrolledDisp + '</span></div>' +
+      '<div class="row"><span class="k">Est. annual</span><span class="v rev">' + annualDisp + '</span></div>' +
       '</div>' +
       '<div class="card-foot">' +
         '<span>' + esc(revNote) + '</span>' +
@@ -208,4 +230,6 @@
   document.getElementById('openMapBtn').href = 'map.html';
 
   console.info('[MarketIntel hub] visible', visible.length, 'metros', metroRows.length);
+  }
+  boot();
 })();
