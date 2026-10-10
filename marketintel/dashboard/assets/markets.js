@@ -49,6 +49,10 @@
     const bits = [
       ['As of', META.as_of],
       ['Week', (META.week && META.week.from) + ' → ' + (META.week && META.week.to)],
+      ['Enroll known', (META.coverage_enrolled_known_vs_total && META.coverage_enrolled_known_vs_total.n_total)
+        ? (META.coverage_enrolled_known_vs_total.n_known + ' / ' + META.coverage_enrolled_known_vs_total.n_total +
+           ' (' + META.coverage_enrolled_known_vs_total.pct_known + '%) · unknowns in denom')
+        : '—'],
       ['Markets', n0(META.n_markets)],
       ['Trade areas', n0(META.n_trade_areas)],
       ['Sites unassigned to a market', n0(META.unassigned_sites)],

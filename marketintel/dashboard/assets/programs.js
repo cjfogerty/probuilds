@@ -395,6 +395,15 @@
     esc(snapshot.as_of || meta.as_of || meta.generated || '—') +
     ')</span>';
   document.getElementById('pullWeekRange').textContent = pullWeekLabel;
+  const covEl = document.getElementById('coverageChip');
+  if (covEl) {
+    const cov = meta.coverage_enrolled_known_vs_total;
+    if (cov && cov.n_total) {
+      covEl.innerHTML = 'Enroll known <strong>' + esc(String(cov.n_known)) + ' / ' + esc(String(cov.n_total)) +
+        '</strong> (' + esc(String(cov.pct_known)) + '%) · unknowns in denom, not zero';
+      covEl.hidden = false;
+    }
+  }
   document.getElementById('pullWeekInline').textContent = pullWeekLabel;
 
   function baseSites() {

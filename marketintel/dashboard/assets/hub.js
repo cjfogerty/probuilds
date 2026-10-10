@@ -70,6 +70,15 @@
   document.getElementById('asOfChip').innerHTML = 'As of <strong>' + esc(snapshot.as_of || meta.as_of || '—') + '</strong>';
   document.getElementById('weekChip').innerHTML =
     'Week <strong>' + esc(snapshot.week_start || meta.week?.from || '—') + '</strong> → <strong>' + esc(snapshot.week_end || meta.week?.to || '—') + '</strong>';
+  const covEl = document.getElementById('coverageChip');
+  if (covEl) {
+    const cov = meta.coverage_enrolled_known_vs_total;
+    if (cov && cov.n_total) {
+      covEl.innerHTML = 'Enroll known <strong>' + esc(String(cov.n_known)) + ' / ' + esc(String(cov.n_total)) +
+        '</strong> (' + esc(String(cov.pct_known)) + '%) · unknowns in denom, not zero';
+      covEl.hidden = false;
+    }
+  }
   document.getElementById('brandCountChip').innerHTML = '<strong>' + brandsMeta.length + '</strong> brands';
   document.getElementById('siteCountChip').innerHTML = '<strong>' + fmtNum(visible.length) + '</strong> open sites';
 

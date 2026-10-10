@@ -1,1 +1,64 @@
-<!DOCTYPE html><html lang="en" class="antialiased"><head><script>(function(){var p=location.pathname;if(/\.html$/.test(p)){var n=p.replace(/\/index\.html$/,"/").replace(/\.html$/,"");history.replaceState(null,"",n+location.search+location.hash);}})();</script><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/probuilds/marketintel/dashboard/assets/styles-F_eFwroV.css" data-precedence="default"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&amp;family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&amp;display=swap" data-precedence="default"/><title>Market Intel</title><meta name="theme-color" content="#0a0e14"/><meta name="description" content="A market map of youth enrichment — platform-visible supply, joined to federal demand, for buyers, lenders, and operators."/><link rel="modulepreload" href="/probuilds/marketintel/dashboard/assets/index-QpLz1o19.js"/><link rel="modulepreload" href="/probuilds/marketintel/dashboard/assets/jsx-runtime-BvwiM1Ak.js"/><link rel="modulepreload" href="/probuilds/marketintel/dashboard/assets/intel-D8_bJyKR.js"/><link rel="modulepreload" href="/probuilds/marketintel/dashboard/assets/preload-helper-O1FD6Xpp.js"/><link rel="modulepreload" href="/probuilds/marketintel/dashboard/assets/routes-Cl3JK9NV.js"/><link rel="modulepreload" href="/probuilds/marketintel/dashboard/assets/app-shell-Dfs2ExVL.js"/><link rel="modulepreload" href="/probuilds/marketintel/dashboard/assets/geo-Bi6ckcDt.js"/><link rel="icon" type="image/svg+xml" href="/probuilds/marketintel/dashboard/favicon.svg"/></head><body class="bg-bg text-fg font-sans"><!--$--><!--$--><!--/$--><!--/$--><script class="$tsr" id="$tsr-stream-barrier">(self.$R=self.$R||{})["tsr"]=[];self.$_TSR={h(){this.hydrated=!0,this.c()},e(){this.streamEnded=!0,this.c()},c(){this.hydrated&&this.streamEnded&&(delete self.$_TSR,delete self.$R.tsr)},p(e){this.initialized?e():this.buffer.push(e)},buffer:[]};$_TSR.router=($R=>$R[0]={manifest:$R[1]={routes:$R[2]={__root__:$R[3]={preloads:$R[4]=["/probuilds/marketintel/dashboard/assets/index-QpLz1o19.js","/probuilds/marketintel/dashboard/assets/jsx-runtime-BvwiM1Ak.js","/probuilds/marketintel/dashboard/assets/intel-D8_bJyKR.js","/probuilds/marketintel/dashboard/assets/preload-helper-O1FD6Xpp.js"],scripts:$R[5]=[$R[6]={attrs:$R[7]={type:"module",async:!0,src:"/probuilds/marketintel/dashboard/assets/index-QpLz1o19.js"}}]}}},matches:$R[8]=[$R[9]={i:"__root__",u:1789012064511,s:"success",ssr:!0}]})($R["tsr"]);$_TSR.e();document.currentScript.remove()</script><script type="module" async="" src="/probuilds/marketintel/dashboard/assets/index-QpLz1o19.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#f9f9f7" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Market Intel — Hub</title>
+<link rel="stylesheet" href="assets/tokens.css" />
+<link rel="stylesheet" href="assets/hub.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="hub-head">
+      <h1>Market Intel</h1>
+      <p class="sub">Kids activity / gym footprint across US metros</p>
+      <div class="meta-row">
+        <span class="chip" id="asOfChip">As of —</span>
+        <span class="chip" id="weekChip">Week —</span>
+        <span class="chip" id="brandCountChip">— brands</span>
+        <span class="chip" id="siteCountChip">— sites</span>
+        <span class="chip est" title="Tuition estimates exclude Urban Air pass pricing">Est. revenue</span>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <input class="search" id="hubSearch" type="search" placeholder="Search metros or brands…" autocomplete="off" />
+      <a class="btn btn-ghost" href="markets.html">Market Command</a>
+      <a class="btn btn-ghost" href="programs.html">Brand &amp; program facts</a>
+      <a class="btn btn-ghost" href="products.html">Products (SKU grain)</a>
+      <a class="btn btn-primary" id="openMapBtn" href="map.html">Open map command center</a>
+    </div>
+
+    <section class="kpis" id="kpiStrip" aria-label="National KPIs">
+      <div class="kpi"><div class="label">Open sites</div><div class="value" id="kSites">—</div><div class="sub" id="kSitesSub"></div></div>
+      <div class="kpi"><div class="label">Total enrolled</div><div class="value" id="kEnrolled">—</div><div class="sub">visible sites</div></div>
+      <div class="kpi"><div class="label">Capacity</div><div class="value" id="kCapacity">—</div><div class="sub">seats reported</div></div>
+      <div class="kpi rev"><div class="label">Est. monthly $</div><div class="value" id="kMonthly">—</div><div class="sub">tuition brands</div></div>
+      <div class="kpi rev"><div class="label">Est. annual $</div><div class="value" id="kAnnual">—</div><div class="sub">monthly × 12</div></div>
+      <div class="kpi"><div class="label">Brands</div><div class="value" id="kBrands">—</div><div class="sub">Unleashed pull</div></div>
+    </section>
+
+    <h3 class="section feat">Featured<span class="section-count">Houston Heights spotlight</span></h3>
+    <div class="cards" id="featuredCards"></div>
+
+    <h3 class="section">Metros<span class="section-count" id="metroCount"></span></h3>
+    <div class="cards" id="metroCards"></div>
+
+    <h3 class="section brands">Brands<span class="section-count" id="brandCount"></span></h3>
+    <div class="cards" id="brandCards"></div>
+
+    <p class="note">
+      <strong>How to use:</strong> pick a metro or brand card → map opens already filtered.
+      Closed parks and junk/HQ rows are hidden by default. Revenue is <strong>estimated</strong>
+      (<code>enrolled × monthly list price × 12</code>); Urban Air jump-pass pricing is excluded.
+      Data: Unleashed + iClassPro wave2 (brands from meta). iClassPro enrollment uses provisional seat_model_assumed8.
+    </p>
+  </div>
+  <script src="data/sites.js"></script>
+  <script src="assets/viz.js"></script>
+  <script src="assets/hub.js"></script>
+</body>
+</html>
