@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-09-15",
-  "as_of": "2026-09-15",
+  "generated_at": "2026-10-10",
+  "as_of": "2026-10-10",
   "observation_week": {
-    "from": "2026-09-07",
-    "to": "2026-09-13"
+    "from": "2026-10-05",
+    "to": "2026-10-11"
   },
   "dataset_version": "v2",
-  "wave": "ghl-leadconnector-boyer",
-  "wave_label": "GHL/LeadConnector Boyer + 4 (trial widget + schedule-image class caps)",
+  "wave": "enrollment-refresh-2026-10-10",
+  "wave_label": "Enrollment refresh 2026-10-10 (history preserved)",
   "sites_n": 8682,
   "products_n": 38384,
   "skus": 38384,
@@ -17,17 +17,93 @@
   "holds": 9,
   "plausibility_holds": 9,
   "platforms": {
-    "sportsengine": 6096,
-    "web_discovery": 561,
     "unleashed": 1083,
-    "activenet": 327,
-    "mygym": 174,
     "iclasspro": 173,
     "jackrabbit": 100,
-    "daxko": 81,
-    "teamunify": 65,
     "pike13": 17,
+    "mygym": 174,
+    "teamunify": 65,
+    "activenet": 327,
+    "daxko": 81,
+    "sportsengine": 6096,
+    "web_discovery": 561,
     "leadconnector": 5
   },
-  "note": "GHL fold +5 sites (Boyer site capacity null; 26 class SKUs observed_max_only caps 5\u201332). Trial appointment_per_slot not used as site capacity. No Est.$ invent."
+  "note": "Enrollment refresh rebuild. History intact. brands.json preserves null enroll (no coerce to 0). Coverage 1076/8682 = 12.4% known. No Est.$ invent.",
+  "coverage_enrolled_known_vs_total": {
+    "definition": "known = enrolled non-null AND not a 0-enrolled/0-capacity placeholder; unknown (null) in denominator, never as 0",
+    "n_known": 1076,
+    "n_total": 8682,
+    "pct_known": 12.4,
+    "n_unknown_null": 6857,
+    "n_zero_placeholder": 749,
+    "by_platform": {
+      "sportsengine": {
+        "n_total": 6096,
+        "n_enrolled_known": 0,
+        "pct_known": 0.0
+      },
+      "unleashed": {
+        "n_total": 1083,
+        "n_enrolled_known": 375,
+        "pct_known": 34.6
+      },
+      "web_discovery": {
+        "n_total": 561,
+        "n_enrolled_known": 0,
+        "pct_known": 0.0
+      },
+      "activenet": {
+        "n_total": 327,
+        "n_enrolled_known": 320,
+        "pct_known": 97.9
+      },
+      "mygym": {
+        "n_total": 174,
+        "n_enrolled_known": 0,
+        "pct_known": 0.0
+      },
+      "iclasspro": {
+        "n_total": 173,
+        "n_enrolled_known": 173,
+        "pct_known": 100.0
+      },
+      "jackrabbit": {
+        "n_total": 100,
+        "n_enrolled_known": 100,
+        "pct_known": 100.0
+      },
+      "daxko": {
+        "n_total": 81,
+        "n_enrolled_known": 65,
+        "pct_known": 80.2
+      },
+      "teamunify": {
+        "n_total": 65,
+        "n_enrolled_known": 38,
+        "pct_known": 58.5
+      },
+      "pike13": {
+        "n_total": 17,
+        "n_enrolled_known": 5,
+        "pct_known": 29.4
+      },
+      "leadconnector": {
+        "n_total": 5,
+        "n_enrolled_known": 0,
+        "pct_known": 0.0
+      }
+    },
+    "null_enroll_platforms": [
+      "mygym",
+      "sportsengine",
+      "web_discovery",
+      "leadconnector"
+    ],
+    "fresh_2026_10_10": {
+      "n_sites_touched": 692,
+      "n_known_fresh": 660
+    }
+  },
+  "history_pre_pull": "data/wave2/history/2026-10-10_enrollment_refresh_pre_pull/"
 }

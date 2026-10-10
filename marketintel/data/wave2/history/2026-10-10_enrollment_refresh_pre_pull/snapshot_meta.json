@@ -1,0 +1,106 @@
+{
+ "snapshot_date": "2026-10-10",
+ "tz": "America/Chicago",
+ "reason": "enrollment_refresh_pre_pull",
+ "prior_tip": "88800da1",
+ "prior_tip_note": "no .git found under /workspace; tip id recorded as given by Team Meeting, not verified",
+ "site_count": 8682,
+ "products_count": 38384,
+ "prior_observation_week": "2026-09-07..2026-09-13",
+ "enrolled_sum_total": 233121,
+ "by_platform": {
+  "unleashed": {
+   "n": 1083,
+   "n_enrolled_nonnull": 1083,
+   "enrolled_sum": 102060,
+   "capacity_sum": 227409
+  },
+  "iclasspro": {
+   "n": 173,
+   "n_enrolled_nonnull": 173,
+   "enrolled_sum": 81592,
+   "capacity_sum": 137308
+  },
+  "jackrabbit": {
+   "n": 100,
+   "n_enrolled_nonnull": 100,
+   "enrolled_sum": 21852,
+   "capacity_sum": 69183
+  },
+  "pike13": {
+   "n": 17,
+   "n_enrolled_nonnull": 17,
+   "enrolled_sum": 192,
+   "capacity_sum": 852
+  },
+  "mygym": {
+   "n": 174,
+   "n_enrolled_nonnull": 0,
+   "enrolled_sum": 0,
+   "capacity_sum": 0
+  },
+  "teamunify": {
+   "n": 65,
+   "n_enrolled_nonnull": 59,
+   "enrolled_sum": 7591,
+   "capacity_sum": 15908
+  },
+  "activenet": {
+   "n": 327,
+   "n_enrolled_nonnull": 327,
+   "enrolled_sum": 18284,
+   "capacity_sum": 37342
+  },
+  "daxko": {
+   "n": 81,
+   "n_enrolled_nonnull": 63,
+   "enrolled_sum": 1550,
+   "capacity_sum": 8808
+  },
+  "sportsengine": {
+   "n": 6096,
+   "n_enrolled_nonnull": 0,
+   "enrolled_sum": 0,
+   "capacity_sum": 0
+  },
+  "web_discovery": {
+   "n": 561,
+   "n_enrolled_nonnull": 0,
+   "enrolled_sum": 0,
+   "capacity_sum": 0
+  },
+  "leadconnector": {
+   "n": 5,
+   "n_enrolled_nonnull": 0,
+   "enrolled_sum": 0,
+   "capacity_sum": 0
+  }
+ },
+ "source_files": {
+  "sites_unified_v2.json": {
+   "md5": "1f30ccff554bd14644d99acad0e9ce64",
+   "bytes": 11625426,
+   "snapshot": "sites_unified_v2.json.gz"
+  },
+  "sites_unified_v2_enriched.json": {
+   "md5": "24a7ce61a6fa12dec4afe78900a83c75",
+   "bytes": 9838386,
+   "snapshot": "sites_unified_v2_enriched.json.gz"
+  },
+  "wave2/sites_unified_v2.json": {
+   "md5": "1f30ccff554bd14644d99acad0e9ce64",
+   "bytes": 11625426,
+   "snapshot": "wave2__sites_unified_v2.json.gz"
+  },
+  "wave2/sites_unified_v2_enriched.json": {
+   "md5": "1f30ccff554bd14644d99acad0e9ce64",
+   "bytes": 11625426,
+   "snapshot": "wave2__sites_unified_v2_enriched.json.gz"
+  },
+  "wave2/products_unified_v2.json": {
+   "md5": "afdcf577f64042af7167c35b125f258e",
+   "bytes": 39349832,
+   "snapshot": "wave2__products_unified_v2.json.gz"
+  }
+ }
+}
