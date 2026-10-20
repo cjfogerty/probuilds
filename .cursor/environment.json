@@ -1,0 +1,17 @@
+{
+  "name": "probuilds Market Intel",
+  "install": "python3 --version",
+  "terminals": [
+    {
+      "name": "static-site",
+      "command": "python3 -m http.server 8000 --bind 0.0.0.0",
+      "description": "Serves the repo root over HTTP: landing page at /, Market Intel dashboard at /marketintel/dashboard/, plus /elevate/ and /masterbrand-west/."
+    }
+  ],
+  "ports": [
+    {
+      "name": "Static site (dashboards + landing pages)",
+      "port": 8000
+    }
+  ]
+}
