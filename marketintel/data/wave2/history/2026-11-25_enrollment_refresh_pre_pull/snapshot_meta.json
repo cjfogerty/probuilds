@@ -1,0 +1,121 @@
+{
+ "snapshot_date": "2026-11-25",
+ "tz": "America/Chicago",
+ "reason": "enrollment_refresh_pre_pull",
+ "prior_tip": "16e94e72",
+ "prior_tip_note": "no .git under /workspace/marketintel-dashboard; tip recorded as given, not verified",
+ "prior_snapshot": "data/wave2/history/2026-10-10_enrollment_refresh_pre_pull (untouched)",
+ "site_count": 8682,
+ "products_count": 38384,
+ "prior_enrollment_as_of": "2026-10-10",
+ "n_enrolled_known_total": 1076,
+ "pct_known": 12.4,
+ "known_definition": "enrolled non-null AND not a 0-enrolled/0-capacity placeholder",
+ "enrolled_sum_total": 232938,
+ "by_platform": {
+  "sportsengine": {
+   "n": 6096,
+   "n_enrolled_nonnull": 0,
+   "n_enrolled_known": 0,
+   "enrolled_sum": 0,
+   "capacity_sum": 0
+  },
+  "unleashed": {
+   "n": 1083,
+   "n_enrolled_nonnull": 1083,
+   "n_enrolled_known": 375,
+   "enrolled_sum": 102060,
+   "capacity_sum": 227409
+  },
+  "web_discovery": {
+   "n": 561,
+   "n_enrolled_nonnull": 0,
+   "n_enrolled_known": 0,
+   "enrolled_sum": 0,
+   "capacity_sum": 0
+  },
+  "activenet": {
+   "n": 327,
+   "n_enrolled_nonnull": 327,
+   "n_enrolled_known": 320,
+   "enrolled_sum": 19604,
+   "capacity_sum": 38625
+  },
+  "mygym": {
+   "n": 174,
+   "n_enrolled_nonnull": 0,
+   "n_enrolled_known": 0,
+   "enrolled_sum": 0,
+   "capacity_sum": 0
+  },
+  "iclasspro": {
+   "n": 173,
+   "n_enrolled_nonnull": 173,
+   "n_enrolled_known": 173,
+   "enrolled_sum": 81310,
+   "capacity_sum": 129747
+  },
+  "jackrabbit": {
+   "n": 100,
+   "n_enrolled_nonnull": 100,
+   "n_enrolled_known": 100,
+   "enrolled_sum": 21110,
+   "capacity_sum": 63630
+  },
+  "daxko": {
+   "n": 81,
+   "n_enrolled_nonnull": 65,
+   "n_enrolled_known": 65,
+   "enrolled_sum": 1626,
+   "capacity_sum": 9064
+  },
+  "teamunify": {
+   "n": 65,
+   "n_enrolled_nonnull": 60,
+   "n_enrolled_known": 38,
+   "enrolled_sum": 6957,
+   "capacity_sum": 14274
+  },
+  "pike13": {
+   "n": 17,
+   "n_enrolled_nonnull": 17,
+   "n_enrolled_known": 5,
+   "enrolled_sum": 271,
+   "capacity_sum": 1166
+  },
+  "leadconnector": {
+   "n": 5,
+   "n_enrolled_nonnull": 0,
+   "n_enrolled_known": 0,
+   "enrolled_sum": 0,
+   "capacity_sum": 0
+  }
+ },
+ "source_files": {
+  "sites_unified_v2.json": {
+   "md5": "589581149082de5775cdd5b0975531dd",
+   "bytes": 12624352,
+   "snapshot": "sites_unified_v2.json.gz"
+  },
+  "sites_unified_v2_enriched.json": {
+   "md5": "90310833d5bc3ee5b17f262d7ac57861",
+   "bytes": 10705056,
+   "snapshot": "sites_unified_v2_enriched.json.gz"
+  },
+  "wave2/sites_unified_v2.json": {
+   "md5": "589581149082de5775cdd5b0975531dd",
+   "bytes": 12624352,
+   "snapshot": "wave2__sites_unified_v2.json.gz"
+  },
+  "wave2/sites_unified_v2_enriched.json": {
+   "md5": "589581149082de5775cdd5b0975531dd",
+   "bytes": 12624352,
+   "snapshot": "wave2__sites_unified_v2_enriched.json.gz"
+  },
+  "wave2/products_unified_v2.json": {
+   "md5": "afdcf577f64042af7167c35b125f258e",
+   "bytes": 39349832,
+   "snapshot": "wave2__products_unified_v2.json.gz"
+  }
+ }
+}

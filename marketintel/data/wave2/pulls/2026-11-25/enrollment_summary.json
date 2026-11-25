@@ -1,0 +1,762 @@
+{
+ "pull_date": "2026-11-25",
+ "tz": "America/Chicago",
+ "observation_date": "2026-11-25",
+ "obs_week": "2026-11-23..2026-11-29",
+ "baseline": {
+  "date": "2026-10-10",
+  "tip": "16e94e72",
+  "history_snapshot": "data/wave2/history/2026-11-25_enrollment_refresh_pre_pull",
+  "n_known": 1076,
+  "n_total": 8682,
+  "pct_known": 12.4,
+  "enrolled_total_known": 232938
+ },
+ "coverage": {
+  "definition": "known = enrolled non-null AND not a 0/0 placeholder; denominator = all sites; unknown stays null, never 0",
+  "n_known": 1077,
+  "n_total": 8682,
+  "pct_known": 12.4,
+  "n_known_fresh_this_pull": 627,
+  "pct_known_fresh": 7.2,
+  "delta_known_vs_baseline": 1
+ },
+ "enrolled_total_known_all_platforms": 229894,
+ "enrolled_total_fresh_this_pull": 124963,
+ "refreshed_platforms": [
+  "iclasspro",
+  "jackrabbit",
+  "pike13",
+  "teamunify",
+  "daxko",
+  "activenet"
+ ],
+ "n_sites_on_refreshed_platforms": 763,
+ "n_sites_on_refreshed_platforms_note": "763 sites in sites_unified_v2.json sit on the six public-seat platforms (the ~1,850 figure quoted in the room does not match the file)",
+ "per_platform": {
+  "sportsengine": {
+   "n_total": 6096,
+   "n_known": 0,
+   "n_known_fresh": 0,
+   "n_zero_placeholder": 0,
+   "n_unknown_null": 6096,
+   "enrolled_total_known": 0,
+   "enrolled_total_fresh": 0,
+   "capacity_total_known": 0,
+   "pct_known": 0.0,
+   "scope": "null_by_design: no public seats",
+   "baseline_2026_10_10": {
+    "n_known": 0,
+    "enrolled_total_known": 0,
+    "pct_known": 0.0
+   },
+   "delta_known": 0,
+   "delta_enrolled_total_known": 0
+  },
+  "unleashed": {
+   "n_total": 1083,
+   "n_known": 375,
+   "n_known_fresh": 0,
+   "n_zero_placeholder": 708,
+   "n_unknown_null": 0,
+   "enrolled_total_known": 102060,
+   "enrolled_total_fresh": 0,
+   "capacity_total_known": 227409,
+   "pct_known": 34.6,
+   "scope": "not refreshed (prior stamp kept)",
+   "baseline_2026_10_10": {
+    "n_known": 375,
+    "enrolled_total_known": 102060,
+    "pct_known": 34.6
+   },
+   "delta_known": 0,
+   "delta_enrolled_total_known": 0
+  },
+  "web_discovery": {
+   "n_total": 561,
+   "n_known": 0,
+   "n_known_fresh": 0,
+   "n_zero_placeholder": 0,
+   "n_unknown_null": 561,
+   "enrolled_total_known": 0,
+   "enrolled_total_fresh": 0,
+   "capacity_total_known": 0,
+   "pct_known": 0.0,
+   "scope": "null_by_design: no public seats",
+   "baseline_2026_10_10": {
+    "n_known": 0,
+    "enrolled_total_known": 0,
+    "pct_known": 0.0
+   },
+   "delta_known": 0,
+   "delta_enrolled_total_known": 0
+  },
+  "activenet": {
+   "n_total": 327,
+   "n_known": 318,
+   "n_known_fresh": 282,
+   "n_zero_placeholder": 9,
+   "n_unknown_null": 0,
+   "enrolled_total_known": 19952,
+   "enrolled_total_fresh": 19168,
+   "capacity_total_known": 45977,
+   "pct_known": 97.2,
+   "scope": "refreshed",
+   "baseline_2026_10_10": {
+    "n_known": 320,
+    "enrolled_total_known": 19604,
+    "pct_known": 97.9
+   },
+   "delta_known": -2,
+   "delta_enrolled_total_known": 348,
+   "pull_status_counts": {
+    "ok": 284,
+    "no_activities_today": 43
+   },
+   "failures": {
+    "n_collector_errors": 0,
+    "collector_errors": [],
+    "n_not_refreshed_kept_prior": 43,
+    "not_ok_rows": [
+     {
+      "park_id": "activenet:chicagoparkdistrict:humboldt_park",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:losangelescounty:stephen_sorensen_park",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:scottsdale:scottsdale_community_design_studio_7506_",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:chicagoparkdistrict:donovan_playground_park",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:losangelescounty:george_lane_park_community_room_gymnasiu",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:losangelescounty:william_steinmetz_park_multi_purpose_roo",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:chicagoparkdistrict:sheil_park",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:mecklenburgparks:tuckaseegee_rec_ctr",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:losangelescounty:jackie_robinson_park",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:chicagoparkdistrict:senn_playlot_park",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:losangelescounty:allen_j_martin_park",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:westshorerec:lemoyne_borough_building",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:denver:central_park_gym_half_1_regulation_at_ce",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:losangelescounty:rimgrove_park",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:gepark:ackerman_sports_and_fitness_ctr",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:westshorerec:fairview_township_fire_station_1",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:mesaaz:webster_recreation_center",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:westshorerec:usa_ninja_challenge",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:cnbreg:cyc_corona_del_mar_room",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:losangelescounty:community_room",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:chicagoparkdistrict:hamilton_park",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:westshorerec:tiger_rock_martial_arts",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:denver:washington_park_rec_ctr",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:chicagoparkdistrict:oakdale_park",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:losangelescounty:george_lane_park_community_room_gynamsiu",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:gepark:lake_ellyn_boat_house",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:mecklenburgparks:multipurpose_room",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:phoenix:gym_building_dance_room",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:cityoffortworth:best_year_s_club_room",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:denver:central_park_multipurpose_room_at_centra",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:bellflowerrecreation:thompson_park_gym",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:chicagoparkdistrict:indian_boundary_park_and_cultural_ctr",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:chicagoparkdistrict:rainey_park",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:denver:glenarm_rec_ctr",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:denver:green_valley_ranch_rec_ctr",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:denver:highland_ballroom_at_highland_recreation",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:denver:highland_rec_ctr",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:denver:montbello_rec_ctr",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:denver:montclair_rec_ctr",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:denver:platt_park_ballroom_at_platt_park_recrea",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:denver:swansea_multi_purpose_at_swansea_recreat",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:losangelescounty:saybrook_park",
+      "status": "no_activities_today"
+     },
+     {
+      "park_id": "activenet:mecklenburgparks:knights_view_rec_ctr",
+      "status": "no_activities_today"
+     }
+    ],
+    "no_row_returned": []
+   },
+   "collector_run": {
+    "started": "2026-11-25 09:07:01 CT",
+    "finished": "2026-11-25 09:10:20 CT",
+    "units_done": 20
+   }
+  },
+  "mygym": {
+   "n_total": 174,
+   "n_known": 0,
+   "n_known_fresh": 0,
+   "n_zero_placeholder": 0,
+   "n_unknown_null": 174,
+   "enrolled_total_known": 0,
+   "enrolled_total_fresh": 0,
+   "capacity_total_known": 0,
+   "pct_known": 0.0,
+   "scope": "null_by_design: no public seats",
+   "baseline_2026_10_10": {
+    "n_known": 0,
+    "enrolled_total_known": 0,
+    "pct_known": 0.0
+   },
+   "delta_known": 0,
+   "delta_enrolled_total_known": 0
+  },
+  "iclasspro": {
+   "n_total": 173,
+   "n_known": 173,
+   "n_known_fresh": 168,
+   "n_zero_placeholder": 0,
+   "n_unknown_null": 0,
+   "enrolled_total_known": 78534,
+   "enrolled_total_fresh": 77262,
+   "capacity_total_known": 124756,
+   "pct_known": 100.0,
+   "scope": "refreshed",
+   "baseline_2026_10_10": {
+    "n_known": 173,
+    "enrolled_total_known": 81310,
+    "pct_known": 100.0
+   },
+   "delta_known": 0,
+   "delta_enrolled_total_known": -2776,
+   "pull_status_counts": {
+    "ok": 168,
+    "ok_no_lesson_classes": 4,
+    "probe_frozen": 1
+   },
+   "failures": {
+    "n_collector_errors": 0,
+    "collector_errors": [],
+    "n_not_refreshed_kept_prior": 5,
+    "not_ok_rows": [
+     {
+      "park_id": "wrightsgymnasticsacademy:12",
+      "status": "ok_no_lesson_classes"
+     },
+     {
+      "park_id": "apexgymnastics:1",
+      "status": "probe_frozen"
+     },
+     {
+      "park_id": "stlouisspirits:1",
+      "status": "ok_no_lesson_classes"
+     },
+     {
+      "park_id": "austinelitegymnastics:1",
+      "status": "ok_no_lesson_classes"
+     },
+     {
+      "park_id": "boostgymnastics:1",
+      "status": "ok_no_lesson_classes"
+     }
+    ],
+    "no_row_returned": []
+   },
+   "collector_run": {
+    "started": "2026-11-25 09:07:01 CT",
+    "finished": "2026-11-25 09:29:23 CT",
+    "units_done": 173
+   }
+  },
+  "jackrabbit": {
+   "n_total": 100,
+   "n_known": 100,
+   "n_known_fresh": 100,
+   "n_zero_placeholder": 0,
+   "n_unknown_null": 0,
+   "enrolled_total_known": 20478,
+   "enrolled_total_fresh": 20478,
+   "capacity_total_known": 56809,
+   "pct_known": 100.0,
+   "scope": "refreshed",
+   "baseline_2026_10_10": {
+    "n_known": 100,
+    "enrolled_total_known": 21110,
+    "pct_known": 100.0
+   },
+   "delta_known": 0,
+   "delta_enrolled_total_known": -632,
+   "pull_status_counts": {
+    "ok": 100
+   },
+   "failures": {
+    "n_collector_errors": 0,
+    "collector_errors": [],
+    "n_not_refreshed_kept_prior": 0,
+    "not_ok_rows": [],
+    "no_row_returned": []
+   },
+   "collector_run": {
+    "started": "2026-11-25 08:38:50 CST",
+    "finished": "2026-11-25 08:41:43 CST",
+    "units_done": 100
+   }
+  },
+  "daxko": {
+   "n_total": 81,
+   "n_known": 68,
+   "n_known_fresh": 37,
+   "n_zero_placeholder": 0,
+   "n_unknown_null": 13,
+   "enrolled_total_known": 1675,
+   "enrolled_total_fresh": 891,
+   "capacity_total_known": 11739,
+   "pct_known": 84.0,
+   "scope": "refreshed",
+   "baseline_2026_10_10": {
+    "n_known": 65,
+    "enrolled_total_known": 1626,
+    "pct_known": 80.2
+   },
+   "delta_known": 3,
+   "delta_enrolled_total_known": 49,
+   "pull_status_counts": {
+    "ok": 54,
+    "no_offerings_today": 27
+   },
+   "failures": {
+    "n_collector_errors": 0,
+    "collector_errors": [],
+    "n_not_refreshed_kept_prior": 44,
+    "not_ok_rows": [
+     {
+      "park_id": "daxko:2026:B701",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:5096:B336",
+      "status": "ok"
+     },
+     {
+      "park_id": "daxko:2026:B99",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:2026:B98",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:5248:B162",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:5096:B342",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:2024:B86",
+      "status": "ok"
+     },
+     {
+      "park_id": "daxko:5006:B83",
+      "status": "ok"
+     },
+     {
+      "park_id": "daxko:10029:B154",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:10029:B146",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:2026:B93",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:3145:S5730",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:5096:B343",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:2026:B514",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:2026:B94",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:5201:B57",
+      "status": "ok"
+     },
+     {
+      "park_id": "daxko:10029:B139",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:3115:B633",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:5006:B676",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:10029:B140",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:2042:B140",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:5104:B371",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:2054:B173",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:10029:B149",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:5012:B40",
+      "status": "ok"
+     },
+     {
+      "park_id": "daxko:5096:B340",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:3115:B638",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:10016:B699",
+      "status": "ok"
+     },
+     {
+      "park_id": "daxko:10024:B462",
+      "status": "ok"
+     },
+     {
+      "park_id": "daxko:10029:B144",
+      "status": "ok"
+     },
+     {
+      "park_id": "daxko:2021:B509",
+      "status": "ok"
+     },
+     {
+      "park_id": "daxko:2030:B113",
+      "status": "ok"
+     },
+     {
+      "park_id": "daxko:2033:S2492",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:3115:B630",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:3115:B631",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:3144:B737",
+      "status": "ok"
+     },
+     {
+      "park_id": "daxko:5012:B26",
+      "status": "ok"
+     },
+     {
+      "park_id": "daxko:5012:B34",
+      "status": "ok"
+     },
+     {
+      "park_id": "daxko:5012:B36",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:5012:B37",
+      "status": "ok"
+     },
+     {
+      "park_id": "daxko:5104:B368",
+      "status": "ok"
+     },
+     {
+      "park_id": "daxko:5155:S3329",
+      "status": "no_offerings_today"
+     },
+     {
+      "park_id": "daxko:5160:S2597",
+      "status": "ok"
+     },
+     {
+      "park_id": "daxko:5192:B563",
+      "status": "ok"
+     }
+    ],
+    "no_row_returned": []
+   },
+   "collector_run": {
+    "started": "2026-11-25 09:07:01 CT",
+    "finished": "2026-11-25 09:27:39 CT",
+    "units_done": 30
+   }
+  },
+  "teamunify": {
+   "n_total": 65,
+   "n_known": 38,
+   "n_known_fresh": 35,
+   "n_zero_placeholder": 22,
+   "n_unknown_null": 5,
+   "enrolled_total_known": 7043,
+   "enrolled_total_fresh": 7012,
+   "capacity_total_known": 23782,
+   "pct_known": 58.5,
+   "scope": "refreshed",
+   "baseline_2026_10_10": {
+    "n_known": 38,
+    "enrolled_total_known": 6957,
+    "pct_known": 58.5
+   },
+   "delta_known": 0,
+   "delta_enrolled_total_known": 86,
+   "pull_status_counts": {
+    "ok": 59,
+    "not_returned:not_found": 3,
+    "not_returned:kept": 3
+   },
+   "failures": {
+    "n_collector_errors": 0,
+    "collector_errors": [],
+    "n_not_refreshed_kept_prior": 10,
+    "not_ok_rows": [
+     {
+      "park_id": "tu:cahld:hamilton",
+      "status": "not_returned:not_found"
+     },
+     {
+      "park_id": "tu:fsky:erlanger",
+      "status": "not_returned:kept"
+     },
+     {
+      "park_id": "tu:iaist:iowaspirittaekwondo",
+      "status": "not_returned:kept"
+     },
+     {
+      "park_id": "tu:ilec:main",
+      "status": "not_returned:not_found"
+     },
+     {
+      "park_id": "tu:iltca:milan",
+      "status": "ok"
+     },
+     {
+      "park_id": "tu:iltca:aledo",
+      "status": "ok"
+     },
+     {
+      "park_id": "tu:mifsg:lakeorion",
+      "status": "not_returned:kept"
+     },
+     {
+      "park_id": "tu:nvfg:flipsusagymnastics",
+      "status": "ok"
+     },
+     {
+      "park_id": "tu:nvfg:tumblebus",
+      "status": "ok"
+     },
+     {
+      "park_id": "tu:ohca:main",
+      "status": "not_returned:not_found"
+     }
+    ],
+    "no_row_returned": []
+   },
+   "collector_run": {
+    "started": "2026-11-25 09:07:01 CT",
+    "finished": "2026-11-25 09:10:41 CT",
+    "units_done": 62
+   }
+  },
+  "pike13": {
+   "n_total": 17,
+   "n_known": 5,
+   "n_known_fresh": 5,
+   "n_zero_placeholder": 12,
+   "n_unknown_null": 0,
+   "enrolled_total_known": 152,
+   "enrolled_total_fresh": 152,
+   "capacity_total_known": 730,
+   "pct_known": 29.4,
+   "scope": "refreshed",
+   "baseline_2026_10_10": {
+    "n_known": 5,
+    "enrolled_total_known": 271,
+    "pct_known": 29.4
+   },
+   "delta_known": 0,
+   "delta_enrolled_total_known": -119,
+   "pull_status_counts": {
+    "ok": 17
+   },
+   "failures": {
+    "n_collector_errors": 0,
+    "collector_errors": [],
+    "n_not_refreshed_kept_prior": 0,
+    "not_ok_rows": [],
+    "no_row_returned": []
+   },
+   "collector_run": {
+    "started": "2026-11-25 09:06:09 CT",
+    "finished": "2026-11-25 09:06:56 CT",
+    "units_done": 17
+   }
+  },
+  "leadconnector": {
+   "n_total": 5,
+   "n_known": 0,
+   "n_known_fresh": 0,
+   "n_zero_placeholder": 0,
+   "n_unknown_null": 5,
+   "enrolled_total_known": 0,
+   "enrolled_total_fresh": 0,
+   "capacity_total_known": 0,
+   "pct_known": 0.0,
+   "scope": "null_by_design: GHL widgets expose trial slots only",
+   "baseline_2026_10_10": {
+    "n_known": 0,
+    "enrolled_total_known": 0,
+    "pct_known": 0.0
+   },
+   "delta_known": 0,
+   "delta_enrolled_total_known": 0
+  }
+ },
+ "rules": [
+  "swim excluded",
+  "public unauth endpoints only",
+  "rows not refreshed keep prior value + prior stamp",
+  "no Est.$ / price fields touched",
+  "brand_id filled only where null: mygym -> 'mygym', jackrabbit -> 'jr_{org}'"
+ ]
+}

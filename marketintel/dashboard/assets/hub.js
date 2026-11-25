@@ -109,6 +109,88 @@
   document.getElementById('kAnnual').textContent = fmtMoney(nat.annual);
   document.getElementById('kBrands').textContent = String(meta.n_brands || brandsMeta.length);
 
+  const platLabel = { unleashed: 'Unleashed', iclasspro: 'iClassPro', jackrabbit: 'Jackrabbit', pike13: 'Pike13',
+    teamunify: 'TeamUnify', daxko: 'Daxko', activenet: 'ActiveNet', sportsengine: 'SportsEngine',
+    mygym: 'My Gym', web_discovery: 'Web', leadconnector: 'LeadConnector' };
+
+  // —— Enrollment trend (running log: data/enrollment_log.json) ——
+  async function renderEnrollTrend() {
+    const host = document.getElementById('enrollTrend');
+    if (!host) return;
+    let log = null;
+    try {
+      const r = await fetch('data/enrollment_log.json');
+      if (r.ok) log = await r.json();
+    } catch (e) { /* no log yet */ }
+    if (!log || !Array.isArray(log.rows) || !log.rows.length) return;
+    const rows = log.rows;
+    const dates = (log.dates || [...new Set(rows.map(r => r.date))]).slice().sort();
+    const all = d => rows.find(r => r.date === d && r.platform === 'ALL');
+    const series = dates.map(d => ({ d, a: all(d) })).filter(x => x.a);
+    if (!series.length) return;
+    const last = series[series.length - 1].a, lastDate = series[series.length - 1].d;
+    const pct = v => (v == null ? '—' : v.toFixed(1) + '%');
+    const S = 'font:13px/1.4 system-ui,sans-serif;';
+    // Chart: enrolled_total_fresh only (sites re-read in that date's pull). Unleashed's stale total is NOT in it.
+    const W = 520, H = 170, pl = 56, pr = 18, pt = 16, pb = 30;
+    const vals = series.map(x => x.a.enrolled_total_fresh).filter(v => v != null);
+    const lo = Math.min(...vals), hi = Math.max(...vals);
+    const pad = Math.max((hi - lo) * 0.25, hi * 0.05, 1);
+    const y0 = Math.max(0, lo - pad), y1 = hi + pad;
+    const xAt = i => pl + (series.length === 1 ? (W - pl - pr) / 2 : i * (W - pl - pr) / (series.length - 1));
+    const yAt = v => pt + (H - pt - pb) * (1 - (v - y0) / (y1 - y0));
+    const pts = series.map((x, i) => x.a.enrolled_total_fresh == null ? null : [xAt(i), yAt(x.a.enrolled_total_fresh), x]);
+    const line = pts.filter(Boolean).map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+    const svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" style="max-width:' + W + 'px" role="img" aria-label="Fresh enrolled total by pull date">' +
+      [0, 0.5, 1].map(f => { const v = y0 + (y1 - y0) * f, y = yAt(v);
+        return '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + y + '" y2="' + y + '" stroke="#cbd5e0" stroke-dasharray="3 3"/>' +
+          '<text x="' + (pl - 6) + '" y="' + (y + 4) + '" text-anchor="end" font-size="11" fill="#718096">' + fmt.format(Math.round(v)) + '</text>'; }).join('') +
+      (pts.filter(Boolean).length > 1 ? '<polyline points="' + line + '" fill="none" stroke="#2b6cb0" stroke-width="2.5"/>' : '') +
+      pts.filter(Boolean).map(p => '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="4.5" fill="#2b6cb0"/>' +
+        '<text x="' + p[0] + '" y="' + (p[1] - 10) + '" text-anchor="middle" font-size="12" font-weight="600" fill="#1a202c">' + fmt.format(p[2].a.enrolled_total_fresh) + '</text>' +
+        '<text x="' + p[0] + '" y="' + (H - 10) + '" text-anchor="middle" font-size="11" fill="#718096">' + esc(p[2].d) + '</text>').join('') +
+      '</svg>';
+    const covRows = series.map(x => '<tr><td>' + esc(x.d) + '</td>' +
+      '<td style="text-align:right"><strong>' + fmtNum(x.a.sites_known) + ' / ' + fmtNum(x.a.sites_total) + '</strong> (' + pct(x.a.coverage_pct) + ')</td>' +
+      '<td style="text-align:right">' + fmtNum(x.a.sites_known_fresh) + '</td>' +
+      '<td style="text-align:right">' + fmtNum(x.a.enrolled_total) + '</td>' +
+      '<td style="text-align:right">' + fmtNum(x.a.enrolled_total_fresh) + '</td></tr>').join('');
+    const plat = rows.filter(r => r.date === lastDate && r.platform !== 'ALL')
+      .sort((a, b) => (b.sites_known - a.sites_known) || (b.sites_total - a.sites_total));
+    const byDesign = new Set(log.unknown_by_design || []);
+    const platRows = plat.map(r => {
+      const prev = rows.find(q => q.platform === r.platform && q.date === (series.length > 1 ? series[series.length - 2].d : null));
+      let note = '';
+      if (byDesign.has(r.platform)) note = 'unknown by design (no public seat counts) — not 0';
+      else if (log.not_refreshed && log.not_refreshed[r.platform]) note = log.not_refreshed[r.platform] + ' — excluded from the fresh line';
+      const dlt = (prev && prev.enrolled_total_fresh != null && r.enrolled_total_fresh != null)
+        ? (r.enrolled_total_fresh - prev.enrolled_total_fresh) : null;
+      return '<tr><td>' + esc(platLabel[r.platform] || r.platform) + '</td>' +
+        '<td style="text-align:right">' + fmtNum(r.sites_known) + ' / ' + fmtNum(r.sites_total) + '</td>' +
+        '<td style="text-align:right">' + pct(r.coverage_pct) + '</td>' +
+        '<td style="text-align:right">' + fmtNum(r.enrolled_total) + '</td>' +
+        '<td style="text-align:right">' + fmtNum(r.enrolled_total_fresh) + '</td>' +
+        '<td style="text-align:right">' + (dlt == null ? '—' : (dlt > 0 ? '+' : '') + fmt.format(dlt)) + '</td>' +
+        '<td style="color:#718096">' + esc(note) + '</td></tr>';
+    }).join('');
+    const th = 'text-align:right;padding:4px 8px;border-bottom:1px solid #cbd5e0;font-weight:600;';
+    host.innerHTML =
+      '<h3 class="section">Enrollment trend<span class="section-count">running log · ' + series.length + ' pull' + (series.length === 1 ? '' : 's') + ' · fills weekly</span></h3>' +
+      '<div class="card" style="padding:16px;' + S + '">' +
+      '<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">' +
+        '<div style="flex:1 1 360px"><div style="font-weight:600;margin-bottom:4px">Fresh enrolled total (sites re-read in that pull)</div>' + svg + '</div>' +
+        '<div style="flex:1 1 360px"><div style="font-weight:600;margin-bottom:4px">Coverage: sites with known enrollment / all sites</div>' +
+        '<table style="border-collapse:collapse;width:100%"><thead><tr><th style="' + th + 'text-align:left">Pull</th><th style="' + th + '">Known / total</th><th style="' + th + '">Fresh sites</th><th style="' + th + '">Enrolled (all known)</th><th style="' + th + '">Enrolled (fresh)</th></tr></thead><tbody>' + covRows + '</tbody></table>' +
+        '<div style="color:#718096;margin-top:6px">Unknown sites stay in the denominator and are never counted as 0. “All known” includes rows carried from an earlier pull (e.g. Unleashed 102,060, not refreshed since before Oct 10) — it is not charted.</div></div>' +
+      '</div>' +
+      '<details style="margin-top:12px"><summary style="cursor:pointer;font-weight:600">By platform · ' + esc(lastDate) + '</summary>' +
+      '<table style="border-collapse:collapse;width:100%;margin-top:6px"><thead><tr><th style="' + th + 'text-align:left">Platform</th><th style="' + th + '">Known / total</th><th style="' + th + '">%</th><th style="' + th + '">Enrolled</th><th style="' + th + '">Fresh</th><th style="' + th + '">Δ fresh vs prior</th><th style="' + th + 'text-align:left">Note</th></tr></thead><tbody>' + platRows + '</tbody></table></details>' +
+      ((log.notes && log.notes[lastDate]) ? '<div style="color:#718096;margin-top:8px">' + esc(log.notes[lastDate]) + '</div>' : '') +
+      '</div>';
+    host.hidden = false;
+  }
+  renderEnrollTrend();
+
   // —— Featured: Houston Heights 10mi ——
   const hhKey = Object.keys(presets).find(k => /houston heights/i.test(k));
   const featEl = document.getElementById('featuredCards');
@@ -191,13 +273,24 @@
 
   document.getElementById('hubSearch').addEventListener('input', (e) => {
     renderMetros(e.target.value);
+    if (typeof renderBrands === 'function') renderBrands(e.target.value);
   });
 
   // —— Brand cards ——
-  document.getElementById('brandCount').textContent = '(' + (meta.n_brands || brandsMeta.length) + ')';
+  const nBrandsAll = meta.n_brands || brandsMeta.length;
   const brandEl = document.getElementById('brandCards');
-  brandEl.innerHTML = brandsMeta.map(b => {
-    const list = visible.filter(s => s.brand === b.name);
+  const brandCountEl = document.getElementById('brandCount');
+  // Same display name can be several brand_ids (one per platform feed): label them so they read as distinct rows.
+  const nameCount = new Map();
+  brandsMeta.forEach(b => nameCount.set(b.name, (nameCount.get(b.name) || 0) + 1));
+  const siteByBrand = new Map();
+  visible.forEach(s => {
+    const key = s.brand_id != null ? 'id:' + s.brand_id : 'name:' + s.brand;
+    if (!siteByBrand.has(key)) siteByBrand.set(key, []);
+    siteByBrand.get(key).push(s);
+  });
+  function brandCard(b) {
+    const list = siteByBrand.get(b.id != null ? 'id:' + b.id : 'name:' + b.name) || [];
     const k = kpiOf(list);
     const sitesN = (b.sites != null ? b.sites : k.sites);
     // Brand-grain null enroll/Est.$ must show — (not 0 from site-sum || 0)
@@ -209,9 +302,11 @@
       ? 'Pass pricing excluded from tuition $'
       : (b.note || 'Tuition estimate when priced');
     const factsHref = 'programs.html#brand=' + encodeURIComponent(b.name);
+    const dup = nameCount.get(b.name) > 1 && b.platform
+      ? '<span class="pill" title="Same name appears on more than one platform feed">' + esc(platLabel[b.platform] || b.platform) + '</span>' : '';
     return '<div class="card brand-card" style="--brand-c:' + b.color + '">' +
       '<h2><a href="' + factsHref + '" style="color:inherit;text-decoration:none">' + esc(b.name) + '</a></h2>' +
-      '<div class="card-meta"><span class="pill" style="background:' + b.color + '22;color:#1a202c">' + sitesN + ' sites</span></div>' +
+      '<div class="card-meta"><span class="pill" style="background:' + b.color + '22;color:#1a202c">' + sitesN + ' sites</span>' + dup + '</div>' +
       '<div class="card-stats">' +
       '<div class="row"><span class="k">Enrolled</span><span class="v">' + enrolledDisp + '</span></div>' +
       '<div class="row"><span class="k">Est. annual</span><span class="v rev">' + annualDisp + '</span></div>' +
@@ -224,7 +319,21 @@
         '</span>' +
       '</div>' +
       '</div>';
-  }).join('');
+  }
+  function renderBrands(q) {
+    const needle = (q || '').trim().toLowerCase();
+    const rows = needle
+      ? brandsMeta.filter(b => (b.name || '').toLowerCase().includes(needle) ||
+          (b.platform || '').toLowerCase().includes(needle) ||
+          (b.category || '').toLowerCase().includes(needle) ||
+          (b.states || []).some(st => String(st).toLowerCase() === needle))
+      : brandsMeta;
+    brandCountEl.textContent = needle ? '(' + rows.length + ' of ' + nBrandsAll + ')' : '(' + nBrandsAll + ')';
+    brandEl.innerHTML = rows.length
+      ? rows.map(brandCard).join('')
+      : '<div class="empty">No brands match "' + esc(q) + '".</div>';
+  }
+  renderBrands('');
 
   // National map CTA
   document.getElementById('openMapBtn').href = 'map.html';

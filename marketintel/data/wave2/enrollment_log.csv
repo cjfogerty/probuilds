@@ -1,0 +1,25 @@
+date,platform,sites_known,sites_total,coverage_pct,enrolled_total,enrolled_total_fresh,sites_known_fresh,obs_week_start,obs_week_end,refreshed_platform,source_pull,note
+2026-10-10,sportsengine,0,6096,0.0,,,0,2026-10-05,2026-10-11,no,data/wave2/pulls/2026-11-25,"unknown by design (no public seat counts) — null, never 0"
+2026-10-10,unleashed,375,1083,34.6,102060,,0,2026-10-05,2026-10-11,no,data/wave2/pulls/2026-11-25,unleashed known rows carry an older (pre-10-10) stamp
+2026-10-10,web_discovery,0,561,0.0,,,0,2026-10-05,2026-10-11,no,data/wave2/pulls/2026-11-25,"unknown by design (no public seat counts) — null, never 0"
+2026-10-10,activenet,320,327,97.9,19604,19217,301,2026-10-05,2026-10-11,yes,data/wave2/pulls/2026-11-25,
+2026-10-10,mygym,0,174,0.0,,,0,2026-10-05,2026-10-11,no,data/wave2/pulls/2026-11-25,"unknown by design (no public seat counts) — null, never 0"
+2026-10-10,iclasspro,173,173,100.0,81310,80997,172,2026-10-05,2026-10-11,yes,data/wave2/pulls/2026-11-25,
+2026-10-10,jackrabbit,100,100,100.0,21110,21110,100,2026-10-05,2026-10-11,yes,data/wave2/pulls/2026-11-25,
+2026-10-10,daxko,65,81,80.2,1626,1066,47,2026-10-05,2026-10-11,yes,data/wave2/pulls/2026-11-25,
+2026-10-10,teamunify,38,65,58.5,6957,6784,35,2026-10-05,2026-10-11,yes,data/wave2/pulls/2026-11-25,
+2026-10-10,pike13,5,17,29.4,271,271,5,2026-10-05,2026-10-11,yes,data/wave2/pulls/2026-11-25,
+2026-10-10,leadconnector,0,5,0.0,,,0,2026-10-05,2026-10-11,no,data/wave2/pulls/2026-11-25,"unknown by design (no public seat counts) — null, never 0"
+2026-10-10,ALL,1076,8682,12.4,232938,129445,660,2026-10-05,2026-10-11,n/a,data/wave2/pulls/2026-11-25,
+2026-11-25,sportsengine,0,6096,0.0,,,0,2026-11-23,2026-11-29,no,data/wave2/pulls/2026-11-25,"unknown by design (no public seat counts) — null, never 0"
+2026-11-25,unleashed,375,1083,34.6,102060,,0,2026-11-23,2026-11-29,no,data/wave2/pulls/2026-11-25,unleashed known rows carry an older (pre-10-10) stamp
+2026-11-25,web_discovery,0,561,0.0,,,0,2026-11-23,2026-11-29,no,data/wave2/pulls/2026-11-25,"unknown by design (no public seat counts) — null, never 0"
+2026-11-25,activenet,318,327,97.2,19952,19168,282,2026-11-23,2026-11-29,yes,data/wave2/pulls/2026-11-25,
+2026-11-25,mygym,0,174,0.0,,,0,2026-11-23,2026-11-29,no,data/wave2/pulls/2026-11-25,"unknown by design (no public seat counts) — null, never 0"
+2026-11-25,iclasspro,173,173,100.0,78534,77262,168,2026-11-23,2026-11-29,yes,data/wave2/pulls/2026-11-25,
+2026-11-25,jackrabbit,100,100,100.0,20478,20478,100,2026-11-23,2026-11-29,yes,data/wave2/pulls/2026-11-25,
+2026-11-25,daxko,68,81,84.0,1675,891,37,2026-11-23,2026-11-29,yes,data/wave2/pulls/2026-11-25,
+2026-11-25,teamunify,38,65,58.5,7043,7012,35,2026-11-23,2026-11-29,yes,data/wave2/pulls/2026-11-25,
+2026-11-25,pike13,5,17,29.4,152,152,5,2026-11-23,2026-11-29,yes,data/wave2/pulls/2026-11-25,
+2026-11-25,leadconnector,0,5,0.0,,,0,2026-11-23,2026-11-29,no,data/wave2/pulls/2026-11-25,"unknown by design (no public seat counts) — null, never 0"
+2026-11-25,ALL,1077,8682,12.4,229894,124963,627,2026-11-23,2026-11-29,n/a,data/wave2/pulls/2026-11-25,

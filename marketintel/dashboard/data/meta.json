@@ -1,11 +1,11 @@
 {
-  "as_of": "2026-10-10",
+  "as_of": "2026-11-25",
   "week": {
-    "from": "2026-10-05",
-    "to": "2026-10-11"
+    "from": "2026-11-23",
+    "to": "2026-11-29"
   },
   "source": "Unleashed Brands public API + iClassPro wave2 (Intel Snatcher)",
-  "generated": "2026-10-10",
+  "generated": "2026-11-25",
   "revenue_methodology": "ESTIMATED: enrolled x price_low x 12 for monthly billing only. Urban Air (brand_id==1) excluded. iClassPro brands included when enrolled+price_low. Wave2 evidence_tier seat_model_assumed8 is provisional. Not audited.",
   "legend_notes": [
     "Urban Air pass pricing excluded from tuition revenue",
@@ -99,29 +99,43 @@
   },
   "n_sites_raw": 8682,
   "n_sites_visible": 8539,
-  "n_brands": 7054,
+  "n_brands": 7055,
   "n_markets": 633,
   "n_trade_areas": 11413,
   "unassigned_sites": 643,
   "plausibility": {
-    "flagged_sites": 6,
+    "flagged_sites": 5,
     "by_flag": {
-      "capacity_ratio_implausible": 3,
-      "revenue_implausible": 2,
-      "price_implausible_high": 2
+      "price_implausible_high": 2,
+      "capacity_ratio_implausible": 2,
+      "revenue_implausible": 1,
+      "capacity_implausible": 1
     },
-    "enrolled_excluded": 3547,
-    "enrolled_excluded_pct": 0.017,
-    "capacity_excluded": 14384,
-    "revenue_excluded": 18266568,
+    "enrolled_excluded": 1319,
+    "enrolled_excluded_pct": 0.0064,
+    "capacity_excluded": 19677,
+    "revenue_excluded": 10054992,
     "examples": [
       {
+        "brand": "Top Gun Pittsburgh",
+        "name": "Top Gun Pittsburgh \u2014 Cranberry TWP",
+        "enrolled": 503,
+        "capacity": 10451,
+        "price": null,
+        "est_annual_rev": null,
+        "platform": "teamunify",
+        "evidence_tier": "published",
+        "flags": [
+          "capacity_implausible"
+        ]
+      },
+      {
         "brand": "The GymStation",
         "name": "The GymStation",
-        "enrolled": 35,
-        "capacity": 3829,
-        "price": 68,
-        "est_annual_rev": 28560,
+        "enrolled": 34,
+        "capacity": 3730,
+        "price": 68.0,
+        "est_annual_rev": 27744.0,
         "platform": "jackrabbit",
         "evidence_tier": "observed_max",
         "flags": [
@@ -131,50 +145,23 @@
       {
         "brand": "The GymStation",
         "name": "The GymStation",
-        "enrolled": 57,
-        "capacity": 3426,
-        "price": 68,
-        "est_annual_rev": 46512,
+        "enrolled": 58,
+        "capacity": 3475,
+        "price": 68.0,
+        "est_annual_rev": 47328.0,
         "platform": "jackrabbit",
         "evidence_tier": "observed_max",
         "flags": [
           "capacity_ratio_implausible"
-        ]
-      },
-      {
-        "brand": "Gotham Gymnastics",
-        "name": "Gotham Gymnastics",
-        "enrolled": 659,
-        "capacity": 2883,
-        "price": 1280,
-        "est_annual_rev": 10122240,
-        "platform": "jackrabbit",
-        "evidence_tier": "observed_max",
-        "flags": [
-          "price_implausible_high",
-          "revenue_implausible"
-        ]
-      },
-      {
-        "brand": "Carolina Flipz",
-        "name": "Carolina Flipz",
-        "enrolled": 2595,
-        "capacity": 2752,
-        "price": 199,
-        "est_annual_rev": 6196860,
-        "platform": "iclasspro",
-        "evidence_tier": "observed_max",
-        "flags": [
-          "revenue_implausible"
         ]
       },
       {
         "brand": "All American Gymnastics",
         "name": "All American Gymnastics",
-        "enrolled": 195,
-        "capacity": 1223,
-        "price": 795,
-        "est_annual_rev": 1860300,
+        "enrolled": 196,
+        "capacity": 1141,
+        "price": 795.0,
+        "est_annual_rev": 1869840.0,
         "platform": "jackrabbit",
         "evidence_tier": "observed_max",
         "flags": [
@@ -182,51 +169,52 @@
         ]
       },
       {
-        "brand": "Gymnastics World",
-        "name": "Gymnastics World",
-        "enrolled": 6,
-        "capacity": 271,
-        "price": 168,
-        "est_annual_rev": 12096,
+        "brand": "Gotham Gymnastics",
+        "name": "Gotham Gymnastics",
+        "enrolled": 528,
+        "capacity": 880,
+        "price": 1280.0,
+        "est_annual_rev": 8110080.0,
         "platform": "jackrabbit",
         "evidence_tier": "observed_max",
         "flags": [
-          "capacity_ratio_implausible"
+          "price_implausible_high",
+          "revenue_implausible"
         ]
       }
     ]
   },
   "enrollment_model_by_category": {
-    "adventure": "not_published",
     "cheer_dance": "not_published",
+    "stem": "not_published",
     "gymnastics": "not_published",
-    "martial_arts": "not_published",
     "ninja": "not_published",
-    "stem": "not_published"
+    "adventure": "not_published",
+    "martial_arts": "not_published"
   },
   "national_median_hh_income": 78538,
   "national_median_price_by_category": {
-    "cheer_dance": 107,
+    "cheer_dance": 107.0,
     "stem": 49.99,
-    "martial_arts": 139,
+    "gymnastics": 121.0,
+    "ninja": 119.0,
     "adventure": 7.49,
-    "gymnastics": 121,
-    "ninja": 119
+    "martial_arts": 139.0
   },
   "caveat": "Share and penetration are measured against platform-visible supply only (Unleashed, iClassPro, Jackrabbit, Pike13, My Gym). Off-platform independents are not in the universe, so shares are upper bounds and penetration figures are lower bounds.",
   "demand_source": "ACS 2023 5-year (B01001, B19013, B11005) via Census table-based summary file",
   "geography": "OMB CBSA 2023 delineation; ZIP->ZCTA->county->CBSA",
   "observation_week": {
-    "from": "2026-10-05",
-    "to": "2026-10-11"
+    "from": "2026-11-23",
+    "to": "2026-11-29"
   },
   "coverage_enrolled_known_vs_total": {
     "definition": "known = enrolled non-null AND not a 0-enrolled/0-capacity placeholder; unknown (null) in denominator, never as 0",
-    "n_known": 1076,
+    "n_known": 1077,
     "n_total": 8682,
     "pct_known": 12.4,
-    "n_unknown_null": 6857,
-    "n_zero_placeholder": 749,
+    "n_unknown_null": 6854,
+    "n_zero_placeholder": 751,
     "null_enroll_platforms": [
       "mygym",
       "sportsengine",
@@ -266,13 +254,13 @@
       },
       "activenet": {
         "n_total": 327,
-        "n_enrolled_known": 320,
-        "pct_known": 97.9
+        "n_enrolled_known": 318,
+        "pct_known": 97.2
       },
       "daxko": {
         "n_total": 81,
-        "n_enrolled_known": 65,
-        "pct_known": 80.2
+        "n_enrolled_known": 68,
+        "pct_known": 84.0
       },
       "sportsengine": {
         "n_total": 6096,
@@ -292,13 +280,14 @@
     }
   },
   "enrollment_refresh": {
-    "as_of": "2026-10-10",
+    "as_of": "2026-11-25",
     "obs_week": {
-      "from": "2026-10-05",
-      "to": "2026-10-11"
+      "from": "2026-11-23",
+      "to": "2026-11-29"
     },
-    "history_pre_pull": "data/wave2/history/2026-10-10_enrollment_refresh_pre_pull/",
-    "n_sites_touched": 692,
-    "coverage": "1076/8682 = 12.4%"
+    "history_pre_pull": "data/wave2/history/2026-11-25_enrollment_refresh_pre_pull/",
+    "n_sites_touched": 661,
+    "coverage": "1077/8682 = 12.4%",
+    "log": "data/enrollment_log.json"
   }
 }

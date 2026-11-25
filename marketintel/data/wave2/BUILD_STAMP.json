@@ -1,17 +1,17 @@
 {
-  "generated_at": "2026-10-10",
-  "as_of": "2026-10-10",
+  "generated_at": "2026-11-25",
+  "as_of": "2026-11-25",
   "observation_week": {
-    "from": "2026-10-05",
-    "to": "2026-10-11"
+    "from": "2026-11-23",
+    "to": "2026-11-29"
   },
   "dataset_version": "v2",
-  "wave": "enrollment-refresh-2026-10-10",
-  "wave_label": "Enrollment refresh 2026-10-10 (history preserved)",
+  "wave": "enrollment-refresh-2026-11-25",
+  "wave_label": "Enrollment refresh 2026-11-25 (history preserved; nationwide weekly log started)",
   "sites_n": 8682,
   "products_n": 38384,
   "skus": 38384,
-  "brands": 7054,
+  "brands": 7055,
   "markets": 633,
   "trade_areas": 11413,
   "holds": 9,
@@ -29,14 +29,14 @@
     "web_discovery": 561,
     "leadconnector": 5
   },
-  "note": "Enrollment refresh rebuild. History intact. brands.json preserves null enroll (no coerce to 0). Coverage 1076/8682 = 12.4% known. No Est.$ invent. CueWay fix: brands.json keys null brand_id by platform:name (no My Gym collapse); My Gym enroll/Est.$ null; sites/markets meta as_of+week+coverage stamped.",
+  "note": "Nationwide enrollment pull 2026-11-25 folded (661 sites refreshed; Thanksgiving-week gaps keep prior value+stamp). Coverage 1077/8682 = 12.4% enrolled-known (null != 0; My Gym/SE/web/GHL unknown). My Gym brand_id=mygym (174), JR null brand rows jr_{org}. brands.json keyed per brand_id; unknown enrolled/Est.$ null, never 0. No Est.$ invented. Running log: data/wave2/enrollment_log.csv + dashboard/data/enrollment_log.json.",
   "coverage_enrolled_known_vs_total": {
     "definition": "known = enrolled non-null AND not a 0-enrolled/0-capacity placeholder; unknown (null) in denominator, never as 0",
-    "n_known": 1076,
+    "n_known": 1077,
     "n_total": 8682,
     "pct_known": 12.4,
-    "n_unknown_null": 6857,
-    "n_zero_placeholder": 749,
+    "n_unknown_null": 6854,
+    "n_zero_placeholder": 751,
     "null_enroll_platforms": [
       "mygym",
       "sportsengine",
@@ -76,13 +76,13 @@
       },
       "activenet": {
         "n_total": 327,
-        "n_enrolled_known": 320,
-        "pct_known": 97.9
+        "n_enrolled_known": 318,
+        "pct_known": 97.2
       },
       "daxko": {
         "n_total": 81,
-        "n_enrolled_known": 65,
-        "pct_known": 80.2
+        "n_enrolled_known": 68,
+        "pct_known": 84.0
       },
       "sportsengine": {
         "n_total": 6096,
@@ -101,5 +101,6 @@
       }
     }
   },
-  "history_pre_pull": "data/wave2/history/2026-10-10_enrollment_refresh_pre_pull/"
+  "history_pre_pull": "data/wave2/history/2026-11-25_enrollment_refresh_pre_pull/",
+  "enrollment_log": "data/wave2/enrollment_log.csv"
 }
